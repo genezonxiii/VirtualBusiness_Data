@@ -6,12 +6,22 @@ import datetime
 from aes_data import aes_data
 from ToMongodb import ToMongodb
 from ToMysql import ToMysql
+import logging
+import time
 
 class Momo_Data2():
     Data=None
     def __init__(self):
         pass
     def Momo_Data2(self,supplier,GroupID,path,UserID):
+        logging.basicConfig(filename='pyupload.log', level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%Y/%m/%d %I:%M:%S %p')
+        logging.Formatter.converter = time.gmtime
+        logging.info('===Momo_Data2===')
+        logging.debug('supplier:' + supplier)
+        logging.debug('GroupID:' + GroupID)
+        logging.debug('path:' + path)
+        logging.debug('UserID:' + UserID)
+        
         #mysql connector object
         mysqlconnect=ToMysql()
         mysqlconnect.connect()
@@ -34,33 +44,37 @@ class Momo_Data2():
         for row_index in range(1,table.nrows):
             for col_index in range(0,num_cols):
                 aes=aes_data()
-                OrderNo = table.cell(row_index, 2).value[0:14]
+                OrderNo = table.cell(row_index, 1).value[0:13]
                 #strTurnDate = str(table.cell(row_index, 9).value).replace("/", "-")
                 #TurnDate = datetime.strptime(strTurnDate, '%Y-%m-%d %H:%M')
                 #strShipmentDate = str(table.cell(row_index, 10).value).replace("/", "-")
                 #ShipmentDate = datetime.strptime(strShipmentDate, '%Y-%m-%d')
-                #strInvoiceDate = str(table.cell(row_index, 21).value).replace("/", "-")
+                #strInvoiceDate = str(table.cell(row_index, 25).value).replace("/", "-")
                 #InvoiceDate = datetime.strptime(strInvoiceDate, '%Y-%m-%d')
                 TurnDate = datetime.datetime.strptime(str(table.cell_value(row_index, 9)),'%Y/%m/%d %H:%M')
                 ShipmentDate = datetime.datetime.strptime(str(table.cell_value(row_index, 10)),'%Y/%m/%d')
-                InvoiceDate = datetime.datetime.strptime(str(table.cell_value(row_index, 21)),'%Y/%m/%d')
+                InvoiceDate = datetime.datetime.strptime(str(table.cell_value(row_index, 25)),'%Y/%m/%d')
 
-                Name = table.cell(row_index, 3).value
+                Name = table.cell(row_index, 11).value
                 ClientName = aes.AESencrypt("p@ssw0rd", Name.encode('utf8'), True)
-                Add = table.cell(row_index, 4).value
+                Tel = table.cell(row_index, 12).value
+                ClientTel = aes.AESencrypt("p@ssw0rd", Tel, True)
+                Phone = table.cell(row_index, 13).value
+                ClientPhone = aes.AESencrypt("p@ssw0rd", Phone, True)
+                Add = table.cell(row_index, 14).value
                 ClientAdd = aes.AESencrypt("p@ssw0rd", Add.encode('utf8'), True)
-                PartNo = str(table.cell(row_index, 12).value)
-                PartName = table.cell(row_index, 13).value
-                PartQuility = table.cell(row_index, 16).value
-                PartPrice = table.cell(row_index, 17).value
-                InvoiceNo = table.cell(row_index, 20).value
+                PartNo = str(table.cell(row_index, 16).value)
+                PartName = table.cell(row_index, 17).value
+                PartQuility = table.cell(row_index, 20).value
+                PartPrice = table.cell(row_index, 21).value
+                InvoiceNo = table.cell(row_index, 24).value
 
                 GroupID = GroupID
                 supplier = supplier
                 UserID = UserID
             # SupplySQL = (str(uuid.uuid4()),GroupID, supplier,"","","","","","","","","","","")
             ProductSQL = (str(uuid.uuid4()), GroupID, PartNo, PartName,supplier, "",'',0,PartPrice,0,None,None,None,None)
-            CustomereSQL = (str(uuid.uuid4()), GroupID, ClientName, ClientAdd, None, None,None,None,None,None)
+            CustomereSQL = (str(uuid.uuid4()), GroupID, ClientName, ClientAdd, ClientTel, ClientPhone,None,None,None,None)
 
             # mysqlconnect.cursor.callproc('p_tb_supply', SupplySQL)
             mysqlconnect.cursor.callproc('p_tb_product', ProductSQL)
@@ -140,6 +154,7 @@ class Momo_Data2():
         mysqlconnect.dbClose()
         mongoOrder.dbClose()
         mongodbClient.dbClose()
+        logging.info('===Momo_Data2 SUCCESS===')
         return 'success'
 
     # mongoDB storage   ç¬¬ä??‹å??¸æ˜¯ä¸Ÿä??¢ç?mongoOrder or mongoClient

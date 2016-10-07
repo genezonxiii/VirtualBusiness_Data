@@ -8,7 +8,8 @@ from SelectCustomer import Query_customer
 from Shipper import ShipperData,VBsale_Analytics
 import datetime
 from time import mktime
-
+import logging
+import time
 
 
 
@@ -19,7 +20,7 @@ urls = ("/upload/(.*)", "Uploaddata",\
         "/ship/(.*)","Shipper",\
         "/analytics/(.*)", "Analytics")
 app =web.application(urls, globals())
-
+logger = logging.getLogger('VirtualBusiness_Web')
 
 class Uploaddata():
     def GET(self, name):
@@ -27,6 +28,13 @@ class Uploaddata():
         for i in range(len(data)):
             data[i]=data[i][5:len(data[i])].decode('base64')
             print len(data[1])
+            
+        logging.basicConfig(filename='/data/VirtualBusiness_Data/pyupload.log', level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', datefmt='%Y/%m/%d %I:%M:%S %p')
+        logging.Formatter.converter = time.gmtime
+        logging.info('===Uploaddata GO!!!!===')
+        logging.info('data[0]:' + data[0])
+        logging.info('data[1]:' + data[1])
+        logging.info('===Uploaddata GO END!!!!===')
 
         Upload = VirtualBusiness()
         return Upload.virtualbusiness(data[0],data[1])

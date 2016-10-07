@@ -7,14 +7,15 @@ from mysql.connector import errorcode
 
 
 class ToMysql():
-    #host = 'localhost'
-    #database = 'db_virtualbusiness'
-    #user = 'root'
-    #password = 'Admin@csi1008!'
-    host = '192.168.112.164'
+    host = '10.0.0.4'
+    #host = 'www.a-ber.com.tw'
     database = 'db_virtualbusiness'
     user = 'root'
-    password = 'admin123'
+    password = 'Admin@csi1008!'
+    #host = '192.168.112.175'
+    #database = 'db_virutalbusiness'
+    #user = 'root'
+    #password = 'password'
 
     def __init__(self):
         pass

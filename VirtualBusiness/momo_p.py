@@ -9,7 +9,8 @@ from cStringIO import StringIO
 import re
 import uuid
 from aes_data import aes_data
-
+import logging
+import time
 
 class Momo_Datap():
     Data=None
@@ -17,6 +18,14 @@ class Momo_Datap():
     def __init__(self):
         pass
     def Momo_Datap(self,supplier,GroupID,path,UserID):
+        logging.basicConfig(filename='pyupload.log', level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%Y/%m/%d %I:%M:%S %p')
+        logging.Formatter.converter = time.gmtime
+        logging.info('===Momo_Datap===')
+        logging.debug('supplier:' + supplier)
+        logging.debug('GroupID:' + GroupID)
+        logging.debug('path:' + path)
+        logging.debug('UserID:' + UserID)
+        
         mysqlconnect = ToMysql()
         mysqlconnect.connect()
         rsrcmgr = PDFResourceManager()
@@ -148,6 +157,7 @@ class Momo_Datap():
                                     SaleSQL = (str(uuid.uuid4()),GroupID, OrderNo, UserID,str(uuid.uuid4()),y[0],x[1],supplier)
                                     mysqlconnect.cursor.execute(InsertSQLins,SaleSQL)
                         mysqlconnect.db.commit()
+                logging.info('===Momo_Datap SUCCESS===')
                 return 'success'
 
 

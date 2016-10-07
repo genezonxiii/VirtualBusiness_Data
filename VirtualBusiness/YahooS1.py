@@ -6,12 +6,24 @@ import datetime
 from aes_data import aes_data
 from ToMongodb import ToMongodb
 from ToMysql import ToMysql
+import logging
+import time
 
 class Yahoo_DataS1():
     Data=None
     def __init__(self):
         pass
     def Yahoo_DataS1(self,supplier,GroupID,path,UserID):
+        #超級商城 超取2
+
+        logging.basicConfig(filename='pyupload.log', level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%Y/%m/%d %I:%M:%S %p')
+        logging.Formatter.converter = time.gmtime
+        logging.info('===Yahoo_DataS1===')
+        logging.debug('supplier:' + supplier)
+        logging.debug('GroupID:' + GroupID)
+        logging.debug('path:' + path)
+        logging.debug('UserID:' + UserID)
+
         mysqlconnect=ToMysql()
         mysqlconnect.connect()
 
@@ -134,6 +146,7 @@ class Yahoo_DataS1():
         mysqlconnect.dbClose()
         mongoOrder.dbClose()
         mongodbClient.dbClose()
+        logging.info('===Yahoo_DataS1 SUCCESS===')
         return 'success'
     # mongoDB storage   第�??��??�是丟�??��?mongoOrder or mongoClient
     def insertOrder(self,mongoOrder,_OrderNo,_PartNo,_PartName,\

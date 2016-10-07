@@ -7,12 +7,22 @@ from aes_data import aes_data
 from ToMongodb import ToMongodb
 from ToMysql import ToMysql
 import csv
+import logging
+import time
 
 class Yahoo1_Data():
     Data=None
     def __init__(self):
         pass
     def Yahoo1_Data(self,supplier,GroupID,path,UserID):
+        logging.basicConfig(filename='pyupload.log', level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%Y/%m/%d %I:%M:%S %p')
+        logging.Formatter.converter = time.gmtime
+        logging.info('===Yahoo1_Data===')
+        logging.debug('supplier:' + supplier)
+        logging.debug('GroupID:' + GroupID)
+        logging.debug('path:' + path)
+        logging.debug('UserID:' + UserID)
+        
         #mysql connector object
         mysqlconnect=ToMysql()
         mysqlconnect.connect()
@@ -147,9 +157,10 @@ class Yahoo1_Data():
                 mysqlconnect.dbClose()
                 mongoOrder.dbClose()
                 mongodbClient.dbClose()
+                logging.info('===Yahoo1_Data SUCCESS===')
                 return 'success'
 
-    # mongoDB storage   Á¨¨‰∏ÄÂÄãÂèÉÊï∏ÊòØ‰∏ü‰∏äÈù¢ÁöÑmongoOrder or mongoClient
+    # mongoDB storage   Á¨¨‰??ãÂ??∏ÊòØ‰∏ü‰??¢Á?mongoOrder or mongoClient
     def insertOrder(self,mongoOrder,_TurnDate,_OrderNo,_PartNo,_PartName,\
                                 _PartQuility,_PartTotalPrice,_PartCost,\
                                 _firm,_supplier):

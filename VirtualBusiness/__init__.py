@@ -7,6 +7,8 @@ from aes_data import aes_data
 import uuid
 import ToMysql
 import ToMongodb
+import logging
+import time
 
 class ASAP():
     Data=None
@@ -14,11 +16,19 @@ class ASAP():
         pass
 
     def ASAP_Data(self,supplier,GroupID,path,collection_order,collection_client):
+        logging.basicConfig(filename='pyupload.log', level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%Y/%m/%d %I:%M:%S %p')
+        logging.Formatter.converter = time.gmtime
+        logging.info('===ASAP===')
+        logging.debug('supplier:' + supplier)
+        logging.debug('GroupID:' + GroupID)
+        logging.debug('path:' + path)
+        logging.debug('UserID:' + UserID)
+        
         #mysql connector object
         mysqlconnect=ToMysql()
         mysqlCursor=mysqlconnect.connect()
 
-        #mongodb connector objectå„²å­˜  å…ˆç”Ÿå‡ºä¸€å€‹object é€£ç·šå¾Œ ç”¨ object.cursor.æ¥ä½ è™•ç†ï¼£ï¼²ï¼µï¼¤
+        #mongodb connector object?²å?  ?ˆç??ºä??‹object ???å¾???object.cursor.?¥ä??•ç?ï¼?¼²ï¼µï¼¤
         mongoOrder=ToMongodb()
         mongoOrder.setcollection('co_ordertest')
         mongoOrder.connect()
@@ -84,7 +94,7 @@ class ASAP():
         mongoOrder.close()
         mongodbClient.close()
 
-    #mongoDB storage   ç¬¬ä¸€å€‹åƒæ•¸æ˜¯ä¸Ÿä¸Šé¢çš„mongoOrder or mongoClient
+    #mongoDB storage   ç¬¬ä??‹å??¸æ˜¯ä¸Ÿä??¢ç?mongoOrder or mongoClient
     # def insertOrder(self,mongoOrder,_TurntDate,_OrderNo,_PartNum,_PartMaterial,_PartName,_PartColor,_PartSize,_PartQuility,_PartNo,_firm,_supplier):
     #     businessorder_doc={ 'TurntDate':_TurntDate,
     #                         'OrderNo':_OrderNo,

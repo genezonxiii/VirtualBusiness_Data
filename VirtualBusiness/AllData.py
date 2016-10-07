@@ -6,12 +6,22 @@ from datetime import datetime
 from aes_data import aes_data
 from ToMongodb import ToMongodb
 from ToMysql import ToMysql
+import logging
+import time
 
 class ASAP_Data():
     Data=None
     def __init__(self):
         pass
     def ASAP_Data(self,supplier,GroupID,path):
+        logging.basicConfig(filename='pyupload.log', level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%Y/%m/%d %I:%M:%S %p')
+        logging.Formatter.converter = time.gmtime
+        logging.info('===ASAP_Data. filename=AllData.py===')
+        logging.debug('supplier:' + supplier)
+        logging.debug('GroupID:' + GroupID)
+        logging.debug('path:' + path)
+        logging.debug('UserID:' + UserID)
+        
         #mysql connector object
         mysqlconnect=ToMysql()
         mysqlconnect.connect()
@@ -133,7 +143,7 @@ class ASAP_Data():
         mongoOrder.dbClose()
         mongodbClient.dbClose()
 
-    # mongoDB storage   绗竴鍊嬪弮鏁告槸涓熶笂闈㈢殑mongoOrder or mongoClient
+    # mongoDB storage   绗??嬪??告槸涓熶??㈢?mongoOrder or mongoClient
     def insertOrder(self,mongoOrder,_TurntDate,_OrderNo,_PartNum,_PartMaterial,_PartName,_PartColor,_PartSize,_PartQuility,_PartNo,_firm,_supplier):
         businessorder_doc={ 'TurntDate':_TurntDate,
                             'OrderNo':_OrderNo,
@@ -326,7 +336,7 @@ class GoHappy_Data():
         mongoOrder.dbClose()
         mongodbClient.dbClose()
 
-    # mongoDB storage   绗竴鍊嬪弮鏁告槸涓熶笂闈㈢殑mongoOrder or mongoClient
+    # mongoDB storage   绗??嬪??告槸涓熶??㈢?mongoOrder or mongoClient
     def insertOrder(self,mongoOrder,_firm,_firmNo,_ShipmentDateNo,_ReconciliationDate,_OrderNo,_OrderStatus,_OrderDate,_PartName,_PartType,_PartNo,_FormatNo,\
                                 _PartCost,_PartPrice,_PartQuility,_PartTotalPrice,_PartNote,_PartShopNo,\
                                 _PartAction,_OrderType,_ShipmentDate,_PartNum,_supplier):
@@ -490,7 +500,7 @@ class IBON_Data():
         mongoOrder.dbClose()
         mongodbClient.dbClose()
 
-    # mongoDB storage   绗竴鍊嬪弮鏁告槸涓熶笂闈㈢殑mongoOrder or mongoClient
+    # mongoDB storage   绗??嬪??告槸涓熶??㈢?mongoOrder or mongoClient
     def insertOrder(self,mongoOrder,_TurntDate,_OrderNo,_OrderType,_PartNo,_PartName,_PartSpec,\
                                 _PartQuility,_PartCost,_ShipmentDate,_firm,_supplier):
         businessorder_doc={ 'TurntDate':_TurntDate,'OrderNo':_OrderNo,'OrderType':[_OrderType],'PartNo':[_PartNo],\
@@ -648,7 +658,7 @@ class IBONC_Data():
         mongoOrder.dbClose()
         mongodbClient.dbClose()
 
-    # mongoDB storage   绗竴鍊嬪弮鏁告槸涓熶笂闈㈢殑mongoOrder or mongoClient
+    # mongoDB storage   绗??嬪??告槸涓熶??㈢?mongoOrder or mongoClient
     def insertOrder(self,mongoOrder,_TurntDate,_ShipmentDate,_OrderNo,_PartNo,_PartName,_PartSpec,\
                                 _PartQuility,_PartCost,_firm,_supplier):
         businessorder_doc={'TurntDate':_TurntDate,'ShipmentDate':_ShipmentDate,'OrderNo':_OrderNo,'PartNo':[_PartNo],\

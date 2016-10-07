@@ -9,6 +9,8 @@ from ToMongodb import ToMongodb
 from ToMysql import ToMysql
 import os
 import sys, argparse, csv
+import logging
+import time
 
 
 class payeasy_Data2():
@@ -16,6 +18,15 @@ class payeasy_Data2():
     def __init__(self):
         pass
     def payeasy_Data2(self,supplier,GroupID,path,UserID):
+        logging.info('===payeasy_Data2 SUCCESS===')
+        logging.basicConfig(filename='pyupload.log', level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%Y/%m/%d %I:%M:%S %p')
+        logging.Formatter.converter = time.gmtime
+        logging.info('===payeasy_Data2===')
+        logging.debug('supplier:' + supplier)
+        logging.debug('GroupID:' + GroupID)
+        logging.debug('path:' + path)
+        logging.debug('UserID:' + UserID)
+        
         #mysql connector object
         mysqlconnect=ToMysql()
         mysqlconnect.connect()
@@ -162,18 +173,14 @@ class payeasy_Data2():
                     mongodbClient.dbClose()
                 else:
                     ignore = 1
+        logging.info('===payeasy_Data2 SUCCESS===')
         return 'success'
-
-
-
-
-
 
                 #put the data into the corresponding variable
 
 
 
-    # mongoDB storage   Á¨¨‰∏ÄÂÄãÂèÉÊï∏ÊòØ‰∏ü‰∏äÈù¢ÁöÑmongoOrder or mongoClient
+    # mongoDB storage   Á¨¨‰??ãÂ??∏ÊòØ‰∏ü‰??¢Á?mongoOrder or mongoClient
     def insertOrder(self,mongoOrder,_OrderNo,_PartName,_PartNo,_PartPrice,\
                                 _PartQuility,_PartTotalPrice,\
                                 _firm,_supplier):

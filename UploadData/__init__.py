@@ -20,6 +20,8 @@ from VirtualBusiness.Pchome1 import PCHome_Data
 from VirtualBusiness.Pchome2 import PCHome2_Data
 from VirtualBusiness.Pchome3 import PCHome3_Data
 from VirtualBusiness.UDN import UDN_Data
+from VirtualBusiness.UDN_2 import UDN_Data2
+from VirtualBusiness.UDN_3 import UDN_Data3
 from VirtualBusiness.Yahoo1 import Yahoo1_Data
 from VirtualBusiness.Yahoo2 import Yahoo2_Data
 from VirtualBusiness.Yahoo3 import Yahoo3_Data
@@ -31,6 +33,7 @@ from VirtualBusiness.Book import Book_Data
 from VirtualBusiness.Umall import UMall_Data
 from VirtualBusiness.YahooS1 import Yahoo_DataS1
 from VirtualBusiness.YahooS2 import Yahoo_DataS2
+from VirtualBusiness.YahooS3 import Yahoo_DataS3
 from VirtualBusiness.LoveBuy import LoveBuy_Data
 from VirtualBusiness.Lotte import Lotte_Data
 from VirtualBusiness.Yahoo_d import Yahood_Data
@@ -45,18 +48,9 @@ class VirtualBusiness():
     def virtualbusiness(self,DataPath,userID):
         Supplier = str(DataPath).split('/')[3]
         Firm = str(DataPath).split('/')[4]
-        #userID='1999234'
         print Firm
         print Supplier
 
-        # for dirPath, dirNames, fileNames in os.walk(DataPath):
-            # if fileNames != []:
-            # Firm= dirPath.split("\\")[1]
-            # Supplier = (dirPath.split("\\")[0]).split('/')[-1]
-            # groupID=(dirPath.split("\\")[-1]).split('/')[-1]
-            #userID='1999999'
-            # Firm = str(dirPath).split('/')[1]
-        # for data in fileNames:
         if Supplier == 'test':
             FinalData=Test_Data()
             return FinalData.Test_Data(Supplier,Firm,os.path.join(DataPath),userID)
@@ -84,11 +78,14 @@ class VirtualBusiness():
                 table = data.sheets()[0]
                 num_cols = table.ncols
                 if num_cols == 25:
-                    FinalData = Momo_Data1()
-                    return FinalData.Momo_Data1('momo', Firm, os.path.join(DataPath), userID)
-                else:
+                    FinalData = Momo_Data()
+                    return FinalData.Momo_Data('momo', Firm, os.path.join(DataPath), userID)
+                elif num_cols == 28:
                     FinalData = Momo_Data2()
                     return FinalData.Momo_Data2('momo', Firm, os.path.join(DataPath), userID)
+                else:
+                    FinalData = Momo_Data3()
+                    return FinalData.Momo_Data3('momo', Firm, os.path.join(DataPath), userID)
             else:
                 FinalData = Momo_Datap()
                 return FinalData.Momo_Datap('momo', Firm, os.path.join(DataPath),userID)
@@ -96,11 +93,16 @@ class VirtualBusiness():
             FinalData = Myfone_Data()
             return FinalData.Myfone_Data('myfone', Firm, os.path.join(DataPath),userID)
         elif Supplier == 'payeasy':
-            FinalData = payeasy_Data()
-            return FinalData.payeasy_Data('payeasy', Firm, os.path.join(DataPath),userID)
-        elif Supplier == 'payeasy1':
-            FinalData = payeasy_Data2()
-            return FinalData.payeasy_Data2( 'payeasy',Firm, os.path.join(DataPath),userID)
+            if DataPath.split('.')[-1] != 'csv':
+                data = xlrd.open_workbook(os.path.join(DataPath))
+                table = data.sheets()[0]
+                num_cols = table.ncols
+                if num_cols == 22:
+                    FinalData = payeasy_Data()
+                    return FinalData.payeasy_Data('payeasy', Firm, os.path.join(DataPath), userID)
+            else:
+              FinalData = payeasy_Data2()
+              return FinalData.payeasy_Data2('payeasy', Firm, os.path.join(DataPath),userID)
         elif Supplier == 'pchome':
             FinalData = PCHome_Data()
             return FinalData.PCHome_Data('Pchome', Firm, os.path.join(DataPath),userID)
@@ -111,22 +113,33 @@ class VirtualBusiness():
             FinalData = PCHome3_Data()
             return FinalData.PCHome3_Data('Pchome',Firm, os.path.join(DataPath),userID)
         elif Supplier == 'udn':
-            FinalData = UDN_Data()
-            return FinalData.UDN_Data('UDN', Firm, os.path.join(DataPath),userID)
+            if DataPath.split('.')[-1] == 'xls':
+                data = xlrd.open_workbook(os.path.join(DataPath))
+                table = data.sheets()[0]
+                num_cols = table.ncols
+                if num_cols == 13:
+                    FinalData = UDN_Data()
+                    return FinalData.UDN_Data('UDN', Firm, os.path.join(DataPath), userID)
+                elif num_cols == 27:
+                    FinalData = UDN_Data2()
+                    return FinalData.UDN_Data2('UDN', Firm, os.path.join(DataPath), userID)
+                elif num_cols == 28:
+                    FinalData = UDN_Data3()
+                    return FinalData.UDN_Data3('UDN', Firm, os.path.join(DataPath), userID)
         elif Supplier == 'yahoo':
             if DataPath.split('.')[-1] == 'xls':
                 data=xlrd.open_workbook(os.path.join(DataPath))
                 table=data.sheets()[0]
                 num_cols=table.ncols
                 if num_cols == 26:
-	            	    FinalData = Yahood_Data()
-            		    return FinalData.Yahood_Data('yahoo', Firm, os.path.join(DataPath),userID)
+                    FinalData = Yahood_Data()
+                    return FinalData.Yahood_Data('yahoo', Firm, os.path.join(DataPath),userID)
                 elif num_cols == 22:
-            		    FinalData = Yahoos_Data()
-            		    return FinalData.Yahoos_Data('yahoo', Firm, os.path.join(DataPath),userID)
+                    FinalData = Yahoos_Data()
+                    return FinalData.Yahoos_Data('yahoo', Firm, os.path.join(DataPath),userID)
                 else:
-		                FinalData = Yahoo3_Data()
-		                return FinalData.Yahoo3_Data('yahoo', Firm, os.path.join(DataPath),userID)
+                    FinalData = Yahoo3_Data()
+                    return FinalData.Yahoo3_Data('yahoo', Firm, os.path.join(DataPath),userID)
             else:
                 with open(os.path.join(DataPath), 'rb') as f:
                     reader = csv.reader(f, delimiter=',',skipinitialspace=True)
@@ -157,11 +170,19 @@ class VirtualBusiness():
             FinalData = UMall_Data()
             return FinalData.UMall_Data(u'森森購物'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
         elif Supplier == 'yahoomall':
-            FinalData = Yahoo_DataS1()
-            return FinalData.Yahoo_DataS1(u'超級商城'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
-        elif Supplier == 'yahoomall':
-            FinalData = Yahoo_DataS2()
-            return FinalData.Yahoo_DataS2(u'超級商城'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
+            if DataPath.split('.')[-1] == 'xls' or DataPath.split('.')[-1] == 'xlsx':
+                data = xlrd.open_workbook(os.path.join(DataPath))
+                table = data.sheets()[0]
+                num_cols = table.ncols
+                if num_cols == 16:
+                    FinalData = Yahoo_DataS1()
+                    return FinalData.Yahoo_DataS1(u'超級商城'.encode("utf-8"), Firm, os.path.join(DataPath), userID)
+                elif num_cols == 24:
+                    FinalData = Yahoo_DataS2()
+                    return FinalData.Yahoo_DataS2(u'超級商城'.encode("utf-8"), Firm, os.path.join(DataPath), userID)
+                elif num_cols == 29:
+                    FinalData = Yahoo_DataS3()
+                    return FinalData.Yahoo_DataS3(u'超級商城'.encode("utf-8"), Firm, os.path.join(DataPath), userID)
         elif Supplier == 'amart':
             FinalData = LoveBuy_Data()
             return FinalData.LoveBuy_Data(u'愛買'.encode("utf-8"), Firm, os.path.join(DataPath),userID)

@@ -7,14 +7,22 @@ from datetime import datetime
 from aes_data import aes_data
 from ToMongodb import ToMongodb
 from ToMysql import ToMysql
-
-
+import logging
+import time
 
 class LineMart_Data():
     Data=None
     def __init__(self):
         pass
     def LineMart_Data(self,supplier,GroupID,path,UserID):
+        logging.basicConfig(filename='pyupload.log', level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%Y/%m/%d %I:%M:%S %p')
+        logging.Formatter.converter = time.gmtime
+        logging.info('===LineMart_Data===')
+        logging.debug('supplier:' + supplier)
+        logging.debug('GroupID:' + GroupID)
+        logging.debug('path:' + path)
+        logging.debug('UserID:' + UserID)
+        
         #mysql connector object
         mysqlconnect=ToMysql()
         mysqlconnect.connect()
@@ -165,6 +173,7 @@ class LineMart_Data():
 
                 else:
                     ignore = 1
+        logging.info('===LineMart_Data SUCCESS===')
         return 'success'
 
 

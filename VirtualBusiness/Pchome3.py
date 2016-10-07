@@ -6,7 +6,8 @@ from datetime import datetime
 from aes_data import aes_data
 from ToMongodb import ToMongodb
 from ToMysql import ToMysql
-
+import logging
+import time
 
 class PCHome3_Data():
     Data = None
@@ -15,6 +16,14 @@ class PCHome3_Data():
         pass
 
     def PCHome3_Data(self,supplier,GroupID,path,UserID):
+        logging.basicConfig(filename='pyupload.log', level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%Y/%m/%d %I:%M:%S %p')
+        logging.Formatter.converter = time.gmtime
+        logging.info('===PCHome3_Data===')
+        logging.debug('supplier:' + supplier)
+        logging.debug('GroupID:' + GroupID)
+        logging.debug('path:' + path)
+        logging.debug('UserID:' + UserID)
+        
         # mysql connector object
         mysqlconnect = ToMysql()
         mysqlconnect.connect()
@@ -147,9 +156,10 @@ class PCHome3_Data():
         mysqlconnect.dbClose()
         mongoOrder.dbClose()
         mongodbClient.dbClose()
+        logging.info('===PCHome3_Data SUCCESS===')
         return 'success'
 
-    # mongoDB storage   Á¨¨‰∏ÄÂÄãÂèÉÊï∏ÊòØ‰∏ü‰∏äÈù¢ÁöÑmongoOrder or mongoClient
+    # mongoDB storage   Á¨¨‰??ãÂ??∏ÊòØ‰∏ü‰??¢Á?mongoOrder or mongoClient
     def insertOrder(self, mongoOrder, _OrderNo, _PartName, _PartNo,
                     _PartQuility, _PartTotalPrice, _TurnDate,
                     _firm, _supplier):
