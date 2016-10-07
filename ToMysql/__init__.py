@@ -5,7 +5,6 @@ __author__ = '10409003'
 import mysql.connector
 from mysql.connector import errorcode
 
-
 class ToMysql():
     host = '10.0.0.4'
     #host = 'www.a-ber.com.tw'
@@ -31,10 +30,7 @@ class ToMysql():
                 print("Database does not exist")
             else:
                 print(err)
-
-
         self.cursor= MySQLCursor(self.db)
-
 
     def setDatabase(self,dbname):
         self.database=dbname

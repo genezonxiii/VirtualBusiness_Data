@@ -9,7 +9,7 @@ from ToMysql import ToMysql
 import logging
 import time
 
-class Momo3_Data():
+class Momo_Data3():
     Data=None
     def __init__(self):
         pass
@@ -146,7 +146,7 @@ class Momo3_Data():
         logging.info('===Momo3_Data SUCCESS===')
         return 'success'
 
-    # mongoDB storage   ç¬¬ä??‹å??¸æ˜¯ä¸Ÿä??¢ç?mongoOrder or mongoClient
+    # mongoDB storage   ç¬¬ï¿½??ï¿½ï¿½??ï¿½æ˜¯ä¸Ÿï¿½??ï¿½ï¿½?mongoOrder or mongoClient
     def insertOrder(self,mongoOrder,_OrderNo,_ShipmentDate,_PartNo,_PartName,_PartQuility,_PartPrice,_firm,_supplier):
         businessorder_doc={ 'OrderNo':_OrderNo,'ShipmentDate':_ShipmentDate,'PartNo':[_PartNo],'PartName':[_PartName],\
                            'PartQuility':[_PartQuility],'Price':[_PartPrice],\
