@@ -2,13 +2,402 @@
 __author__ = '10409003'
 from pymongo import MongoClient
 import xlrd
-from datetime import datetime
+import datetime
+# from datetime import datetime
 from aes_data import aes_data
 import uuid
 import ToMysql
 import ToMongodb
 import logging
 import time
+
+class convertType():
+    def __init__(self):
+        pass
+
+    def ToDateTime(self,value):
+        try:
+            if value== None :
+                return None
+            elif value=='':
+                return None
+            else:
+                dateObj=datetime.datetime.strptime(str(value),'%Y/%m/%d %H:%M')
+                return dateObj
+        except Exception as e:
+            logging.ERROR(e.message)
+
+    def ToInt(self,value):
+        try:
+            if value== None :
+                return 0
+            elif value=='':
+                return 0
+            else:
+                return int(float(value))
+        except Exception as e:
+            logging.ERROR(e.message)
+
+    def ToFloat(self,value):
+        try:
+            if value== None :
+                return 0.0
+            elif value=='':
+                return 0.0
+            else:
+                return float(value)
+        except Exception as e:
+            logging.ERROR(e.message)
+
+    def ToString(self,value):
+        try:
+            if value== None :
+                return None
+            elif value=='':
+                return ''
+            else:
+                return str(value)
+        except Exception as e:
+            logging.ERROR(e.message)
+
+    def ToBoolean(self,value):
+        try:
+            if value == True:
+                return True
+            else:
+                return False
+        except Exception as e :
+            logging.ERROR(e.message)
+
+class Sale():
+    p_sale_id, p_seq_no, p_group_id, p_order_no = None, None, None, None
+    p_user_id, p_product_id, p_product_name, p_c_product_id = None, None, None, None
+    p_customer_id, p_name, p_invoice,o_name = None, None, None, None
+    p_quantity, p_price = 0, 0.0
+    p_invoice_date, p_trans_list_date, p_dis_date, p_sale_date, p_return_date = None, None, None, None, None
+    p_memo, p_order_source = None, None
+    p_isreturn = False
+    aes,convert = None ,None
+
+    def __init__(self):
+        self.convert = convertType()
+        self.aes = aes_data()
+
+    def __del__(self):
+        self.convert = None
+        self.aes = None
+
+    def setSale_id(self, value):
+        self.p_sale_id = self.convert.ToString(value.encode('utf-8'))
+
+    def setSeq_no(self,value):
+        self.p_seq_no = self.convert.ToString(value.encode('utf-8'))
+
+    def setGroup_id(self,value):
+        self.p_group_id = self.convert.ToString(value.encode('utf-8'))
+
+    def setOrder_No(self,value):
+        self.p_order_no = self.convert.ToString(value.encode('utf-8'))
+
+    def setUser_id(self,value):
+        self.p_user_id = self.convert.ToString(value.encode('utf-8'))
+
+    def setProduct_id(self,value):
+        self.p_product_id = self.convert.ToString(value.encode('utf-8'))
+
+    def setProduct_name(self,value):
+        self.p_product_name = self.convert.ToString(value.encode("utf-8"))
+
+    def setC_Product_id(self,value):
+        self.p_c_product_id = self.convert.ToString(value.encode('utf-8'))
+
+    def setCustomer_id(self,value):
+        self.p_customer_id = self.convert.ToString(value.encode('utf-8'))
+
+    def setName(self,value):
+        if value == None or value == '' or value == 'NULL':
+            self.p_name = None
+            self.o_name = None
+        else:
+            self.p_name = self.aes.AESencrypt('p@ssw0rd', value.encode('utf-8'), True)
+            self.o_name = self.convert.ToString(value.encode('utf-8'))
+
+    def setInvoice(self,value):
+        self.p_invoice = self.convert.ToString(value.encode('utf-8'))
+
+    def setQuantity(self,value):
+        self.p_quantity = self.convert.ToInt(value)
+
+    def setPrice(self,value):
+        self.p_price = self.convert.ToFloat(value)
+
+    def setInvoice_date(self,value):
+        self.p_invoice_date = self.convert.ToDateTime(value)
+
+    def setTrans_list_date(self,value):
+        self.p_trans_list_date = self.convert.ToDateTime(value)
+
+    def setDis_date(self,value):
+        self.p_dis_date = self.convert.ToDateTime(value)
+
+    def setSale_date(self,value):
+        self.p_sale_date = self.convert.ToDateTime(value)
+
+    def setReturn_date(self,value):
+        self.p_return_date = self.convert.ToDateTime(value)
+
+    def setMemo(self,value):
+        self.p_memo = self.convert.ToString(value.encode('utf-8'))
+
+    def setOrder_source(self,value):
+        self.p_order_source = self.convert.ToString(value.encode('utf-8'))
+
+    def setIsreturn(self,value):
+        self.p_isreturn = self.convert.ToBoolean(value)
+
+    def getSale_id(self):
+        return self.p_sale_id
+
+    def getSeq_no(self):
+        return self.p_seq_no
+
+    def getGroup_id(self):
+        return self.p_group_id
+
+    def getOrder_No(self):
+        return self.p_order_no
+
+    def getUser_id(self):
+        return self.p_user_id
+
+    def getProduct_id(self):
+        return self.p_product_id
+
+    def getProduct_name(self):
+        return self.p_product_name
+
+    def getC_Product_id(self):
+        return self.p_c_product_id
+
+    def getCustomer_id(self):
+        return self.p_customer_id
+
+    def getName(self):
+        return self.o_name
+
+    def get_Name(self):
+        return self.p_name
+
+    def getInvoice(self):
+        return self.p_invoice
+
+    def getQuantity(self):
+        return self.p_quantity
+
+    def getPrice(self):
+        return self.p_price
+
+    def getInvoice_date(self):
+        return self.p_invoice_date
+
+    def getTrans_list_date(self):
+        return self.p_trans_list_date
+
+    def getDis_date(self):
+        return self.p_dis_date
+
+    def getSale_date(self):
+        return self.p_sale_date
+
+    def getReturn_date(self):
+        return self.p_return_date
+
+    def getMemo(self):
+        return self.p_memo
+
+    def getOrder_source(self):
+        return self.p_order_source
+
+    def getIsreturn(self):
+        return self.p_isreturn
+
+class Customer():
+    p_customer_id,p_group_id,p_name=None,None,None
+    p_address, p_phone, p_mobile=None,None,None
+    p_email, p_post, p_class, p_memo = None,None,None,None
+    o_name,o_address, o_phone, o_mobile,o_email = None,None,None,None,None
+    aes, convert = None,None
+
+    def __init__(self):
+        self.aes = aes_data()
+        self.convert = convertType()
+
+    def __del__(self):
+        self.aes = None
+        self.convert = None
+
+    def setCustomer_id(self,value):
+        self.p_customer_id = self.convert.ToString(value)
+
+    def setGroup_id(self,value):
+        self.p_group_id = self.convert.ToString(value)
+
+    def setName(self,value):
+        if value == None or value == '' or value == 'NULL':
+            self.p_name = None
+            self.o_name = None
+        else:
+            self.p_name = self.aes.AESencrypt('p@ssw0rd', value.encode('utf-8'), True)
+            self.o_name = self.convert.ToString(value.encode('utf-8'))
+
+    def setAddress(self,value):
+        if value == None or value == '' or value == 'NULL':
+            self.p_address = None
+            self.o_address = None
+        else:
+            self.p_address = self.aes.AESencrypt('p@ssw0rd', value.encode('utf-8'), True)
+            self.o_address = self.convert.ToString(value.encode('utf-8'))
+
+    def setPhone(self,value):
+        if value == None or value == '' or value == 'NULL':
+            self.p_phone = None
+            self.o_phone = None
+        else:
+            self.p_phone = self.aes.AESencrypt('p@ssw0rd', value.encode('utf-8'), True)
+            self.o_phone = self.convert.ToString(value.encode('utf-8'))
+
+    def setMobile(self,value):
+        if value == None or value == '' or value == 'NULL':
+            self.p_mobile = None
+            self.o_mobile = None
+        else:
+            self.p_mobile = self.aes.AESencrypt('p@ssw0rd', value.encode('utf-8'), True)
+            self.o_mobile = self.convert.ToString(value.encode('utf-8'))
+
+    def setEmail(self,value):
+        if value == None or value == '' or value == 'NULL':
+            self.p_email = None
+            self.o_email = None
+        else:
+            self.p_email = self.aes.AESencrypt('p@ssw0rd', value.encode('utf-8'), True)
+            self.o_email = self.convert.ToString(value.encode('utf-8'))
+
+    def setPost(self,value):
+        self.p_post = self.convert.ToString(value)
+
+    def setClass(self,value):
+        self.p_class = self.convert.ToString(value)
+
+    def setMemo(self,value):
+        self.p_memo = self.convert.ToString(value)
+
+    def getCustomer_id(self):
+        return  self.p_customer_id
+
+    def getGroup_id(self):
+        return self.p_group_id
+
+    def getName(self):
+        return self.p_name
+
+    def getAddress(self):
+        return self.p_address
+
+    def getphone(self):
+        return self.p_phone
+
+    def getMobile(self):
+        return self.p_mobile
+
+    def getEmail(self):
+        return self.p_email
+
+    def get_Name(self):
+        return self.o_name
+
+    def get_Address(self):
+        return self.o_address
+
+    def get_phone(self):
+        return self.o_phone
+
+    def get_Mobile(self):
+        return self.o_mobile
+
+    def get_Email(self):
+        return self.o_email
+
+    def getPost(self):
+        return self.p_post
+
+    def getClass(self):
+        return self.p_class
+
+    def getMemo(self):
+        return self.p_memo
+
+class updateCustomer():
+    conn = None
+    def __init__(self):
+        pass
+
+    def checkCustomerid(self,p_group_id,p_name,p_address,p_phone,p_mobile,p_email):
+        try:
+            p_result=None
+            paremeter = (p_group_id,p_name,p_address,p_phone,p_mobile,p_email,p_result)
+            if self.conn == None :
+                self.getConnection()
+            cursor = self.conn.cursor()
+            result = cursor.callproc('sp_find_customer',paremeter)
+            return result[6]
+        except mysql.connector.Error:
+            logging.error("Connection DB Error")
+            raise
+        except Exception as e:
+            logging.error(e.message)
+            raise
+
+    def updataData(self,parameter):
+        try:
+            if self.conn == None :
+                self.getConnection()
+            cursor = self.conn.cursor()
+            cursor.callproc('sp_update_customer', parameter)
+            cursor.close()
+            return True
+        except mysql.connector.Error:
+            logging.error("Connection DB Error")
+            raise
+            return False
+        except Exception as e:
+            logging.error(e.message)
+            raise
+            return False
+
+    def getConnection(self):
+        try:
+            config = DBSetting()
+            self.conn = mysql.connector.connect(user=config.dbUser, password=config.dbPassword,
+                                       host=config.dbHost, database=config.dbName)
+        except mysql.connector.Error:
+            logging.error("Connection DB Error")
+            raise
+        except Exception as e:
+            logging.error(e.message)
+            raise
+
+    def __del__(self):
+        if self.conn <> None :
+            self.conn.close()
+            self.conn = None
+
+class DBSetting():
+    dbHost ,dbName , dbUser , dbPassword = None , None ,None ,None
+    def __init__(self):
+        self.dbHost = '192.168.112.164'
+        self.dbName = 'tmp'
+        self.dbUser = 'root'
+        self.dbPassword = 'admin123'
 
 class ASAP():
     Data=None
@@ -28,7 +417,7 @@ class ASAP():
         mysqlconnect=ToMysql()
         mysqlCursor=mysqlconnect.connect()
 
-        #mongodb connector object?²å?  ?ˆç??ºä??‹object ???å¾???object.cursor.?¥ä??•ç?ï¼?¼²ï¼µï¼¤
+        #mongodb connector object?ï¿½ï¿½?  ?ï¿½ï¿½??ï¿½ï¿½??ï¿½object ???ï¿½???object.cursor.?ï¿½ï¿½??ï¿½ï¿½?ï¿½?ï¿½ï¿½ï¼µï¼¤
         mongoOrder=ToMongodb()
         mongoOrder.setcollection('co_ordertest')
         mongoOrder.connect()
@@ -94,7 +483,7 @@ class ASAP():
         mongoOrder.close()
         mongodbClient.close()
 
-    #mongoDB storage   ç¬¬ä??‹å??¸æ˜¯ä¸Ÿä??¢ç?mongoOrder or mongoClient
+    #mongoDB storage   ç¬¬ï¿½??ï¿½ï¿½??ï¿½æ˜¯ä¸Ÿï¿½??ï¿½ï¿½?mongoOrder or mongoClient
     # def insertOrder(self,mongoOrder,_TurntDate,_OrderNo,_PartNum,_PartMaterial,_PartName,_PartColor,_PartSize,_PartQuility,_PartNo,_firm,_supplier):
     #     businessorder_doc={ 'TurntDate':_TurntDate,
     #                         'OrderNo':_OrderNo,
@@ -166,3 +555,4 @@ class ASAP():
         else:
             print "Sqlselect error!"
         return sql
+

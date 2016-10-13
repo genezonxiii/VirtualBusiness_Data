@@ -6,11 +6,11 @@ import mysql.connector
 from mysql.connector import errorcode
 
 class ToMysql():
-    host = '10.0.0.4'
+    host = '192.168.112.164'
     #host = 'www.a-ber.com.tw'
     database = 'db_virtualbusiness'
     user = 'root'
-    password = 'Admin@csi1008!'
+    password = 'admin123'
     #host = '192.168.112.175'
     #database = 'db_virutalbusiness'
     #user = 'root'
@@ -18,6 +18,7 @@ class ToMysql():
 
     def __init__(self):
         pass
+
     def connect(self):
         try:
             self.db = mysql.connector.connect(user=self.user, password=self.password,
@@ -35,12 +36,15 @@ class ToMysql():
     def setDatabase(self,dbname):
         self.database=dbname
         pass
+
     def setTable(self,tbname):
         self.tablename=tbname
         pass
+
     def setuser(self,username,pw):
         self.user=username
         self.password=pw
         pass
+
     def dbClose(self):
         self.cursor.close()

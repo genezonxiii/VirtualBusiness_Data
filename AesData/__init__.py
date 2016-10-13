@@ -29,3 +29,18 @@ class Insert_Client():
         r = {"name": ClientName, "address": ClientAdd, "phone": ClientPhone, "mobile": ClientMobile}
         return r
 
+class DEncrypt():
+    def __init__(self):
+        pass
+
+    def encrypt(self,value):
+        aes = aes_data()
+        result = aes.AESencrypt("p@ssw0rd", value, True)
+        r = {"result" : result}
+        return r
+
+    def decrypt(self,value):
+        aes = aes_data()
+        result = aes.AESdecrypt("p@ssw0rd", value, True)
+        r = {"result": result}
+        return r

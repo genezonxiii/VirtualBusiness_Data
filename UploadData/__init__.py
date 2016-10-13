@@ -190,12 +190,6 @@ class VirtualBusiness():
             FinalData = Lotte_Data()
             return FinalData.Lotte_Data(u'樂天'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
 
-
-
-
-
-
-
 if __name__ == '__main__':
     Business = VirtualBusiness()
     Business.virtualbusiness("/data/vbupload/test/", "19647356")

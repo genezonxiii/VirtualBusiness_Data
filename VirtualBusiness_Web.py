@@ -3,7 +3,7 @@ __author__ = '10409003'
 import web
 import json
 from UploadData import VirtualBusiness
-from AesData import Insert_Client
+from AesData import Insert_Client,DEncrypt
 from SelectCustomer import Query_customer
 from Shipper import ShipperData,VBsale_Analytics
 import datetime
@@ -18,7 +18,9 @@ urls = ("/upload/(.*)", "Uploaddata",\
         "/aes/(.*)", "Encrypt",\
         "/query/(.*)", "GetClientData",\
         "/ship/(.*)","Shipper",\
-        "/analytics/(.*)", "Analytics")
+        "/analytics/(.*)", "Analytics",\
+        "/dataEncrypt/(.*)", "DEcryptData")
+
 app =web.application(urls, globals())
 logger = logging.getLogger('VirtualBusiness_Web')
 
@@ -48,6 +50,20 @@ class Encrypt():
         customerData = Insert_Client()
         web.header('Content-Type', 'text/json; charset=utf-8', unique=True)
         result = json.dumps(customerData.AESen_CustomerData(data[0], data[1], data[2], data[3]))
+        return result
+
+class DEcryptData():
+    def GET(self,name):
+        data = name.split('&')
+        for i in range(len(data)):
+            data[i] = data[i][5:len(data[i])].decode('base64')
+
+        resultData = DEncrypt()
+        result = None
+        if data[0]=='1':
+            result = json.dumps(resultData.encrypt(data[1]))
+        else:
+            result = json.dumps(resultData.decrypt(data[1]))
         return result
 
 class GetClientData():
