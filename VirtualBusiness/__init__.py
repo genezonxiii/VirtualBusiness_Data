@@ -10,6 +10,7 @@ import ToMysql
 import ToMongodb
 import logging
 import time
+import mysql.connector
 
 class convertType():
     def __init__(self):
@@ -183,10 +184,10 @@ class Sale():
         return self.p_customer_id
 
     def getName(self):
-        return self.o_name
+        return self.p_name
 
     def get_Name(self):
-        return self.p_name
+        return self.o_name
 
     def getInvoice(self):
         return self.p_invoice
@@ -345,15 +346,20 @@ class updateCustomer():
         try:
             p_result=None
             paremeter = (p_group_id,p_name,p_address,p_phone,p_mobile,p_email,p_result)
+            print paremeter
             if self.conn == None :
                 self.getConnection()
             cursor = self.conn.cursor()
             result = cursor.callproc('sp_find_customer',paremeter)
-            return result[6]
+            if result==None:
+                return None
+            else:
+                return result[6]
         except mysql.connector.Error:
             logging.error("Connection DB Error")
             raise
         except Exception as e:
+            print e.message
             logging.error(e.message)
             raise
 
@@ -364,6 +370,7 @@ class updateCustomer():
             cursor = self.conn.cursor()
             cursor.callproc('sp_update_customer', parameter)
             cursor.close()
+            self.conn.commit()
             return True
         except mysql.connector.Error:
             logging.error("Connection DB Error")
