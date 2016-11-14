@@ -5,7 +5,9 @@ import logging
 import xlrd
 from ToMysql import ToMysql
 import uuid
-from VirtualBusiness import Sale ,Customer,updateCustomer
+from VirtualBusiness import Sale,Customer,updateCustomer
+
+logger = logger = logging.getLogger(__name__)
 
 class Yahoo_Data():
     Data = None
@@ -17,14 +19,17 @@ class Yahoo_Data():
         self.mysqlconnect.connect()
 
     def Yahood_Data(self, supplier, GroupID, path, UserID):
-        logging.basicConfig(filename='pyupload.log', level=logging.DEBUG, format='%(asctime)s %(message)s',
+        logging.basicConfig(filename='/data/VirtualBusiness_Data/pyupload.log',
+                            level=logging.DEBUG,
+                            format='%(asctime)s - %(levelname)s - %(filename)s:%(name)s:%(module)s/%(funcName)s/%(lineno)d - %(message)s',
                             datefmt='%Y/%m/%d %I:%M:%S %p')
         logging.Formatter.converter = time.gmtime
-        logging.info('===Yahood_Data===')
-        logging.debug('supplier:' + supplier)
-        logging.debug('GroupID:' + GroupID)
-        logging.debug('path:' + path)
-        logging.debug('UserID:' + UserID)
+
+        logger.info('===Yahood_Data===')
+        logger.debug('supplier:' + supplier)
+        logger.debug('GroupID:' + GroupID)
+        logger.debug('path:' + path)
+        logger.debug('UserID:' + UserID)
         try:
             data = xlrd.open_workbook(path)
             table = data.sheets()[0]
@@ -41,10 +46,10 @@ class Yahoo_Data():
                 self.customer = None
             self.mysqlconnect.db.commit()
             self.mysqlconnect.dbClose()
-            logging.info('===Yahood_Data SUCCESS===')
+            logger.info('===Yahood_Data SUCCESS===')
             return 'success'
         except Exception as e :
-            logging.error(e.message)
+            logger.error(e.message)
             return 'failure'
 
     def parserData(self,table,row_index,GroupID,UserID,supplier):

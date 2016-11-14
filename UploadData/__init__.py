@@ -1,8 +1,11 @@
 # -*-  coding: utf-8  -*-
 __author__ = '10409003'
+
 import os
 import csv
 import xlrd
+import logging
+import time
 from VirtualBusiness.test import Test_Data
 from VirtualBusiness.ASAP import ASAP_Data
 from VirtualBusiness.Go_Happy import GoHappy_Data
@@ -12,7 +15,9 @@ from VirtualBusiness.Life import Life_Data
 from VirtualBusiness.Line_mart import LineMart_Data
 from VirtualBusiness.Momo1 import Momo_Data
 from VirtualBusiness.Momo2 import Momo_Data2
-from VirtualBusiness.Momo3 import Momo_Data3
+from VirtualBusiness.Momo3 import Momo3_Data
+from VirtualBusiness.Momo24 import Momo_Data24
+from VirtualBusiness.momo_pdf import Momo_Pdf
 from VirtualBusiness.Myfone import Myfone_Data
 from VirtualBusiness.payeasy import payeasy_Data
 from VirtualBusiness.payeasy2 import payeasy_Data2
@@ -40,6 +45,9 @@ from VirtualBusiness.Yahoo_d import Yahood_Data
 from VirtualBusiness.Yahoo_s import Yahoos_Data
 from VirtualBusiness.momo_p import Momo_Datap
 
+
+logger = logging.getLogger(__name__)
+
 class VirtualBusiness():
     Data=None
 
@@ -50,6 +58,16 @@ class VirtualBusiness():
         Firm = str(DataPath).split('/')[4]
         print Firm
         print Supplier
+
+        logging.basicConfig(filename='/data/VirtualBusiness_Data/pyupload.log', 
+			level=logging.DEBUG, 
+			format='%(asctime)s - %(levelname)s - %(filename)s:%(name)s:%(module)s/%(funcName)s/%(lineno)d - %(message)s',
+            datefmt='%Y/%m/%d %I:%M:%S %p')
+        logging.Formatter.converter = time.gmtime
+
+        logger.info('Supplier')
+        logger.info(Supplier)
+
 
         if Supplier == 'test':
             FinalData=Test_Data()
@@ -73,19 +91,32 @@ class VirtualBusiness():
             FinalData = LineMart_Data()
             return FinalData.LineMart_Data('Line_Mart', Firm, os.path.join(DataPath),userID)
         elif Supplier =='momo':
+            logger.debug("momo")
             if DataPath.split('.')[-1] != 'pdf':
                 data = xlrd.open_workbook(os.path.join(DataPath))
                 table = data.sheets()[0]
                 num_cols = table.ncols
                 if num_cols == 25:
+                    logger.debug("col 25")
                     FinalData = Momo_Data()
                     return FinalData.Momo_Data('momo', Firm, os.path.join(DataPath), userID)
+                elif num_cols == 24:
+                    logger.debug("col 24")
+                    FinalData = Momo_Data24()
+                    return FinalData.Momo_Data24('momo', Firm, os.path.join(DataPath), userID)
                 elif num_cols == 28:
+                    logger.debug("col 28")
                     FinalData = Momo_Data2()
                     return FinalData.Momo_Data2('momo', Firm, os.path.join(DataPath), userID)
                 else:
-                    FinalData = Momo_Data3()
-                    return FinalData.Momo_Data3('momo', Firm, os.path.join(DataPath), userID)
+                    logger.debug("col else")
+                    FinalData = Momo3_Data()
+                    return FinalData.Momo3_Data('momo', Firm, os.path.join(DataPath), userID)
+            elif DataPath.split('.')[-1] == 'pdf':
+                logger.debug("pdf")
+                momo = Momo_Pdf()
+                momo.getOrder(Firm, os.path.join(DataPath))
+                return 'success'
             else:
                 FinalData = Momo_Datap()
                 return FinalData.Momo_Datap('momo', Firm, os.path.join(DataPath),userID)
@@ -153,22 +184,22 @@ class VirtualBusiness():
                         return FinalData.Yahoo2_Data('yahoo', Firm, os.path.join(DataPath),userID)
         elif Supplier == '91mai':
             FinalData = Nine_Data()
-            return FinalData.Nine_Data(u'九易'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
+            return FinalData.Nine_Data(u'91Mai'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
         elif Supplier == 'treemall':
             FinalData = TREE_Data()
-            return FinalData.TREE_Data(u'國泰Tree'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
+            return FinalData.TREE_Data(u'Tree'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
         elif Supplier == 'gomaji':
             FinalData = MAJI_Data()
-            return FinalData.MAJI_Data(u'夠麻吉'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
+            return FinalData.MAJI_Data(u'GoMaji'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
         elif Supplier == 'etmall':
             FinalData = GM_Data()
-            return FinalData.GM_Data(u'東森購物'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
+            return FinalData.GM_Data(u'ETMall'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
         elif Supplier == 'books':
             FinalData = Book_Data()
-            return FinalData.Book_Data(u'博客來'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
+            return FinalData.Book_Data(u'Book'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
         elif Supplier == 'umall':
             FinalData = UMall_Data()
-            return FinalData.UMall_Data(u'森森購物'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
+            return FinalData.UMall_Data(u'UMall'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
         elif Supplier == 'yahoomall':
             if DataPath.split('.')[-1] == 'xls' or DataPath.split('.')[-1] == 'xlsx':
                 data = xlrd.open_workbook(os.path.join(DataPath))
@@ -176,22 +207,29 @@ class VirtualBusiness():
                 num_cols = table.ncols
                 if num_cols == 16:
                     FinalData = Yahoo_DataS1()
-                    return FinalData.Yahoo_DataS1(u'超級商城'.encode("utf-8"), Firm, os.path.join(DataPath), userID)
+                    return FinalData.Yahoo_DataS1(u'Yahoo'.encode("utf-8"), Firm, os.path.join(DataPath), userID)
                 elif num_cols == 24:
                     FinalData = Yahoo_DataS2()
-                    return FinalData.Yahoo_DataS2(u'超級商城'.encode("utf-8"), Firm, os.path.join(DataPath), userID)
+                    return FinalData.Yahoo_DataS2(u'Yahoo'.encode("utf-8"), Firm, os.path.join(DataPath), userID)
                 elif num_cols == 29:
                     FinalData = Yahoo_DataS3()
-                    return FinalData.Yahoo_DataS3(u'超級商城'.encode("utf-8"), Firm, os.path.join(DataPath), userID)
+                    return FinalData.Yahoo_DataS3(u'Yahoo'.encode("utf-8"), Firm, os.path.join(DataPath), userID)
         elif Supplier == 'amart':
             FinalData = LoveBuy_Data()
-            return FinalData.LoveBuy_Data(u'愛買'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
+            return FinalData.LoveBuy_Data(u'lovebuy'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
         elif Supplier == 'rakuten':
             FinalData = Lotte_Data()
-            return FinalData.Lotte_Data(u'樂天'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
+            return FinalData.Lotte_Data(u'lotte'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
+
+
+
+
+
+
 
 if __name__ == '__main__':
     Business = VirtualBusiness()
-    Business.virtualbusiness("/data/vbupload/test/", "19647356")
+    # Business.virtualbusiness("/data/vbupload/test/", "19647356")
+    Business.virtualbusiness("D:/vbdata/vbupload/momo/cbcc3138-5603-11e6-a532-000d3a800878/A1102_3_1_010031_20160301110142.xls", "19647356")
 #     Business=VirtualBusiness()
 #     Business.virtualbusiness("C:/vbdata/vbupload/17life/7dcc2045-472e-11e6-806e-000c29c1d000/Data2.xls")
