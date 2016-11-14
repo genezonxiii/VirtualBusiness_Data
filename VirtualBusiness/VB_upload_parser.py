@@ -12,7 +12,14 @@ logger = logger = logging.getLogger(__name__)
 class Yahoo_Data():
     Data = None
     mysqlconnect = None
-    sale , customer =None, None
+    sale , customer = None, None
+
+    # 預期要找出欄位的索引位置的欄位名稱
+    TitleTuple = (u'訂單編號', u'轉單日', u'應出貨日', u'出貨日期', u'最晚出貨日',
+                  u'收件人姓名', u'收件人電話(日)', u'收件人電話(夜)', u'收件人手機', u'收件人郵遞區號',
+                  u'收件人地址', u'供應商料號', u'商品名稱', u'數量', u'商品成本')
+    TitleList = [];
+
     def __init__(self):
         # mysql connector object
         self.mysqlconnect = ToMysql()
@@ -33,6 +40,23 @@ class Yahoo_Data():
         try:
             data = xlrd.open_workbook(path)
             table = data.sheets()[0]
+
+            # 存放excel中全部的欄位名稱
+            self.TitleList = []
+            for row_index in range(1, 2):
+                for col_index in range(0, table.ncols):
+                    self.TitleList.append(table.cell(row_index, col_index).value)
+
+            print self.TitleList
+
+            # 存放excel中對應TitleTuple欄位名稱的index
+            for index in range(0, len(self.TitleTuple)):
+                if self.TitleTuple[index] in self.TitleList:
+                    logger.debug(str(index) + self.TitleTuple[index])
+                    logger.debug(u'index in file - ' + str(self.TitleList.index(self.TitleTuple[index])) )
+                    # print str(index) + TitleTuple[index]
+                    # print (TitleList.index(TitleTuple[index]))
+
             for row_index in range(2, table.nrows):
                 self.sale = Sale()
                 self.customer = Customer()
@@ -55,23 +79,23 @@ class Yahoo_Data():
     def parserData(self,table,row_index,GroupID,UserID,supplier):
         try:
             self.sale.setGroup_id(GroupID)
-            self.sale.setOrder_No(table.cell(row_index, 1).value)
             self.sale.setUser_id(UserID)
-            self.sale.setTrans_list_date(table.cell(row_index, 2).value)
-            self.sale.setSale_date(table.cell(row_index, 3).value)
-            self.sale.setC_Product_id(str(table.cell(row_index, 13).value).split('.')[0])
-            self.sale.setProduct_name(table.cell(row_index, 14).value)
-            self.sale.setQuantity(table.cell(row_index, 18).value)
-            self.sale.setPrice(table.cell(row_index, 20).value)
-            self.sale.setName(table.cell(row_index, 6).value)
             self.sale.setOrder_source(supplier)
+            self.sale.setOrder_No(table.cell(row_index, self.TitleList.index(self.TitleTuple[0])).value)
+            self.sale.setTrans_list_date(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
+            self.sale.setSale_date(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
+            self.sale.setC_Product_id(str(table.cell(row_index, self.TitleList.index(self.TitleTuple[11])).value).split('.')[0])
+            self.sale.setProduct_name(table.cell(row_index, self.TitleList.index(self.TitleTuple[12])).value)
+            self.sale.setQuantity(table.cell(row_index, self.TitleList.index(self.TitleTuple[13])).value)
+            self.sale.setPrice(table.cell(row_index, self.TitleList.index(self.TitleTuple[14])).value)
+            self.sale.setName(table.cell(row_index, self.TitleList.index(self.TitleTuple[5])).value)
 
             self.customer.setGroup_id(GroupID)
-            self.customer.setName(table.cell(row_index, 6).value)
-            self.customer.setPhone(table.cell(row_index, 7).value)
-            self.customer.setMobile(table.cell(row_index, 9).value)
-            self.customer.setPost(table.cell(row_index, 10).value)
-            self.customer.setAddress(table.cell(row_index, 11).value)
+            self.customer.setName(table.cell(row_index, self.TitleList.index(self.TitleTuple[5])).value)
+            self.customer.setPhone(table.cell(row_index, self.TitleList.index(self.TitleTuple[6])).value)
+            self.customer.setMobile(table.cell(row_index, self.TitleList.index(self.TitleTuple[8])).value)
+            self.customer.setPost(table.cell(row_index, self.TitleList.index(self.TitleTuple[9])).value)
+            self.customer.setAddress(table.cell(row_index, self.TitleList.index(self.TitleTuple[10])).value)
         except Exception as e :
             print e.message
             logging.error(e.message)
@@ -83,6 +107,7 @@ class Yahoo_Data():
             self.customer.setCustomer_id(
                 updatecustomer.checkCustomerid(self.customer.getGroup_id(), self.customer.get_Name(), self.customer.get_Address(), \
                                                self.customer.get_phone(), self.customer.get_Mobile(), self.customer.get_Email()))
+
             if self.customer.getCustomer_id() == None:
                 self.customer.setCustomer_id(uuid.uuid4())
                 CustomereSQL = (
