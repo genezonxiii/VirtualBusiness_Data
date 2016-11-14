@@ -146,6 +146,7 @@ class Yahoo_Data():
 
 if __name__ == '__main__':
     yahoo = Yahoo_Data()
+    groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
     print yahoo.Yahood_Data('yahoo',groupid,u'C:\\Users\\10408001\\Desktop\\delivery-Y購-new-4.xls','system')
     # print yahoo.checkCustomerid('data_09221433(test).xlsx','鍾妮',\
