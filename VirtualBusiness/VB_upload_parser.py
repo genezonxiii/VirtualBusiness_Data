@@ -7,7 +7,7 @@ from ToMysql import ToMysql
 import uuid
 from VirtualBusiness import Sale,Customer,updateCustomer
 
-logger = logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 class Yahoo_Data():
     Data = None
@@ -18,7 +18,7 @@ class Yahoo_Data():
     TitleTuple = (u'訂單編號', u'轉單日', u'應出貨日', u'出貨日期', u'最晚出貨日',
                   u'收件人姓名', u'收件人電話(日)', u'收件人電話(夜)', u'收件人手機', u'收件人郵遞區號',
                   u'收件人地址', u'供應商料號', u'商品名稱', u'數量', u'商品成本')
-    TitleList = [];
+    TitleList = []
 
     def __init__(self):
         # mysql connector object

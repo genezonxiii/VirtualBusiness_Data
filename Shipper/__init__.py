@@ -82,12 +82,12 @@ class VBsale_Analytics():
     def __init__(self):
         pass
 
-    # ¨ú±o db ªº³s½u
+    # å–å¾— db çš„é€£ç·š
     #def getConnection(self):
     #        try:
     #            if (self.conn == None):
     #                config = Config()
-    #                return mysql.connector.connect(user=config.dbUser, password=config.dbPwd,host=config.dbServer, database=config.dbName)                    
+    #                return mysql.connector.connect(user=config.dbUser, password=config.dbPwd,host=config.dbServer, database=config.dbName)
     #            else:
     #                return self.conn
     #        except mysql.connector.Error:
@@ -97,7 +97,7 @@ class VBsale_Analytics():
     #            print e.message
     #            raise
 
-    #¨ú±o­qÁÊ¤H®ø¶O Top 10 ¸ê®Æ
+    # å–å¾—è¨‚è³¼äººæ¶ˆè²» Top 10 è³‡æ–™
     def get_buyer_top10(self,group_id,start_Date,end_date):
         args =(group_id,datetime.strptime(start_Date,'%Y-%m-%d'),datetime.strptime(end_date,'%Y-%m-%d'))
         data = self.getData('sp_buyer_top10',args)
@@ -108,7 +108,7 @@ class VBsale_Analytics():
             result.append(r)
         return result
 
-    # ¨ú±o³æ¤@³q¸ô­qÁÊ¤H®ø¶O±Æ¦W ¸ê®Æ
+    # å–å¾—å–®ä¸€é€šè·¯è¨‚è³¼äººæ¶ˆè²»æ’å è³‡æ–™
     def get_buyer_channel(self, group_id, start_Date, end_date,order_source):
         args = (group_id, datetime.strptime(start_Date, '%Y-%m-%d'), datetime.strptime(end_date, '%Y-%m-%d'),order_source)
         data = self.getData('sp_buyer_channel', args)
@@ -119,7 +119,7 @@ class VBsale_Analytics():
             result.append(r)
         return result
 
-    # ±q db ¨ú±o stored procedure µ²ªG
+    # å¾ db å–å¾— stored procedure çµæœ
     def getData(self, procedureName,parameter):
             try:
                 mysqlconnect = ToMysql()

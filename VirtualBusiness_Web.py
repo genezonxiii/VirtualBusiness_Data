@@ -18,7 +18,7 @@ urls = ("/upload/(.*)", "Uploaddata", \
         "/ship/(.*)", "Shipper", \
         "/analytics/(.*)", "Analytics")
 app = web.application(urls, globals())
-logger = logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 class Uploaddata():
