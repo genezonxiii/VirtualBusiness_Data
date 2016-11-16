@@ -115,8 +115,7 @@ class VirtualBusiness():
             elif DataPath.split('.')[-1] == 'pdf':
                 logger.debug("pdf")
                 momo = Momo_Pdf()
-                momo.getOrder(Firm, os.path.join(DataPath))
-                return 'success'
+                return momo.getOrder(Firm, os.path.join(DataPath))
             else:
                 FinalData = Momo_Datap()
                 return FinalData.Momo_Datap('momo', Firm, os.path.join(DataPath),userID)

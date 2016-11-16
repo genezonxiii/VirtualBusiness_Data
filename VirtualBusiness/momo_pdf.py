@@ -10,6 +10,7 @@ from pdfminer.pdfinterp import PDFResourceManager, PDFPageInterpreter
 from pdfminer.converter import PDFPageAggregator
 from pdfminer.layout import LAParams, LTTextBox, LTTextLine, LTFigure
 import logging
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -44,6 +45,7 @@ class Momo_Pdf():
                     # print(lt_obj.get_text())
                     list.append(lt_obj.get_text().replace("\n", ""))
                     logger.debug("receiver block: address")
+
                 # receiver block: phone, mobile, customer name,
                 if (lt_obj.x0 >= 60 and lt_obj.x0 <= 70) \
                         and ((lt_obj.y0 >= 600 and lt_obj.y0 <= 620) or (lt_obj.y0 >= 180 and lt_obj.y0 <= 190)):
@@ -66,6 +68,7 @@ class Momo_Pdf():
             傳入 order_list [order_no, user_name, tel, mobile, address]
             由傳入的訂單編號找出customer_id，更新 tb_customer, tb_sale
         """
+
         logger.debug("modifyOrder")
 
         mysqlconnect = ToMysql()
@@ -95,6 +98,7 @@ class Momo_Pdf():
 
         if customerResult != []:
             #update tb_customer
+            logger.debug("update tb_customer")
             updateCustomer = """update tb_customer set
                 name = %s, phone = %s, mobile = %s, address = %s
                 where customer_id = %s; """
@@ -102,78 +106,100 @@ class Momo_Pdf():
             mysqlconnect.cursor.execute(updateCustomer, updateCustomerParam)
 
             # update tb_sale
+            logger.debug("update tb_sale")
             updateCustomerInSale = """update tb_sale set
                             name = %s where customer_id = %s; """
             updateCustomerInSaleParam = (order_List[1], customerResult[0][0])
             mysqlconnect.cursor.execute(updateCustomerInSale, updateCustomerInSaleParam)
 
             mysqlconnect.db.commit()
+        else :
+            logger.debug("tb_sale NOT FOUND order_no=" + order_List[0])
 
     def getOrder(self, groupId, path):
         """
             parse_layout後，整理客戶資料
             return list format [order_no, user_name, tel, mobile, address]
         """
-        logger.debug("getOrder")
 
-        self.__groupId = groupId
+        try:
+            logger.debug("===momo pdf===")
+            logger.debug("getOrder")
 
-        fp = open(path, 'rb')
+            success = False
+            resultinfo = ""
+            totalRows = 0
 
-        parser = PDFParser(fp)
-        doc = PDFDocument(parser)
+            self.__groupId = groupId
 
-        rsrcmgr = PDFResourceManager()
-        laparams = LAParams()
-        device = PDFPageAggregator(rsrcmgr, laparams=laparams)
-        interpreter = PDFPageInterpreter(rsrcmgr, device)
+            fp = open(path, 'rb')
 
-        for page in PDFPage.create_pages(doc):
-            interpreter.process_page(page)
-            layout = device.get_result()
-            list = []
-            self.parse_layout(layout, list)
+            parser = PDFParser(fp)
+            doc = PDFDocument(parser)
 
-            # for temp in list:
-            #     print temp
+            rsrcmgr = PDFResourceManager()
+            laparams = LAParams()
+            device = PDFPageAggregator(rsrcmgr, laparams=laparams)
+            interpreter = PDFPageInterpreter(rsrcmgr, device)
 
-            size = len(list)
-            # print size
-            for i in range(0, size / 3, 1):
-                address = ""
-                # print 'first>>>'
-                # print (list[3 * i])
-                address = list[3 * i]
+            for page in PDFPage.create_pages(doc):
+                interpreter.process_page(page)
+                layout = device.get_result()
+                list = []
+                self.parse_layout(layout, list)
 
-                # print 'second>>>'
-                # print (list[3 * i + 1])
-                temp = list[3 * i + 1]
-                temp_list = temp.split("\n")
+                # for temp in list:
+                #     print temp
 
-                tel = ""
-                mobile = ""
-                user_name = ""
+                size = len(list)
 
-                if len(temp_list) == 3:
-                    temp_list2 = temp_list[0].encode('utf8').split("/")
-                    if len(temp_list2) == 2:
-                        tel = temp_list2[0]
-                        mobile = temp_list2[1]
+                # pdf分頁，所以總筆數需累加
+                totalRows += size / 3
+                # print size
+                for i in range(0, size / 3, 1):
+                    address = ""
+                    # print 'first>>>'
+                    # print (list[3 * i])
+                    address = list[3 * i]
 
-                if len(temp_list) == 3:
-                    user_name = temp_list[1].encode('utf8')
+                    # print 'second>>>'
+                    # print (list[3 * i + 1])
+                    temp = list[3 * i + 1]
+                    temp_list = temp.split("\n")
 
-                # print 'third>>>'
-                # print (list[3 * i + 2])
+                    tel = ""
+                    mobile = ""
+                    user_name = ""
 
-                temp = list[3 * i + 2]
-                temp_list = temp.split("\n")
-                order_no = ""
-                if len(temp_list) == 5:
-                    order_no = temp_list[-2].encode('utf8').replace("訂單編號:", "")
+                    if len(temp_list) == 3:
+                        temp_list2 = temp_list[0].encode('utf8').split("/")
+                        if len(temp_list2) == 2:
+                            tel = temp_list2[0]
+                            mobile = temp_list2[1]
 
-                order_info_list = [order_no, user_name, tel, mobile, address]
-                self.modifyOrder(order_info_list, True)
+                    if len(temp_list) == 3:
+                        user_name = temp_list[1].encode('utf8')
+
+                    # print 'third>>>'
+                    # print (list[3 * i + 2])
+
+                    temp = list[3 * i + 2]
+                    temp_list = temp.split("\n")
+                    order_no = ""
+                    if len(temp_list) == 5:
+                        order_no = temp_list[-2].encode('utf8').replace("訂單編號:", "")
+
+                    order_info_list = [order_no, user_name, tel, mobile, address]
+                    self.modifyOrder(order_info_list, True)
+
+            success = True
+
+        except Exception as inst:
+            logging.error(inst.args)
+            resultinfo = inst.args
+        finally:
+            logging.debug('===momo pdf finally===')
+            return json.dumps({"success": success, "info": resultinfo, "total": totalRows}, sort_keys=False)
 
 if __name__ == '__main__':
     # print 'start'
