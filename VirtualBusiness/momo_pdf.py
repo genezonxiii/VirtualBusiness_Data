@@ -195,10 +195,10 @@ class Momo_Pdf():
             success = True
 
         except Exception as inst:
-            logging.error(inst.args)
+            logger.error(inst.args)
             resultinfo = inst.args
         finally:
-            logging.debug('===momo pdf finally===')
+            logger.debug('===momo pdf finally===')
             return json.dumps({"success": success, "info": resultinfo, "total": totalRows}, sort_keys=False)
 
 if __name__ == '__main__':

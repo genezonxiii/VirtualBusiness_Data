@@ -49,7 +49,7 @@ class Momo_Data24():
             num_cols=table.ncols
             #put the data into the corresponding variable
 
-            #找出各個欄位的索引位置
+            # 預期要找出欄位的索引位置的欄位名稱
             TitleTuple = (u'訂單編號', u'收件人姓名', u'收件人地址', u'轉單日', u'商品原廠編號',
                           u'品名', u'數量', u'發票號碼', u'發票日期', u'貨運公司\n出貨地址',
                           u'進價(含稅)', u'預計出貨日')
@@ -61,8 +61,7 @@ class Momo_Data24():
                     TitleList.append(table.cell(row_index, col_index).value)
 
             logger.debug("TitleList OK")
-            for temp in TitleList:
-                logger.debug(temp)
+            logger.debug(', '.join(e for e in TitleList))
             print TitleList
 
             # 存放excel中對應TitleTuple欄位名稱的index
@@ -209,10 +208,10 @@ class Momo_Data24():
 
             success = True
         except Exception as inst:
-            logging.error(inst.args)
+            logger.error(inst.args)
             resultinfo = inst.args
         finally:
-            logging.debug('===Momo_Data24 finally===')
+            logger.debug('===Momo_Data24 finally===')
             return json.dumps({"success": success, "info": resultinfo, "total": totalRows}, sort_keys = False)
 
     # mongoDB storage   第�??��??�是丟�??��?mongoOrder or mongoClient
