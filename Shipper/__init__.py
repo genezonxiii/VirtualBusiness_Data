@@ -1,7 +1,7 @@
 # -*-  coding: utf-8  -*-
 __author__ = '10409003'
 import sys
-import MySQLdb
+# import MySQLdb
 from aes_data import aes_data
 from ToMysql import ToMysql
 from datetime import datetime

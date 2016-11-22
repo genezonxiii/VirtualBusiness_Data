@@ -41,7 +41,7 @@ from VirtualBusiness.YahooS2 import Yahoo_DataS2
 from VirtualBusiness.YahooS3 import Yahoo_DataS3
 from VirtualBusiness.LoveBuy import LoveBuy_Data
 from VirtualBusiness.Lotte import Lotte_Data
-from VirtualBusiness.Yahoo_d import Yahood_Data
+from VirtualBusiness.Yahoo_d import Yahoo_Data
 from VirtualBusiness.Yahoo_s import Yahoos_Data
 from VirtualBusiness.momo_p import Momo_Datap
 
@@ -162,7 +162,7 @@ class VirtualBusiness():
                 table=data.sheets()[0]
                 num_cols=table.ncols
                 if num_cols == 26:
-                    FinalData = Yahood_Data()
+                    FinalData = Yahoo_Data()
                     return FinalData.Yahood_Data('yahoo', Firm, os.path.join(DataPath),userID)
                 elif num_cols == 22:
                     FinalData = Yahoos_Data()
