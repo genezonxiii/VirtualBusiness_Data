@@ -75,7 +75,7 @@ class Momo_Data24():
 
             logger.debug("TitleTuple OK")
 
-            totalRows = table.nrows - 1;
+            totalRows = table.nrows - 1
 
             for row_index in range(1,table.nrows):
                 logger.debug("row_index")

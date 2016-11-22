@@ -39,7 +39,7 @@ class Yahoo_Data():
             data = xlrd.open_workbook(path)
             table = data.sheets()[0]
 
-            totalRows = table.nrows - 2;
+            totalRows = table.nrows - 2
 
             # 存放excel中全部的欄位名稱
             self.TitleList = []
