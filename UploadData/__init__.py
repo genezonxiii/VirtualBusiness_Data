@@ -14,6 +14,7 @@ from VirtualBusiness.ibonc import IBON_DataC
 from VirtualBusiness.Life import Life_Data
 from VirtualBusiness.Line_mart import LineMart_Data
 from VirtualBusiness.Momo1 import Momo_Data
+from VirtualBusiness.Momo25 import Momo25_Data
 from VirtualBusiness.Momo2 import Momo_Data2
 from VirtualBusiness.Momo3 import Momo3_Data
 from VirtualBusiness.Momo24 import Momo_Data24
@@ -98,8 +99,8 @@ class VirtualBusiness():
                 num_cols = table.ncols
                 if num_cols == 25:
                     logger.debug("col 25")
-                    FinalData = Momo_Data()
-                    return FinalData.Momo_Data('momo', Firm, os.path.join(DataPath), userID)
+                    FinalData = Momo25_Data()
+                    return FinalData.Momo_25_Data('momo', Firm, os.path.join(DataPath), userID)
                 elif num_cols == 24:
                     logger.debug("col 24")
                     FinalData = Momo_Data24()
