@@ -184,22 +184,22 @@ class VirtualBusiness():
                         return FinalData.Yahoo2_Data('yahoo', Firm, os.path.join(DataPath),userID)
         elif Supplier == '91mai':
             FinalData = Nine_Data()
-            return FinalData.Nine_Data(u'91Mai'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
+            return FinalData.Nine_Data(u'九易'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
         elif Supplier == 'treemall':
             FinalData = TREE_Data()
-            return FinalData.TREE_Data(u'Tree'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
+            return FinalData.TREE_Data(u'國泰Tree'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
         elif Supplier == 'gomaji':
             FinalData = MAJI_Data()
-            return FinalData.MAJI_Data(u'GoMaji'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
+            return FinalData.MAJI_Data(u'夠麻吉'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
         elif Supplier == 'etmall':
             FinalData = GM_Data()
-            return FinalData.GM_Data(u'ETMall'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
+            return FinalData.GM_Data(u'東森購物'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
         elif Supplier == 'books':
             FinalData = Book_Data()
-            return FinalData.Book_Data(u'Book'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
+            return FinalData.Book_Data(u'博客來'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
         elif Supplier == 'umall':
             FinalData = UMall_Data()
-            return FinalData.UMall_Data(u'UMall'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
+            return FinalData.UMall_Data(u'森森購物'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
         elif Supplier == 'yahoomall':
             if DataPath.split('.')[-1] == 'xls' or DataPath.split('.')[-1] == 'xlsx':
                 data = xlrd.open_workbook(os.path.join(DataPath))
@@ -207,19 +207,19 @@ class VirtualBusiness():
                 num_cols = table.ncols
                 if num_cols == 16:
                     FinalData = Yahoo_DataS1()
-                    return FinalData.Yahoo_DataS1(u'Yahoo'.encode("utf-8"), Firm, os.path.join(DataPath), userID)
+                    return FinalData.Yahoo_DataS1(u'超級商城'.encode("utf-8"), Firm, os.path.join(DataPath), userID)
                 elif num_cols == 24:
                     FinalData = Yahoo_DataS2()
-                    return FinalData.Yahoo_DataS2(u'Yahoo'.encode("utf-8"), Firm, os.path.join(DataPath), userID)
+                    return FinalData.Yahoo_DataS2(u'超級商城'.encode("utf-8"), Firm, os.path.join(DataPath), userID)
                 elif num_cols == 29:
                     FinalData = Yahoo_DataS3()
-                    return FinalData.Yahoo_DataS3(u'Yahoo'.encode("utf-8"), Firm, os.path.join(DataPath), userID)
+                    return FinalData.Yahoo_DataS3(u'超級商城'.encode("utf-8"), Firm, os.path.join(DataPath), userID)
         elif Supplier == 'amart':
             FinalData = LoveBuy_Data()
-            return FinalData.LoveBuy_Data(u'lovebuy'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
+            return FinalData.LoveBuy_Data(u'愛買'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
         elif Supplier == 'rakuten':
             FinalData = Lotte_Data()
-            return FinalData.Lotte_Data(u'lotte'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
+            return FinalData.Lotte_Data(u'樂天'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
 
 
 

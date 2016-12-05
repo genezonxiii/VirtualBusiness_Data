@@ -28,6 +28,30 @@ class convertType():
         except Exception as e:
             logging.ERROR(e.message)
 
+    def ToDateTimeYYYYMMDD(self,value):
+        try:
+            if value== None :
+                return None
+            elif value=='':
+                return None
+            else:
+                dateObj=datetime.datetime.strptime(str(value),'%Y/%m/%d')
+                return dateObj
+        except Exception as e:
+            logging.ERROR(e.message)
+
+    def ToDateTime2(self,value):
+        try:
+            if value== None :
+                return None
+            elif value=='':
+                return None
+            else:
+                dateObj=datetime.datetime.strptime(str(value),'%Y/%m/%d/%H/%M')
+                return dateObj
+        except Exception as e:
+            logging.ERROR(e.message)
+
     def ToInt(self,value):
         try:
             if value== None :
@@ -138,11 +162,20 @@ class Sale():
     def setTrans_list_date(self,value):
         self.p_trans_list_date = self.convert.ToDateTime(value)
 
+    def setTrans_list_date_YYYYMMDD(self,value):
+        self.p_trans_list_date = self.convert.ToDateTimeYYYYMMDD(value)
+
+    def setTrans_list_date_udn(self,value):
+        self.p_trans_list_date = self.convert.ToDateTime2(value)
+
     def setDis_date(self,value):
         self.p_dis_date = self.convert.ToDateTime(value)
 
     def setSale_date(self,value):
         self.p_sale_date = self.convert.ToDateTime(value)
+
+    def setSale_date_YYYYMMDD(self,value):
+        self.p_sale_date = self.convert.ToDateTimeYYYYMMDD(value)
 
     def setReturn_date(self,value):
         self.p_return_date = self.convert.ToDateTime(value)
@@ -264,6 +297,11 @@ class Customer():
             self.p_phone = None
             self.o_phone = None
         else:
+            if type(value) <> unicode :
+                if type(value) == float :
+                    value = str(int(value))
+                else:
+                    value = str(value)
             self.p_phone = self.aes.AESencrypt('p@ssw0rd', value.encode('utf-8'), True)
             self.o_phone = self.convert.ToString(value.encode('utf-8'))
 
@@ -272,6 +310,11 @@ class Customer():
             self.p_mobile = None
             self.o_mobile = None
         else:
+            if type(value) <> unicode :
+                if type(value) == float :
+                    value = str(int(value))
+                else:
+                    value = str(value)
             self.p_mobile = self.aes.AESencrypt('p@ssw0rd', value.encode('utf-8'), True)
             self.o_mobile = self.convert.ToString(value.encode('utf-8'))
 
@@ -405,6 +448,10 @@ class DBSetting():
         self.dbName = 'tmp'
         self.dbUser = 'root'
         self.dbPassword = 'admin123'
+        # self.dbHost = 'localhost'
+        # self.dbName = 'tmp'
+        # self.dbUser = 'root'
+        # self.dbPassword = 'mysql'
 
 class ASAP():
     Data=None
