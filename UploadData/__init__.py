@@ -15,9 +15,14 @@ from VirtualBusiness.Life import Life_Data
 from VirtualBusiness.Line_mart import LineMart_Data
 from VirtualBusiness.Momo1 import Momo_Data
 from VirtualBusiness.Momo25 import Momo25_Data
+from VirtualBusiness.Momo26 import Momo26_Data
+from VirtualBusiness.Momo27 import Momo27_Data
+from VirtualBusiness.Momo28 import Momo28_Data
 from VirtualBusiness.Momo2 import Momo_Data2
 from VirtualBusiness.Momo3 import Momo3_Data
-from VirtualBusiness.Momo24 import Momo_Data24
+from VirtualBusiness.Momo23 import Momo23_Data
+from VirtualBusiness.Momo24 import Momo24_Data
+from VirtualBusiness.Momo24_1 import Momo24_Data1
 from VirtualBusiness.momo_pdf import Momo_Pdf
 from VirtualBusiness.Myfone import Myfone_Data
 from VirtualBusiness.payeasy import payeasy_Data
@@ -25,7 +30,9 @@ from VirtualBusiness.payeasy2 import payeasy_Data2
 from VirtualBusiness.Pchome1 import PCHome_Data
 from VirtualBusiness.Pchome2 import PCHome2_Data
 from VirtualBusiness.Pchome3 import PCHome3_Data
-from VirtualBusiness.UDN import UDN_Data
+from VirtualBusiness.UDN15 import Udn15_Data
+from VirtualBusiness.UDN29 import Udn29_Data
+from VirtualBusiness.UDN30 import Udn30_Data
 from VirtualBusiness.UDN_2 import UDN_Data2
 from VirtualBusiness.UDN_3 import UDN_Data3
 from VirtualBusiness.Yahoo1 import Yahoo1_Data
@@ -34,11 +41,13 @@ from VirtualBusiness.Yahoo3 import Yahoo3_Data
 from VirtualBusiness.Nine import Nine_Data
 from VirtualBusiness.Tree import TREE_Data
 from VirtualBusiness.MaJi import MAJI_Data
-from VirtualBusiness.gm import GM_Data
+from VirtualBusiness.gm import GM16_Data
 from VirtualBusiness.Book import Book_Data
 from VirtualBusiness.Umall import UMall_Data
 from VirtualBusiness.YahooS1 import Yahoo_DataS1
 from VirtualBusiness.YahooS2 import Yahoo_DataS2
+from VirtualBusiness.YahooS24 import YahooS24_Data
+from VirtualBusiness.YahooS29 import YahooS29_Data
 from VirtualBusiness.YahooS3 import Yahoo_DataS3
 from VirtualBusiness.LoveBuy import LoveBuy_Data
 from VirtualBusiness.Lotte import Lotte_Data
@@ -101,14 +110,26 @@ class VirtualBusiness():
                     logger.debug("col 25")
                     FinalData = Momo25_Data()
                     return FinalData.Momo_25_Data('momo', Firm, os.path.join(DataPath), userID)
+                elif num_cols == 23:
+                    logger.debug("col 23")
+                    FinalData = Momo23_Data()
+                    return FinalData.Momo_23_Data('momo', Firm, os.path.join(DataPath), userID)
                 elif num_cols == 24:
                     logger.debug("col 24")
-                    FinalData = Momo_Data24()
-                    return FinalData.Momo_Data24('momo', Firm, os.path.join(DataPath), userID)
+                    FinalData = Momo24_Data1()
+                    return FinalData.Momo_24_Data1('momo', Firm, os.path.join(DataPath), userID)
+                elif num_cols == 26:
+                    logger.debug("col 26")
+                    FinalData = Momo26_Data()
+                    return FinalData.Momo_26_Data('momo', Firm, os.path.join(DataPath), userID)
+                elif num_cols == 27:
+                    logger.debug("col 27")
+                    FinalData = Momo27_Data()
+                    return FinalData.Momo_27_Data('momo', Firm, os.path.join(DataPath), userID)
                 elif num_cols == 28:
                     logger.debug("col 28")
-                    FinalData = Momo_Data2()
-                    return FinalData.Momo_Data2('momo', Firm, os.path.join(DataPath), userID)
+                    FinalData = Momo28_Data()
+                    return FinalData.Momo_28_Data('momo', Firm, os.path.join(DataPath), userID)
                 else:
                     logger.debug("col else")
                     FinalData = Momo3_Data()
@@ -151,12 +172,21 @@ class VirtualBusiness():
                 if num_cols == 13:
                     FinalData = UDN_Data()
                     return FinalData.UDN_Data('UDN', Firm, os.path.join(DataPath), userID)
+                elif num_cols == 15:
+                    FinalData = Udn15_Data()
+                    return FinalData.Udn_15_Data('udn', Firm, os.path.join(DataPath), userID)
                 elif num_cols == 27:
                     FinalData = UDN_Data2()
                     return FinalData.UDN_Data2('UDN', Firm, os.path.join(DataPath), userID)
                 elif num_cols == 28:
                     FinalData = UDN_Data3()
                     return FinalData.UDN_Data3('UDN', Firm, os.path.join(DataPath), userID)
+                elif num_cols == 29:
+                    FinalData = Udn29_Data()
+                    return FinalData.Udn_29_Data('udn', Firm, os.path.join(DataPath), userID)
+                elif num_cols == 30:
+                    FinalData = Udn30_Data()
+                    return FinalData.Udn_30_Data('udn', Firm, os.path.join(DataPath), userID)
         elif Supplier == 'yahoo':
             if DataPath.split('.')[-1] == 'xls':
                 data=xlrd.open_workbook(os.path.join(DataPath))
@@ -192,8 +222,8 @@ class VirtualBusiness():
             FinalData = MAJI_Data()
             return FinalData.MAJI_Data(u'夠麻吉'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
         elif Supplier == 'etmall':
-            FinalData = GM_Data()
-            return FinalData.GM_Data(u'東森購物'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
+            FinalData = GM16_Data()
+            return FinalData.GM_16_Data(u'東森購物'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
         elif Supplier == 'books':
             FinalData = Book_Data()
             return FinalData.Book_Data(u'博客來'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
@@ -209,11 +239,11 @@ class VirtualBusiness():
                     FinalData = Yahoo_DataS1()
                     return FinalData.Yahoo_DataS1(u'超級商城'.encode("utf-8"), Firm, os.path.join(DataPath), userID)
                 elif num_cols == 24:
-                    FinalData = Yahoo_DataS2()
-                    return FinalData.Yahoo_DataS2(u'超級商城'.encode("utf-8"), Firm, os.path.join(DataPath), userID)
+                    FinalData = YahooS24_Data()
+                    return FinalData.YahooS_24_Data(u'超級商城'.encode("utf-8"), Firm, os.path.join(DataPath), userID)
                 elif num_cols == 29:
-                    FinalData = Yahoo_DataS3()
-                    return FinalData.Yahoo_DataS3(u'超級商城'.encode("utf-8"), Firm, os.path.join(DataPath), userID)
+                    FinalData = YahooS29_Data()
+                    return FinalData.YahooS_29_Data(u'超級商城'.encode("utf-8"), Firm, os.path.join(DataPath), userID)
         elif Supplier == 'amart':
             FinalData = LoveBuy_Data()
             return FinalData.LoveBuy_Data(u'愛買'.encode("utf-8"), Firm, os.path.join(DataPath),userID)

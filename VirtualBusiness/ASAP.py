@@ -105,6 +105,7 @@ class ASAP_Data():
                 PartPrice = table.cell(row_index, self.TitleList.index(self.TitleTuple[6])).value
                 #InvoiceNo = table.cell(row_index, 24).value
 
+                logger.debug(supplier)
                 GroupID = GroupID
                 supplier = supplier
                 UserID = UserID

@@ -1,5 +1,6 @@
-# -*-  coding: utf-8  -*-
-__author__ = '10409003'
+# -*- coding: utf-8 -*-
+#__author__ = '10408001'
+import datetime,time
 import logging
 import json
 import xlrd
@@ -9,24 +10,15 @@ from VirtualBusiness import Sale,Customer,updateCustomer
 
 logger = logging.getLogger(__name__)
 
-class Momo25_Data():
+class YahooS29_Data():
     Data = None
     mysqlconnect = None
     sale , customer = None, None
 
     # 預期要找出欄位的索引位置的欄位名稱
-    # \0407\momo摩天商城\1458525585016.xls
-    # TitleTuple = (u'訂單編號', u'付款日', u'最晚出貨日', u'出貨日期', u'收件人姓名',
-    #               u'電話', u'行動電話',u'地址', u'商店品號', u'商品名稱',
-    #               u'數量', u'成交價')
-
-    # 悠活原力
-    # \momo\2016.03.16\A1102_3_1_008992_20160316114348.xls
-    TitleTuple = (u'訂單編號', u'收件人姓名', u'收件人地址', u'轉單日', u'品號',
-                  u'商品原廠編號',u'品名', u'數量',u'進價(含稅)', u'發票號碼')
-    # \momo\2016.10.05\A1106_008992_EXL.xls
-    # TitleTuple = (u'訂單編號', u'收件人姓名', u'發票號碼', u'轉單日', u'品號',
-    #               u'商品原廠編號', u'品名', u'數量', u'進價(含稅)')
+    TitleTuple = (u'訂單編號', u'轉單日期', u'最晚出貨日', u'收件人姓名', u'商品編號',
+                  u'收件人電話(日)', u'收件人電話(夜)', u'收件人行動電話', u'金額小計',u'收件人郵遞區號',
+                  u'收件人地址', u'店家商品料號', u'商品名稱', u'數量')
     TitleList = []
 
     def __init__(self):
@@ -34,11 +26,11 @@ class Momo25_Data():
         self.mysqlconnect = ToMysql()
         self.mysqlconnect.connect()
 
-    def Momo_25_Data(self, supplier, GroupID, path, UserID):
+    def YahooS_29_Data(self, supplier, GroupID, path, UserID):
 
         try:
 
-            logger.debug("===Momo25_Data===")
+            logger.debug("===YahooS29_Data===")
 
             success = False
             resultinfo = ""
@@ -85,7 +77,7 @@ class Momo25_Data():
             logger.error(inst.args)
             resultinfo = inst.args
         finally:
-            logger.debug('===Momo25_Data finally===')
+            logger.debug('===YahooS29_Data finally===')
             return json.dumps({"success": success, "info": resultinfo, "total": totalRows}, sort_keys=False)
 
     def parserData(self,table,row_index,GroupID,UserID,supplier):
@@ -93,21 +85,21 @@ class Momo25_Data():
             self.sale.setGroup_id(GroupID)
             self.sale.setUser_id(UserID)
             self.sale.setOrder_source(supplier)
-            self.sale.setOrder_No(table.cell(row_index, self.TitleList.index(self.TitleTuple[0])).value[0:14])
-            self.sale.setTrans_list_date(table.cell(row_index, self.TitleList.index(self.TitleTuple[3])).value)
-            self.sale.setSale_date(table.cell(row_index, self.TitleList.index(self.TitleTuple[3])).value)
-            self.sale.setC_Product_id(str(table.cell(row_index, self.TitleList.index(self.TitleTuple[5])).value).split('.')[0])
-            self.sale.setProduct_name(table.cell(row_index, self.TitleList.index(self.TitleTuple[6])).value)
-            self.sale.setQuantity(table.cell(row_index, self.TitleList.index(self.TitleTuple[7])).value)
+            self.sale.setOrder_No(table.cell(row_index, self.TitleList.index(self.TitleTuple[0])).value)
+            self.sale.setTrans_list_date(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
+            self.sale.setSale_date(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
+            self.sale.setC_Product_id(str(table.cell(row_index, self.TitleList.index(self.TitleTuple[4])).value).split('.')[0])
+            self.sale.setProduct_name(table.cell(row_index, self.TitleList.index(self.TitleTuple[12])).value)
+            self.sale.setQuantity(table.cell(row_index, self.TitleList.index(self.TitleTuple[13])).value)
             self.sale.setPrice(table.cell(row_index, self.TitleList.index(self.TitleTuple[8])).value)
-            self.sale.setName(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
+            self.sale.setName(table.cell(row_index, self.TitleList.index(self.TitleTuple[3])).value)
 
             self.customer.setGroup_id(GroupID)
-            self.customer.setName(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
-            self.customer.setPhone(None)
-            self.customer.setMobile(None)
-            self.customer.setPost(None)
-            self.customer.setAddress(table.cell(row_index, self.TitleList.index(self.TitleTuple[2])).value)
+            self.customer.setName(table.cell(row_index, self.TitleList.index(self.TitleTuple[3])).value)
+            self.customer.setPhone(table.cell(row_index, self.TitleList.index(self.TitleTuple[5])).value)
+            self.customer.setMobile(table.cell(row_index, self.TitleList.index(self.TitleTuple[7])).value)
+            self.customer.setPost(table.cell(row_index, self.TitleList.index(self.TitleTuple[9])).value)
+            self.customer.setAddress(table.cell(row_index, self.TitleList.index(self.TitleTuple[10])).value)
         except Exception as e :
             print e.message
             logging.error(e.message)
@@ -157,7 +149,7 @@ class Momo25_Data():
             raise
 
 if __name__ == '__main__':
-    momo = Momo25_Data()
+    yahoo = YahooS29_Data()
     # groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
-    print momo.Momo_25_Data('momo',groupid,u'C:\\Users\\10509002\\Documents\\電商檔案\\網購平台訂單資訊\\momo\\2016.03.16\\A1102_3_1_008992_20160316114348.xls','system')
+    print yahoo.YahooS_29_Data('yahoo',groupid,u'C:\\Users\\10509002\\Desktop\\新增資料夾 (2)\\0407\\yahoo 超級商城\\delivery.xlsx','system')

@@ -6,11 +6,12 @@ import mysql.connector
 from mysql.connector import errorcode
 
 class ToMysql():
-    host = '192.168.112.164'
+    # host = '192.168.112.164'
+    host = 'localhost'
     #host = 'www.a-ber.com.tw'
     database = 'db_virtualbusiness'
     user = 'root'
-    password = 'admin123'
+    password = 'mysql'
     #host = '192.168.112.175'
     #database = 'db_virutalbusiness'
     #user = 'root'

@@ -40,6 +40,31 @@ class convertType():
         except Exception as e:
             logging.ERROR(e.message)
 
+    def ToDateTimeYMD(self,value):
+        try:
+            if value== None :
+                return None
+            elif value=='':
+                return None
+            else:
+                dateObj=datetime.datetime.strptime(str(value),'%Y-%m-%d')
+                return dateObj
+        except Exception as e:
+            logging.ERROR(e.message)
+
+    def ToDateTimeYYYYMMDD_float(self,value):
+        try:
+            if value== None :
+                return None
+            elif value=='':
+                return None
+            else:
+                ct = convertType()
+                dateObj=datetime.datetime.strptime(ct.getdate(value),'%Y/%m/%d')
+                return dateObj
+        except Exception as e:
+            logging.ERROR(e.message)
+
     def ToDateTime2(self,value):
         try:
             if value== None :
@@ -51,6 +76,13 @@ class convertType():
                 return dateObj
         except Exception as e:
             logging.ERROR(e.message)
+
+    def getdate(self, date):
+        __s_date = datetime.date(1899, 12, 31).toordinal() - 1
+        if isinstance(date, float):
+            date = int(date)
+        d = datetime.date.fromordinal(__s_date + date)
+        return d.strftime("%Y/%m/%d")
 
     def ToInt(self,value):
         try:
@@ -70,7 +102,7 @@ class convertType():
             elif value=='':
                 return 0.0
             else:
-                return float(value)
+                return float(value.replace(",",""))
         except Exception as e:
             logging.ERROR(e.message)
 
@@ -124,6 +156,9 @@ class Sale():
     def setOrder_No(self,value):
         self.p_order_no = self.convert.ToString(value.encode('utf-8'))
 
+    def setOrder_No_float(self,value):
+        self.p_order_no = self.convert.ToString(value).split(".")[0]
+
     def setUser_id(self,value):
         self.p_user_id = self.convert.ToString(value.encode('utf-8'))
 
@@ -135,6 +170,9 @@ class Sale():
 
     def setC_Product_id(self,value):
         self.p_c_product_id = self.convert.ToString(value.encode('utf-8'))
+
+    def setC_Product_id_float(self,value):
+        self.p_c_product_id = self.convert.ToString(value).split(".")[0]
 
     def setCustomer_id(self,value):
         self.p_customer_id = self.convert.ToString(value.encode('utf-8'))
@@ -156,6 +194,9 @@ class Sale():
     def setPrice(self,value):
         self.p_price = self.convert.ToFloat(value)
 
+    # def setPrice_str(self,value):
+    #     self.p_price = self.convert.ToString(value)
+
     def setInvoice_date(self,value):
         self.p_invoice_date = self.convert.ToDateTime(value)
 
@@ -164,6 +205,12 @@ class Sale():
 
     def setTrans_list_date_YYYYMMDD(self,value):
         self.p_trans_list_date = self.convert.ToDateTimeYYYYMMDD(value)
+
+    def setTrans_list_date_YMD(self,value):
+        self.p_trans_list_date = self.convert.ToDateTimeYMD(value)
+
+    def setTrans_list_date_YYYYMMDD_float(self,value):
+        self.p_trans_list_date = self.convert.ToDateTimeYYYYMMDD_float(value)
 
     def setTrans_list_date_udn(self,value):
         self.p_trans_list_date = self.convert.ToDateTime2(value)
@@ -174,8 +221,14 @@ class Sale():
     def setSale_date(self,value):
         self.p_sale_date = self.convert.ToDateTime(value)
 
+    def setSale_date_YMD(self,value):
+        self.p_sale_date = self.convert.ToDateTimeYMD(value)
+
     def setSale_date_YYYYMMDD(self,value):
         self.p_sale_date = self.convert.ToDateTimeYYYYMMDD(value)
+
+    def setSale_date_YYYYMMDD_float(self,value):
+        self.p_sale_date = self.convert.ToDateTimeYYYYMMDD_float(value)
 
     def setReturn_date(self,value):
         self.p_return_date = self.convert.ToDateTime(value)
@@ -184,7 +237,9 @@ class Sale():
         self.p_memo = self.convert.ToString(value.encode('utf-8'))
 
     def setOrder_source(self,value):
-        self.p_order_source = self.convert.ToString(value.encode('utf-8'))
+        # self.p_order_source = self.convert.ToString(value.encode('utf-8'))
+        self.p_order_source = self.convert.ToString(value.decode('utf-8').encode('utf-8'))
+
 
     def setIsreturn(self,value):
         self.p_isreturn = self.convert.ToBoolean(value)
@@ -444,14 +499,14 @@ class updateCustomer():
 class DBSetting():
     dbHost ,dbName , dbUser , dbPassword = None , None ,None ,None
     def __init__(self):
-        self.dbHost = '192.168.112.164'
-        self.dbName = 'tmp'
-        self.dbUser = 'root'
-        self.dbPassword = 'admin123'
-        # self.dbHost = 'localhost'
+        # self.dbHost = '192.168.112.164'
         # self.dbName = 'tmp'
         # self.dbUser = 'root'
-        # self.dbPassword = 'mysql'
+        # self.dbPassword = 'admin123'
+        self.dbHost = 'localhost'
+        self.dbName = 'tmp'
+        self.dbUser = 'root'
+        self.dbPassword = 'mysql'
 
 class ASAP():
     Data=None

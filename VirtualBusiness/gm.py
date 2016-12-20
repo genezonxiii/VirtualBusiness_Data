@@ -1,192 +1,154 @@
-# -*-  coding: utf-8  -*-
-__author__ = '10409003'
-import xlrd
-import uuid
-from datetime import datetime
-from aes_data import aes_data
-from ToMongodb import ToMongodb
-from ToMysql import ToMysql
+# -*- coding: utf-8 -*-
+#__author__ = '10409003'
+
 import logging
-import time
+import json
+import xlrd
+from ToMysql import ToMysql
+import uuid
+from VirtualBusiness import Sale,Customer,updateCustomer
 
-class GM_Data():
-    Data=None
+logger = logging.getLogger(__name__)
+
+class GM16_Data():
+    Data = None
+    mysqlconnect = None
+    sale , customer = None, None
+
+    # 預期要找出欄位的索引位置的欄位名稱
+    TitleTuple = (u'訂單編號', u'收件日', u'配達日', u'收件人', u'收件地址',
+                  u'收件人手機1', u'訂購品項', u'訂購份數', u'盒數')
+    TitleList = []
+
     def __init__(self):
-        pass
-    def GM_Data(self,supplier,GroupID,path,UserID):
-        logging.basicConfig(filename='pyupload.log', level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%Y/%m/%d %I:%M:%S %p')
-        logging.Formatter.converter = time.gmtime
-        logging.info('===GM_Data===')
-        logging.debug('supplier:' + supplier)
-        logging.debug('GroupID:' + GroupID)
-        logging.debug('path:' + path)
-        logging.debug('UserID:' + UserID)
-        
-        #mysql connector object
-        mysqlconnect=ToMysql()
-        mysqlconnect.connect()
+        # mysql connector object
+        self.mysqlconnect = ToMysql()
+        self.mysqlconnect.connect()
 
-        mongoOrder=ToMongodb()
-        mongoOrder.setCollection('co_order')
-        mongoOrder.connect()
-        mongodbClient=ToMongodb()
-        mongodbClient.setCollection('co_client')
-        mongodbClient.connect()
+    def GM_16_Data(self, supplier, GroupID, path, UserID):
 
-        Ordernum=""
-        Clientnum=""
+        try:
 
-        data=xlrd.open_workbook(path)
-        table=data.sheets()[0]
-        num_cols=table.ncols
-        #put the data into the corresponding variable
+            logger.debug("===gm16_Data===")
 
-        for row_index in range(1,table.nrows):
-            for col_index in range(0,num_cols):
-                aes=aes_data()
-                OrderNo = table.cell(row_index, 1).value[0:13]
-                Name = table.cell(row_index, 3).value
-                ClientName = aes.AESencrypt("p@ssw0rd", Name.encode('utf-8'), True)
-                Phone = table.cell(row_index, 5).value
-                ClientPhone = aes.AESencrypt("p@ssw0rd", Phone, True)
-                Tel = table.cell(row_index, 4).value
-                ClientTel = aes.AESencrypt("p@ssw0rd", Tel, True)
-                Add = table.cell(row_index, 6).value
-                ClientAdd = aes.AESencrypt("p@ssw0rd", Add.encode('utf-8'), True)
-                PartName = table.cell(row_index, 8).value
-                PartNo = str(table.cell(row_index, 7).value)
-                PartQuility = table.cell(row_index, 9).value
-                PartTotalPrice = table.cell(row_index, 11).value
-                strTurnDate = xlrd.xldate_as_tuple(table.cell_value(row_index, 2), data.datemode)
-                _TurnDate = datetime(*strTurnDate[0:6]).strftime('%Y-%m-%d')
-                TurnDate = datetime.strptime(_TurnDate, '%Y-%m-%d')
-                firm = GroupID
-                supplier = supplier
-                UserID=UserID
-            # SupplySQL = (str(uuid.uuid4()),GroupID, supplier,"","","","","","","","","","","")
-            ProductSQL = (str(uuid.uuid4()), GroupID, PartNo, PartName,supplier, "",'',0,PartTotalPrice,0,None,None,None,None)
-            CustomereSQL = (str(uuid.uuid4()), GroupID, ClientName, ClientAdd, ClientTel, ClientPhone,None,None,None,None)
+            success = False
+            resultinfo = ""
+            totalRows = 0
 
-            # mysqlconnect.cursor.callproc('p_tb_supply', SupplySQL)
-            mysqlconnect.cursor.callproc('p_tb_product', ProductSQL)
+            data = xlrd.open_workbook(path)
+            table = data.sheets()[0]
 
-            CustomereSQLsel = """select group_id,name from tb_customer where group_id='%s'""" % (GroupID)
+            totalRows = table.nrows - 2
 
-            CustomereSQLupd = """update tb_customer
-                set address= %s ,
-                    phone= %s,
-                    mobile = %s,
-                    email = %s,
-                    post= %s,
-                    class = %s,
-                    memo= %s
+            # 存放excel中全部的欄位名稱
+            self.TitleList = []
+            for row_index in range(0, 1):
+                for col_index in range(0, table.ncols):
+                    self.TitleList.append(table.cell(row_index, col_index).value)
 
-                where group_id=%s and name=%s;"""
-            CustomereSQLins = """ insert into tb_customer
-                                    (customer_id,group_id ,name,address,phone,mobile,email,post,class,memo)
-                                    values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s);"""
-            mysqlconnect.cursor.execute(CustomereSQLsel)
-            result = mysqlconnect.cursor.fetchall()
+            print self.TitleList
 
-            print result
-            Name_compare=[]
-            if result!=[]:
-                for x in result:
-                    Name_compare.append(aes.AESdecrypt("p@ssw0rd",x[1], True))
-                if Name.encode('utf-8') in Name_compare :
-                    print "update"
-                    mysqlconnect.cursor.execute(CustomereSQLupd,(ClientAdd, ClientTel, ClientPhone,None,None,None,None,GroupID,x[1]))
-                else:
-                    print "select insert"
-                    mysqlconnect.cursor.execute(CustomereSQLins, CustomereSQL)
+            # 存放excel中對應TitleTuple欄位名稱的index
+            for index in range(0, len(self.TitleTuple)):
+                if self.TitleTuple[index] in self.TitleList:
+                    logger.debug(str(index) + self.TitleTuple[index])
+                    logger.debug(u'index in file - ' + str(self.TitleList.index(self.TitleTuple[index])) )
+                    # print str(index) + TitleTuple[index]
+                    # print (TitleList.index(TitleTuple[index]))
+
+            for row_index in range(1, table.nrows):
+                self.sale = Sale()
+                self.customer = Customer()
+                #Parser Data from xls
+                self.parserData(table, row_index, GroupID, UserID, supplier)
+                # insert or update table tb_customer
+                self.updateDB_Customer()
+                # insert table tb_sale
+                self.updateDB_Sale()
+                self.sale = None
+                self.customer = None
+            self.mysqlconnect.db.commit()
+            self.mysqlconnect.dbClose()
+
+            success = True
+
+        except Exception as inst:
+            logger.error(inst.args)
+            resultinfo = inst.args
+        finally:
+            logger.debug('===gm16_Data finally===')
+            return json.dumps({"success": success, "info": resultinfo, "total": totalRows}, sort_keys=False)
+
+    def parserData(self,table,row_index,GroupID,UserID,supplier):
+        try:
+            self.sale.setGroup_id(GroupID)
+            self.sale.setUser_id(UserID)
+            self.sale.setOrder_source(supplier)
+            self.sale.setOrder_No(table.cell(row_index, self.TitleList.index(self.TitleTuple[0])).value)
+            self.sale.setTrans_list_date_YYYYMMDD_float(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
+            self.sale.setSale_date_YYYYMMDD_float(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
+            self.sale.setC_Product_id(' ')
+            self.sale.setProduct_name(table.cell(row_index, self.TitleList.index(self.TitleTuple[6])).value)
+            self.sale.setQuantity(table.cell(row_index, self.TitleList.index(self.TitleTuple[7])).value)
+            self.sale.setPrice(None)
+            self.sale.setName(table.cell(row_index, self.TitleList.index(self.TitleTuple[3])).value)
+
+            self.customer.setGroup_id(GroupID)
+            self.customer.setName(table.cell(row_index, self.TitleList.index(self.TitleTuple[3])).value)
+            self.customer.setPhone(table.cell(row_index, self.TitleList.index(self.TitleTuple[5])).value[1:])
+            self.customer.setMobile(table.cell(row_index, self.TitleList.index(self.TitleTuple[5])).value)
+            self.customer.setPost(None)
+            self.customer.setAddress(table.cell(row_index, self.TitleList.index(self.TitleTuple[4])).value)
+        except Exception as e :
+            print e.message
+            logging.error(e.message)
+
+    def updateDB_Customer(self):
+        try:
+            # insert or update table tb_customer
+            updatecustomer = updateCustomer()
+            self.customer.setCustomer_id(
+                updatecustomer.checkCustomerid(self.customer.getGroup_id(), self.customer.get_Name(), self.customer.get_Address(), \
+                                               self.customer.get_phone(), self.customer.get_Mobile(), self.customer.get_Email()))
+
+            if self.customer.getCustomer_id() == None:
+                self.customer.setCustomer_id(uuid.uuid4())
+                CustomereSQL = (
+                    self.customer.getCustomer_id(), self.customer.getGroup_id(), self.customer.getName(), \
+                    self.customer.getAddress(), self.customer.getphone(), self.customer.getMobile(), \
+                    self.customer.getEmail(), self.customer.getPost(), self.customer.getClass(), self.customer.getMemo(), self.sale.getUser_id())
+                self.mysqlconnect.cursor.callproc('sp_insert_customer_bysys', CustomereSQL)
             else:
-                mysqlconnect.cursor.execute(CustomereSQLins, CustomereSQL)
-            mysqlconnect.cursor.execute(CustomereSQLsel)
-            result = mysqlconnect.cursor.fetchall()
-            customer_id_temp=[]
-            SalestrSQLsel="SELECT customer_id from tb_customer where name =%s;"
-            for x in result:
-                if aes.AESdecrypt('p@ssw0rd',x[1],True)==Name.encode('utf-8'):
-                    mysqlconnect.cursor.execute(SalestrSQLsel,(str(x[1]),))
-                    customer_id_temp.append(mysqlconnect.cursor.fetchall()[0])
-            print customer_id_temp
-            for y in customer_id_temp:
-                for x in result:
-                    if aes.AESdecrypt('p@ssw0rd', x[1], True) == Name.encode('utf-8'):
-                        SaleSQL = (
-                            GroupID, OrderNo, UserID, PartName, PartNo, y[0],
-                            x[1], PartQuility, PartTotalPrice, None, TurnDate, TurnDate, TurnDate,
-                            None, TurnDate,supplier)
-                        mysqlconnect.cursor.callproc('p_tb_sale', SaleSQL)
-                        # SalestrSQL = "INSERT INTO tb_sale (sale_id,seq_no,group_id,user_id,customer_id,name,c_product_id,quantity,price,trans_list_date,sale_date,product_name)"\
-                        # "VALUES(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-                        # mysqlconnect.cursor.execute(SalestrSQL,(str(uuid.uuid4()), OrderNo, GroupID, '12345', y[0], x[1], PartNo, PartQuility,PartTotalPrice, TurnDate,TurnDate,PartName))
-            mysqlconnect.db.commit()
-            # mysqlconnect.cursor.callproc('p_tb_customer', CustomereSQL)
+                CustomereSQL = (self.customer.getCustomer_id(), self.customer.getGroup_id(), self.customer.getName(), \
+                                self.customer.getAddress(), self.customer.getphone(), self.customer.getMobile(), \
+                                self.customer.getEmail(), self.customer.getPost(), self.customer.getClass(), \
+                                self.customer.getMemo(),self.sale.getUser_id())
+                self.mysqlconnect.cursor.callproc('sp_update_customer', CustomereSQL)
 
-            if (Ordernum==OrderNo[0:13]):
-                print 'update'
-                self.updataOrder(mongoOrder,OrderNo,PartName,PartNo,\
-                                PartQuility,PartTotalPrice,TurnDate,\
-                                firm,supplier)
+            CustomereSQL = (self.customer.getCustomer_id(), self.customer.getGroup_id(), self.customer.get_Name(), \
+                            self.customer.get_Address(), self.customer.get_phone(), self.customer.get_Mobile(), \
+                            self.customer.get_Email())
+            updatecustomer.updataData(CustomereSQL)
+        except Exception as e :
+            print e.message
+            logging.error(e.message)
+            raise
 
-            else:
-                print 'insert'
-                Ordernum=OrderNo
-                self.insertOrder(mongoOrder,OrderNo,PartName,PartNo,\
-                                PartQuility,PartTotalPrice,TurnDate,\
-                                firm,supplier)
-            if (Clientnum == ClientName):
-                print 'update'
-                self.updataClient(mongodbClient, OrderNo,ClientName,\
-                                ClientAdd,ClientTel,ClientPhone,\
-                               firm,supplier)
-            else:
-                print 'insert'
-                Clientnum = ClientName
-                self.insertClient(mongodbClient, OrderNo,ClientName,\
-                                ClientAdd,ClientTel,ClientPhone,\
-                               firm,supplier)
+    def updateDB_Sale(self):
+        try:
+            SaleSQL = (self.sale.getGroup_id(), self.sale.getOrder_No(), self.sale.getUser_id(), self.sale.getProduct_name(), \
+                       self.sale.getC_Product_id(), self.customer.getCustomer_id(), self.sale.getName(), self.sale.getQuantity(), \
+                       self.sale.getPrice(), self.sale.getInvoice(), self.sale.getInvoice_date(), self.sale.getTrans_list_date(), \
+                       self.sale.getDis_date(), self.sale.getMemo(), self.sale.getSale_date(), self.sale.getOrder_source())
+            self.mysqlconnect.cursor.callproc('p_tb_sale', SaleSQL)
+            return
+        except Exception as e :
+            print e.message
+            logging.error(e.message)
+            raise
 
-        mysqlconnect.dbClose()
-        mongoOrder.dbClose()
-        mongodbClient.dbClose()
-        logging.info('===GM_Data SUCCESS===')
-        return 'success'
-
-    # mongoDB storage   第�??��??�是丟�??��?mongoOrder or mongoClient
-    def insertOrder(self,mongoOrder,_OrderNo,_PartName,_PartNo,\
-                                _PartQuility,_PartTotalPrice,_TurnDate,\
-                                _firm,_supplier):
-        businessorder_doc={ 'OrderNo':_OrderNo,\
-                           'PartName':[_PartName],'PartNo':[_PartNo],\
-                           'PartQuility':[_PartQuility],'Price':[_PartTotalPrice],\
-                           'TurnDate':_TurnDate,'firm':[_firm],'supplier':[_supplier]
-                            }
-
-        mongoOrder.cursor.insert(businessorder_doc)
-    def updataOrder(self,mongoOrder,_OrderNo,_PartName,_PartNo,\
-                                _PartQuility,_PartTotalPrice,_TurnDate,\
-                                _firm,_supplier):
-        mongoOrder.cursor.update({ "OrderNo" : _OrderNo,'firm':_firm,'supplier':_supplier},\
-                           {'$push':{'PartName':_PartName,'PartNo':_PartNo ,\
-                           'PartQuility':_PartQuility,'Price':_PartTotalPrice,'TurnDate':_TurnDate}}
-                                                )
-    def insertClient(self,mongodbClient,_OrderNo,_ClientName,_ClientAdd,_ClientTel,\
-                   _ClientPhone,_firm,_supplier):
-        businessorder_doc={'OrderNo':_OrderNo,'ClientName':[_ClientName],'ClientTel':[_ClientTel],'ClientPhone':[_ClientPhone],'ClientAdd':[_ClientAdd],\
-                           'firm':[_firm],'supplier':[_supplier]}
-
-        mongodbClient.cursor.insert(businessorder_doc)
-    def updataClient(self,mongodbClient,_OrderNo,_ClientName,_ClientAdd,_ClientTel,\
-                   _ClientPhone,_firm,_supplier):
-        mongodbClient.cursor.update({ 'ClientName':_ClientName,'ClientAdd':_ClientAdd,'ClientTel':_ClientTel,'ClientPhone':_ClientPhone,\
-                            'firm':_firm,'supplier':_supplier}\
-                           ,{'$push':{"OrderNo" : _OrderNo}})
-
-
-
-
-
-
-
+if __name__ == '__main__':
+    gm =GM16_Data()
+    groupid = ""
+    groupid='cbcc3138-5603-11e6-a532-000d3a800878'
+    print gm.GM_16_Data(u'東森購物',groupid,u'C:\\Users\\10509002\\Documents\\電商檔案\\網購平台訂單資訊\\東森\\2016.10.17\\2016-10-17_出貨單.xls','system')
