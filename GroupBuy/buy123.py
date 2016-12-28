@@ -12,7 +12,7 @@ from GroupBuy import ExcelTemplate
 class buy123():
     mysqlconnect = None
     customer = None
-    GroupID , UserID = None , None
+    GroupID , UserID , ProductCode = None , None , None
     def __init__(self):
         self.mysqlconnect = ToMysql()
         self.mysqlconnect.connect()
@@ -23,7 +23,7 @@ class buy123():
         return SourceString[:location-intLen]
 
     #解析原始檔
-    def parserXls(self,GroupID,UserID,filename,output):
+    def parserXls(self,GroupID,UserID,ProductCode,filename,output):
         logging.basicConfig(filename='pyupload.log', level=logging.DEBUG, format='%(asctime)s %(message)s',
                             datefmt='%Y/%m/%d %I:%M:%S %p')
         logging.Formatter.converter = time.gmtime
@@ -34,6 +34,7 @@ class buy123():
         self.GroupID = GroupID
         self.customer = Customer()
         self.UserID = UserID
+        self.ProductCode = ProductCode
         try:
             data = xlrd.open_workbook(filename)
             table = data.sheets()[0]
@@ -72,6 +73,7 @@ class buy123():
                 table.write(i, 6, row[1])       # 收件人
                 table.write(i, 7, row[2])       # 收件地址
                 table.write(i, 8, row[3])       # 收件人手機1
+                table.write(i, 10, str(int(row[5])*int(row[6])) + self.ProductCode )  #交易備註
                 table.write(i, 11,'1')           # 送貨時段
                 table.write(i, 12, row[4])      # 訂購品項
                 table.write(i, 13, row[6])      # 訂購份數
@@ -124,5 +126,5 @@ class buy123():
 
 if __name__ == '__main__':
     buy = buy123()
-    buy.parserXls('robintest','test',u'C:/Users/10408001/Desktop/團購平台訂單資訊/生活市集/原始檔/2016.12.05/2016-12-05_生活市集_BY123375367F_悠活原力有限公司_欣敏立清益生菌-原味多多_未出貨.xls', \
-                  u'C:/Users/10408001/Desktop/20161228出貨單.xls')
+    buy.parserXls('robintest','test','MS',u'C:/Users/10408001/Desktop/團購平台訂單資訊/生活市集/原始檔/2016.12.05/2016-12-05_生活市集_BY123375489F_悠活原力有限公司_(0822食品高毛利)欣敏立清益生菌-蔓越莓多多(32點5%策略性商品)_未出貨.xls', \
+                  u'C:/Users/10408001/Desktop/20161228-1出貨單.xls')
