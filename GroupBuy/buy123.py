@@ -23,43 +23,44 @@ class buy123():
         return SourceString[:location-intLen]
 
     #解析原始檔
-    def parserXls(self,GroupID,UserID,ProductCode,filename,output):
+    def parserXls(self,GroupID,UserID,ProductCode=None,inputFile=None,outputFile=None):
         logging.basicConfig(filename='pyupload.log', level=logging.DEBUG, format='%(asctime)s %(message)s',
                             datefmt='%Y/%m/%d %I:%M:%S %p')
         logging.Formatter.converter = time.gmtime
         logging.info('===Buy123_Data===')
         logging.debug('GroupID:' + GroupID)
-        logging.debug('path:' + filename)
+        logging.debug('path:' + inputFile)
         logging.debug('UserID:' + UserID)
         self.GroupID = GroupID
         self.customer = Customer()
         self.UserID = UserID
         self.ProductCode = ProductCode
         try:
-            data = xlrd.open_workbook(filename)
+            data = xlrd.open_workbook(inputFile)
             table = data.sheets()[0]
             result = []
             # 讀 excel 檔
             for row_index in range(1, table.nrows):
                 tmp=[]
-                tmp.append(self.ReplaceField(str(table.cell(row_index, 0).value),'.'))
-                tmp.append(self.ReplaceField(table.cell(row_index, 1).value,'(',1))
-                tmp.append(table.cell(row_index, 2).value)
-                tmp.append('0' + self.ReplaceField(str(table.cell(row_index, 3).value),'.'))
-                tmp.append(table.cell(row_index, 5).value)
-                tmp.append(self.ReplaceField(table.cell(row_index, 6).value,u'盒'))
-                tmp.append(table.cell(row_index, 7).value)
+                tmp.append(self.ReplaceField(str(table.cell(row_index, 0).value),'.'))           #訂單編號
+                tmp.append(self.ReplaceField(table.cell(row_index, 1).value,'(',1))              # 收件人
+                tmp.append(table.cell(row_index, 2).value)                                      #收件地址
+                tmp.append('0' + self.ReplaceField(str(table.cell(row_index, 3).value),'.'))      #電話
+                tmp.append(table.cell(row_index, 5).value)                                      #檔次名稱
+                tmp.append(self.ReplaceField(table.cell(row_index, 6).value,u'盒'))              #訂購方案
+                tmp.append(table.cell(row_index, 7).value)                                      #組數
+                tmp.append('')                                                                   #訂購人
                 result.append(tmp)
-            self.writeT_catXls(result,output)
+            self.writeT_catXls(result,outputFile)
         except Exception as e :
             logging.error(e.message)
             return 'failure'
 
     #寫入黑貓出貨單內容
-    def writeT_catXls(self,data,output):
+    def writeT_catXls(self,data,outputFile):
         try:
-            outputFile = ExcelTemplate()
-            fileTemplate =  outputFile.T_Cat_OutputFile
+            Template = ExcelTemplate()
+            fileTemplate =  Template.T_Cat_OutputFile
             rb = xlrd.open_workbook(fileTemplate)
             file = copy(rb)
             table = file.get_sheet(0)
@@ -70,10 +71,11 @@ class buy123():
                 table.write(i,0,d1)             # 收件日
                 table.write(i, 1,d2)            # 配達日
                 table.write(i,3,row[0])         # 訂單編號
+                table.write(i, 5, row[7])       # 訂購人
                 table.write(i, 6, row[1])       # 收件人
                 table.write(i, 7, row[2])       # 收件地址
                 table.write(i, 8, row[3])       # 收件人手機1
-                table.write(i, 10, str(int(row[5])*int(row[6])) + self.ProductCode )  #交易備註
+                table.write(i, 10, str(int(row[5])*int(row[6])) + str(self.ProductCode) )  #交易備註
                 table.write(i, 11,'1')           # 送貨時段
                 table.write(i, 12, row[4])      # 訂購品項
                 table.write(i, 13, row[6])      # 訂購份數
@@ -88,7 +90,7 @@ class buy123():
                 i += 1
             self.mysqlconnect.db.commit()
             self.mysqlconnect.dbClose()
-            file.save(output)
+            file.save(outputFile)
         except Exception as e :
             logging.error(e.message)
             return 'failure'
@@ -126,5 +128,5 @@ class buy123():
 
 if __name__ == '__main__':
     buy = buy123()
-    buy.parserXls('robintest','test','MS',u'C:/Users/10408001/Desktop/團購平台訂單資訊/生活市集/原始檔/2016.12.05/2016-12-05_生活市集_BY123375489F_悠活原力有限公司_(0822食品高毛利)欣敏立清益生菌-蔓越莓多多(32點5%策略性商品)_未出貨.xls', \
-                  u'C:/Users/10408001/Desktop/20161228-1出貨單.xls')
+    buy.parserXls('robintest','test','MS',inputFile=u'C:/Users/10408001/Desktop/團購平台訂單資訊/生活市集/原始檔/2016.12.05/2016-12-05_生活市集_BY123375489F_悠活原力有限公司_(0822食品高毛利)欣敏立清益生菌-蔓越莓多多(32點5%策略性商品)_未出貨.xls', \
+                  outputFile=u'C:/Users/10408001/Desktop/20161228-1出貨單.xls')
