@@ -13,17 +13,7 @@ from GroupBuy.buy123 import buy123
 class gomaji(buy123):
     # 解析原始檔
     def parserXls(self, GroupID, UserID, LogisticsID=2, ProductCode=None, inputFile=None, outputFile=None):
-        logging.basicConfig(filename='pyupload.log', level=logging.DEBUG, format='%(asctime)s %(message)s',
-                            datefmt='%Y/%m/%d %I:%M:%S %p')
-        logging.Formatter.converter = time.gmtime
-        logging.info('===Gomaji_Data===')
-        logging.debug('GroupID:' + GroupID)
-        logging.debug('path:' + inputFile)
-        logging.debug('UserID:' + UserID)
-        self.GroupID = GroupID
-        self.customer = Customer()
-        self.UserID = UserID
-        self.ProductCode = ProductCode
+        self.init_log('Gomaji_Data', GroupID, UserID, ProductCode, inputFile)
         try:
             data = xlrd.open_workbook(inputFile)
             table = data.sheets()[0]

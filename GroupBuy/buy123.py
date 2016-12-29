@@ -72,12 +72,12 @@ class buy123():
         location = SourceString.find(ReplaceName)
         return SourceString[:location-intLen]
 
-    #解析原始檔
-    def parserXls(self, GroupID, UserID, LogisticsID=2, ProductCode=None, inputFile=None, outputFile=None):
+    #初始記錄解析 Log
+    def init_log(self,dataName,GroupID,UserID ,ProductCode,inputFile):
         logging.basicConfig(filename='pyupload.log', level=logging.DEBUG, format='%(asctime)s %(message)s',
                             datefmt='%Y/%m/%d %I:%M:%S %p')
         logging.Formatter.converter = time.gmtime
-        logging.info('===Buy123_Data===')
+        logging.info('===' + dataName + '===')
         logging.debug('GroupID:' + GroupID)
         logging.debug('path:' + inputFile)
         logging.debug('UserID:' + UserID)
@@ -85,6 +85,10 @@ class buy123():
         self.customer = Customer()
         self.UserID = UserID
         self.ProductCode = ProductCode
+
+    #解析原始檔
+    def parserXls(self, GroupID, UserID, LogisticsID=2, ProductCode=None, inputFile=None, outputFile=None):
+        self.init_log('Buy123_Data',GroupID, UserID , ProductCode , inputFile)
         try:
             data = xlrd.open_workbook(inputFile)
             table = data.sheets()[0]

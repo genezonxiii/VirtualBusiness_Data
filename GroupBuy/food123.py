@@ -13,17 +13,7 @@ from GroupBuy.buy123 import buy123
 class food123(buy123):
     # 解析原始檔
     def parserXls(self, GroupID, UserID, LogisticsID=2, ProductCode=None, inputFile=None, outputFile=None):
-        logging.basicConfig(filename='pyupload.log', level=logging.DEBUG, format='%(asctime)s %(message)s',
-                            datefmt='%Y/%m/%d %I:%M:%S %p')
-        logging.Formatter.converter = time.gmtime
-        logging.info('===Food123_Data===')
-        logging.debug('GroupID:' + GroupID)
-        logging.debug('path:' + inputFile)
-        logging.debug('UserID:' + UserID)
-        self.GroupID = GroupID
-        self.customer = Customer()
-        self.UserID = UserID
-        self.ProductCode = ProductCode
+        self.init_log('Food123_Data', GroupID, UserID, ProductCode, inputFile)
         try:
             data = xlrd.open_workbook(inputFile)
             table = data.sheets()[0]
@@ -31,7 +21,7 @@ class food123(buy123):
             # 讀 excel 檔
             for row_index in range(1, table.nrows):
                 tmp = []
-                tmp.append(self.ReplaceField(str(table.cell(row_index, 0).value), '.'))
+                tmp.append(self.ReplaceField(str(table.cell(row_index, 0).value), '.')) #訂單編號
                 tmp.append(self.ReplaceField(table.cell(row_index, 1).value, '(', 1))  # 收件人
                 tmp.append(table.cell(row_index, 2).value)  # 收件地址
                 tmp.append('0' + self.ReplaceField(str(table.cell(row_index, 3).value), '.'))  # 電話
@@ -44,7 +34,6 @@ class food123(buy123):
         except Exception as e:
             logging.error(e.message)
             return 'failure'
-
 
 if __name__ == '__main__':
     buy = food123()
