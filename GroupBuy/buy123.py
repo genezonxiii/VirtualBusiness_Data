@@ -73,7 +73,7 @@ class buy123():
         return SourceString[:location-intLen]
 
     #解析原始檔
-    def parserXls(self,GroupID,UserID,ProductCode=None,inputFile=None,outputFile=None):
+    def parserXls(self, GroupID, UserID, LogisticsID=2, ProductCode=None, inputFile=None, outputFile=None):
         logging.basicConfig(filename='pyupload.log', level=logging.DEBUG, format='%(asctime)s %(message)s',
                             datefmt='%Y/%m/%d %I:%M:%S %p')
         logging.Formatter.converter = time.gmtime
@@ -101,10 +101,14 @@ class buy123():
                 tmp.append(table.cell(row_index, 7).value)                                      #組數
                 tmp.append('')                                                                   #訂購人
                 result.append(tmp)
-            self.writeT_catXls(result,outputFile)
+            self.writeXls(LogisticsID,result,outputFile)
         except Exception as e :
             logging.error(e.message)
             return 'failure'
+
+    def writeXls(self,LogisticsID,data,outputFile):
+        if LogisticsID == 2 :
+            self.writeT_catXls(data,outputFile)
 
     #寫入黑貓出貨單內容
     def writeT_catXls(self,data,outputFile):
@@ -178,5 +182,6 @@ class buy123():
 
 if __name__ == '__main__':
     buy = buy123()
-    buy.parserXls('robintest','test','MS',inputFile=u'C:/Users/10408001/Desktop/團購平台訂單資訊/生活市集/原始檔/2016.12.05/2016-12-05_生活市集_BY123375489F_悠活原力有限公司_(0822食品高毛利)欣敏立清益生菌-蔓越莓多多(32點5%策略性商品)_未出貨.xls', \
+    buy.parserXls('robintest', 'test', 2, 'MS',
+                  inputFile=u'C:/Users/10408001/Desktop/團購平台訂單資訊/生活市集/原始檔/2016.12.05/2016-12-05_生活市集_BY123375489F_悠活原力有限公司_(0822食品高毛利)欣敏立清益生菌-蔓越莓多多(32點5%策略性商品)_未出貨.xls', \
                   outputFile=u'C:/Users/10408001/Desktop/20161228-1出貨單.xls')
