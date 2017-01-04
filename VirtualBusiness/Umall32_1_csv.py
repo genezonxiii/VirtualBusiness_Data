@@ -1,66 +1,65 @@
 # -*- coding: utf-8 -*-
-#__author__ = '10409003'
-
+#__author__ = '10408001'
+import datetime,time
 import logging
-import json
-import xlrd
+import csv
 from ToMysql import ToMysql
 import uuid
 from VirtualBusiness import Sale,Customer,updateCustomer
 
 logger = logging.getLogger(__name__)
 
-class Babyhome17_Data():
+class Umall32_Data1():
     Data = None
     mysqlconnect = None
     sale , customer = None, None
-
-    # 預期要找出欄位的索引位置的欄位名稱
-    TitleTuple = (u'訂單編號', u'收件日', u'配達日', u'收件人', u'收件地址',
-                  u'收件人手機1', u'訂購品項', u'訂購份數', u'盒數')
-    TitleList = []
+    header = []
+    content = []
 
     def __init__(self):
         # mysql connector object
         self.mysqlconnect = ToMysql()
         self.mysqlconnect.connect()
 
-    def Babyhome_17_Data(self, supplier, GroupID, path, UserID):
+    def readFile(self, _file):
+        cr = open(_file, 'rb')
 
+        i = 0
+        for row in cr:
+            str = row.split(',')
+
+            if i == 0:
+                self.header.append([r for r in str])
+            else:
+                # print "content"
+                temp = [r for r in str]
+                self.content.append(temp)
+
+            i += 1
+
+    def Umall_32_Data1(self, supplier, GroupID, path, UserID):
+        logging.basicConfig(filename='/data/VirtualBusiness_Data/pyupload.log',
+                            level=logging.DEBUG,
+                            format='%(asctime)s - %(levelname)s - %(filename)s:%(name)s:%(module)s/%(funcName)s/%(lineno)d - %(message)s',
+                            datefmt='%Y/%m/%d %I:%M:%S %p')
+        logging.Formatter.converter = time.gmtime
+
+        logger.info('===Umall32_Data===')
+        logger.debug('supplier:' + supplier)
+        logger.debug('GroupID:' + GroupID)
+        logger.debug('path:' + path)
+        logger.debug('UserID:' + UserID)
         try:
+            self.readFile(path)
+            logger.debug("header:")
+            logger.debug(self.header)
+            print len(self.content)
 
-            logger.debug("===Babyhome17_Data===")
-
-            success = False
-            resultinfo = ""
-            totalRows = 0
-
-            data = xlrd.open_workbook(path)
-            table = data.sheets()[0]
-
-            totalRows = table.nrows - 2
-
-            # 存放excel中全部的欄位名稱
-            self.TitleList = []
-            for row_index in range(0, 1):
-                for col_index in range(0, table.ncols):
-                    self.TitleList.append(table.cell(row_index, col_index).value)
-
-            print self.TitleList
-
-            # 存放excel中對應TitleTuple欄位名稱的index
-            for index in range(0, len(self.TitleTuple)):
-                if self.TitleTuple[index] in self.TitleList:
-                    logger.debug(str(index) + self.TitleTuple[index])
-                    logger.debug(u'index in file - ' + str(self.TitleList.index(self.TitleTuple[index])) )
-                    # print str(index) + TitleTuple[index]
-                    # print (TitleList.index(TitleTuple[index]))
-
-            for row_index in range(1, table.nrows):
+            for row_index in range(0, len(self.content)):
                 self.sale = Sale()
                 self.customer = Customer()
                 #Parser Data from xls
-                self.parserData(table, row_index, GroupID, UserID, supplier)
+                self.parserData(self.content, row_index, GroupID, UserID, supplier)
                 # insert or update table tb_customer
                 self.updateDB_Customer()
                 # insert table tb_sale
@@ -69,36 +68,34 @@ class Babyhome17_Data():
                 self.customer = None
             self.mysqlconnect.db.commit()
             self.mysqlconnect.dbClose()
-
-            success = True
-
-        except Exception as inst:
-            logger.error(inst.args)
-            resultinfo = inst.args
-        finally:
-            logger.debug('===Babyhome17_Data finally===')
-            return json.dumps({"success": success, "info": resultinfo, "total": totalRows}, sort_keys=False)
+            logger.info('===Umall32_Data SUCCESS===')
+            return 'success'
+        except Exception as e :
+            logger.error(e.message)
+            return 'failure'
 
     def parserData(self,table,row_index,GroupID,UserID,supplier):
         try:
+            row = self.content[row_index]
+
             self.sale.setGroup_id(GroupID)
             self.sale.setUser_id(UserID)
             self.sale.setOrder_source(supplier)
-            self.sale.setOrder_No(table.cell(row_index, self.TitleList.index(self.TitleTuple[0])).value)
-            self.sale.setTrans_list_date_YYYYMMDD_float(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
-            self.sale.setSale_date_YYYYMMDD_float(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
-            self.sale.setC_Product_id(' ')
-            self.sale.setProduct_name_NoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[6])).value)
-            self.sale.setQuantity(table.cell(row_index, self.TitleList.index(self.TitleTuple[7])).value)
-            self.sale.setPrice(None)
-            self.sale.setNameNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[3])).value)
+            self.sale.setOrder_No(row[1])
+            self.sale.setTrans_list_date_YYYYMMDD(row[21])
+            self.sale.setSale_date_YYYYMMDD(row[21])
+            self.sale.setC_Product_id(row[6])
+            self.sale.setProduct_name(row[7].decode('big5').encode('utf-8'))
+            self.sale.setQuantity(row[12])
+            self.sale.setPrice(row[13])
+            self.sale.setName(row[15].decode('big5').encode('utf-8'))
 
             self.customer.setGroup_id(GroupID)
-            self.customer.setNameNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[3])).value)
-            self.customer.setPhone(table.cell(row_index, self.TitleList.index(self.TitleTuple[5])).value[1:])
-            self.customer.setMobile(table.cell(row_index, self.TitleList.index(self.TitleTuple[5])).value)
+            self.customer.setName(row[15].decode('big5').encode('utf-8'))
+            self.customer.setPhone(row[16].lstrip("'"))
+            self.customer.setMobile(row[16].lstrip("'"))
             self.customer.setPost(None)
-            self.customer.setAddressNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[4])).value)
+            self.customer.setAddress(row[18].decode('big5').encode('utf-8'))
         except Exception as e :
             print e.message
             logging.error(e.message)
@@ -148,7 +145,7 @@ class Babyhome17_Data():
             raise
 
 if __name__ == '__main__':
-    babyhome =Babyhome17_Data()
+    umall = Umall32_Data1()
     groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
-    print babyhome.Babyhome_17_Data('babyhome',groupid,u'C:\\Users\\10509002\\Documents\\電商檔案\\網購平台訂單資訊\\BabyHome\\2016.11.18\\出貨單.xls','system')
+    print umall.Umall_32_Data1('umall',groupid, u'C:\\Users\\10509002\\Documents\\電商檔案\\網購平台訂單資訊\\東森\\2015.10.12\\zip-temp\\cso_export_1444632949448.csv','system')

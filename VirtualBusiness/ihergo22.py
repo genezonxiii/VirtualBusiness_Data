@@ -10,14 +10,15 @@ from VirtualBusiness import Sale,Customer,updateCustomer
 
 logger = logging.getLogger(__name__)
 
-class Babyhome17_Data():
+class Ihergo22_Data():
     Data = None
     mysqlconnect = None
     sale , customer = None, None
 
     # 預期要找出欄位的索引位置的欄位名稱
-    TitleTuple = (u'訂單編號', u'收件日', u'配達日', u'收件人', u'收件地址',
-                  u'收件人手機1', u'訂購品項', u'訂購份數', u'盒數')
+    TitleTuple = (u'訂單編號', u'收件人', u'收件人電話', u'收件人手機',u'郵遞區號',
+                  u'商品編號', u'商品名稱', u'單價(含稅)', u'數量',u'小計(含稅)',
+                  u'總金額(含稅)', u'到貨日期',u'收貨地址')
     TitleList = []
 
     def __init__(self):
@@ -25,11 +26,11 @@ class Babyhome17_Data():
         self.mysqlconnect = ToMysql()
         self.mysqlconnect.connect()
 
-    def Babyhome_17_Data(self, supplier, GroupID, path, UserID):
+    def Ihergo_22_Data(self, supplier, GroupID, path, UserID):
 
         try:
 
-            logger.debug("===Babyhome17_Data===")
+            logger.debug("===Ihergo22_Data===")
 
             success = False
             resultinfo = ""
@@ -42,7 +43,7 @@ class Babyhome17_Data():
 
             # 存放excel中全部的欄位名稱
             self.TitleList = []
-            for row_index in range(0, 1):
+            for row_index in range(3, 4):
                 for col_index in range(0, table.ncols):
                     self.TitleList.append(table.cell(row_index, col_index).value)
 
@@ -56,7 +57,7 @@ class Babyhome17_Data():
                     # print str(index) + TitleTuple[index]
                     # print (TitleList.index(TitleTuple[index]))
 
-            for row_index in range(1, table.nrows):
+            for row_index in range(4, table.nrows-1):
                 self.sale = Sale()
                 self.customer = Customer()
                 #Parser Data from xls
@@ -76,7 +77,7 @@ class Babyhome17_Data():
             logger.error(inst.args)
             resultinfo = inst.args
         finally:
-            logger.debug('===Babyhome17_Data finally===')
+            logger.debug('===Ihergo22_Data finally===')
             return json.dumps({"success": success, "info": resultinfo, "total": totalRows}, sort_keys=False)
 
     def parserData(self,table,row_index,GroupID,UserID,supplier):
@@ -84,21 +85,21 @@ class Babyhome17_Data():
             self.sale.setGroup_id(GroupID)
             self.sale.setUser_id(UserID)
             self.sale.setOrder_source(supplier)
-            self.sale.setOrder_No(table.cell(row_index, self.TitleList.index(self.TitleTuple[0])).value)
-            self.sale.setTrans_list_date_YYYYMMDD_float(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
-            self.sale.setSale_date_YYYYMMDD_float(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
-            self.sale.setC_Product_id(' ')
+            self.sale.setOrder_No_float(table.cell(row_index, self.TitleList.index(self.TitleTuple[0])).value)
+            self.sale.setTrans_list_date_YYYYMMDD_float(table.cell(row_index, self.TitleList.index(self.TitleTuple[11])).value)
+            self.sale.setSale_date_YYYYMMDD_float(table.cell(row_index, self.TitleList.index(self.TitleTuple[11])).value)
+            self.sale.setC_Product_id_float(table.cell(row_index, self.TitleList.index(self.TitleTuple[5])).value)
             self.sale.setProduct_name_NoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[6])).value)
-            self.sale.setQuantity(table.cell(row_index, self.TitleList.index(self.TitleTuple[7])).value)
-            self.sale.setPrice(None)
-            self.sale.setNameNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[3])).value)
+            self.sale.setQuantity(table.cell(row_index, self.TitleList.index(self.TitleTuple[8])).value)
+            self.sale.setPrice(str(table.cell(row_index, self.TitleList.index(self.TitleTuple[10])).value).split('.')[0])
+            self.sale.setNameNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
 
             self.customer.setGroup_id(GroupID)
-            self.customer.setNameNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[3])).value)
-            self.customer.setPhone(table.cell(row_index, self.TitleList.index(self.TitleTuple[5])).value[1:])
-            self.customer.setMobile(table.cell(row_index, self.TitleList.index(self.TitleTuple[5])).value)
-            self.customer.setPost(None)
-            self.customer.setAddressNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[4])).value)
+            self.customer.setNameNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
+            self.customer.setPhone(table.cell(row_index, self.TitleList.index(self.TitleTuple[2])).value)
+            self.customer.setMobile(table.cell(row_index, self.TitleList.index(self.TitleTuple[2])).value)
+            self.customer.setPost(table.cell(row_index, self.TitleList.index(self.TitleTuple[4])).value)
+            self.customer.setAddressNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[12])).value)
         except Exception as e :
             print e.message
             logging.error(e.message)
@@ -148,7 +149,7 @@ class Babyhome17_Data():
             raise
 
 if __name__ == '__main__':
-    babyhome =Babyhome17_Data()
+    ihergo =Ihergo22_Data()
     groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
-    print babyhome.Babyhome_17_Data('babyhome',groupid,u'C:\\Users\\10509002\\Documents\\電商檔案\\網購平台訂單資訊\\BabyHome\\2016.11.18\\出貨單.xls','system')
+    print ihergo.Ihergo_22_Data('ihergo',groupid,u'C:\\Users\\10509002\\Documents\\電商檔案\\網購平台訂單資訊\\愛合購\\原始檔\\2014\\2014.07.11\\ihergo_861683_1405058433202.xls','system')
