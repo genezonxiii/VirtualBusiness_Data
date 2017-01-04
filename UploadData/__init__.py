@@ -10,51 +10,31 @@ from VirtualBusiness.test import Test_Data
 from VirtualBusiness.ASAP import ASAP_Data
 from VirtualBusiness.Go_Happy import GoHappy_Data
 from VirtualBusiness.ibon import IBON_Data
-from VirtualBusiness.ibonc import IBON_DataC
 from VirtualBusiness.Life import Life_Data
 from VirtualBusiness.Line_mart import LineMart_Data
-from VirtualBusiness.Momo1 import Momo_Data
 from VirtualBusiness.Momo25 import Momo25_Data
-from VirtualBusiness.Momo26 import Momo26_Data
-from VirtualBusiness.Momo27 import Momo27_Data
-from VirtualBusiness.Momo28 import Momo28_Data
-from VirtualBusiness.Momo2 import Momo_Data2
-from VirtualBusiness.Momo3 import Momo3_Data
-from VirtualBusiness.Momo23 import Momo23_Data
-from VirtualBusiness.Momo24 import Momo24_Data
-from VirtualBusiness.Momo24_1 import Momo24_Data1
-from VirtualBusiness.momo_pdf import Momo_Pdf
-from VirtualBusiness.Myfone import Myfone_Data
+from VirtualBusiness.momo24_csv import Momo24csv_Data
+from VirtualBusiness.Myfone22_table import Myfone22table_Data
 from VirtualBusiness.payeasy import payeasy_Data
-from VirtualBusiness.payeasy2 import payeasy_Data2
 from VirtualBusiness.Pchome1 import PCHome_Data
-from VirtualBusiness.Pchome2 import PCHome2_Data
-from VirtualBusiness.Pchome3 import PCHome3_Data
-from VirtualBusiness.UDN15 import Udn15_Data
-from VirtualBusiness.UDN29 import Udn29_Data
 from VirtualBusiness.UDN30 import Udn30_Data
-from VirtualBusiness.UDN_2 import UDN_Data2
-from VirtualBusiness.UDN_3 import UDN_Data3
-from VirtualBusiness.Yahoo1 import Yahoo1_Data
-from VirtualBusiness.Yahoo2 import Yahoo2_Data
-from VirtualBusiness.Yahoo3 import Yahoo3_Data
+from VirtualBusiness.UDN30_csv import UDN30csv_Data
 from VirtualBusiness.Nine import Nine_Data
 from VirtualBusiness.Tree import TREE_Data
 from VirtualBusiness.MaJi import MAJI_Data
 from VirtualBusiness.gm import GM16_Data
+from VirtualBusiness.etmall29_csv import Etmall29csv_Data
 from VirtualBusiness.Book import Book_Data
-from VirtualBusiness.Umall import UMall_Data
-from VirtualBusiness.YahooS1 import Yahoo_DataS1
-from VirtualBusiness.YahooS2 import Yahoo_DataS2
-from VirtualBusiness.YahooS24 import YahooS24_Data
-from VirtualBusiness.YahooS29 import YahooS29_Data
-from VirtualBusiness.YahooS3 import Yahoo_DataS3
+from VirtualBusiness.Umall30_csv import Umall30csv_Data
 from VirtualBusiness.LoveBuy import LoveBuy_Data
 from VirtualBusiness.Lotte import Lotte_Data
 from VirtualBusiness.Yahoo_d import Yahoo_Data
-from VirtualBusiness.Yahoo_s import Yahoos_Data
-from VirtualBusiness.momo_p import Momo_Datap
-
+from VirtualBusiness.Yahoomall24_table import YahooS24table_Data
+from VirtualBusiness.Savesafe22_table import Savesafe22table_Data
+from VirtualBusiness.Babyhome17 import Babyhome17_Data
+from VirtualBusiness.Friday16 import Friday16_Data
+from VirtualBusiness.Momomall21 import Momomall21_Data
+from VirtualBusiness.ihergo22 import Ihergo22_Data
 
 logger = logging.getLogger(__name__)
 
@@ -65,9 +45,12 @@ class VirtualBusiness():
         pass
     def virtualbusiness(self,DataPath,userID):
         Supplier = str(DataPath).split('/')[3]
-        Firm = str(DataPath).split('/')[4]
+        Firm = str(DataPath).split('/')[5]
+        supplierType = str(DataPath).split('/')[4]
+
         print Firm
         print Supplier
+        print supplierType
 
         logging.basicConfig(filename='/data/VirtualBusiness_Data/pyupload.log', 
 			level=logging.DEBUG, 
@@ -82,179 +65,287 @@ class VirtualBusiness():
         if Supplier == 'test':
             FinalData=Test_Data()
             return FinalData.Test_Data(Supplier,Firm,os.path.join(DataPath),userID)
+
         elif Supplier == 'asap':
-            FinalData = ASAP_Data()
-            return FinalData.ASAP_Data('ASAP', Firm, os.path.join(DataPath), userID)
+            logger.debug('asap')
+            if supplierType == 'home-delivery':
+                logger.debug( 'home-delivery')
+                FinalData = ASAP_Data()
+                return FinalData.ASAP_Data('ASAP', Firm, os.path.join(DataPath),userID)
+            if supplierType == 'instore-pickup':
+                logger.debug('instore-pickup')
+                print 'instore-pickup'
+                FinalData = ASAP_Data()
+                return FinalData.ASAP_Data('ASAP', Firm, os.path.join(DataPath),userID)
+
         elif Supplier =='gohappy':
-            FinalData = GoHappy_Data()
-            return FinalData.GoHappy_Data('GoHappy', Firm, os.path.join(DataPath),userID)
+            logger.debug('gohappy')
+            if supplierType == 'home-delivery':
+                logger.debug( 'instore-pickup')
+                FinalData = GoHappy_Data()
+                return FinalData.GoHappy_Data('GoHappy', Firm, os.path.join(DataPath),userID)
+
         elif Supplier =='ibon':
-            FinalData = IBON_Data()
-            return FinalData.IBON_Data('ibon', Firm, os.path.join(DataPath),userID)
-        elif Supplier =='ibonc':
-            FinalData = IBON_DataC()
-            return FinalData.IBON_DataC('ibon', Firm, os.path.join(DataPath),userID)
+            logger.debug('ibon')
+            if supplierType == 'home-delivery':
+                logger.debug('home-delivery')
+                FinalData = IBON_Data()
+                return FinalData.IBON_Data('ibon', Firm, os.path.join(DataPath),userID)
+            if supplierType == 'instore-pickup':
+                logger.debug('instore-pickup')
+                print 'instore-pickup'
+                FinalData = IBON_Data()
+                return FinalData.IBON_Data('ibon', Firm, os.path.join(DataPath),userID)
+
         elif Supplier =='17life':
-            FinalData = Life_Data()
-            return FinalData.Life_Data('17Life', Firm, os.path.join(DataPath),userID)
-        elif Supplier =='Line_Mart':
-            FinalData = LineMart_Data()
-            return FinalData.LineMart_Data('Line_Mart', Firm, os.path.join(DataPath),userID)
+            logger.debug('17life')
+            if supplierType == 'home-delivery':
+                logger.debug( 'home-delivery')
+                FinalData = Life_Data()
+                return FinalData.Life_Data('17Life', Firm, os.path.join(DataPath),userID)
+            if supplierType == 'instore-pickup':
+                logger.debug('instore-pickup')
+                print 'instore-pickup'
+                FinalData = Life_Data()
+                return FinalData.Life_Data('17Life', Firm, os.path.join(DataPath),userID)
+
+        elif Supplier =='linemart':
+            logger.debug('Line Mart')
+            if supplierType == 'home-delivery':
+                logger.debug('home-delivery')
+                FinalData = LineMart_Data()
+                return FinalData.LineMart_Data('Line_Mart', Firm, os.path.join(DataPath),userID)
+            if supplierType == 'instore-pickup':
+                logger.debug('instore-pickup')
+                print 'instore-pickup'
+                FinalData = LineMart_Data()
+                return FinalData.LineMart_Data('Line_Mart', Firm, os.path.join(DataPath),userID)
+
         elif Supplier =='momo':
             logger.debug("momo")
-            if DataPath.split('.')[-1] != 'pdf':
-                data = xlrd.open_workbook(os.path.join(DataPath))
-                table = data.sheets()[0]
-                num_cols = table.ncols
-                if num_cols == 25:
-                    logger.debug("col 25")
+            if supplierType == 'home-delivery':
+                logger.debug( 'home-delivery')
+                if DataPath.split('.')[-1] == 'xls':
                     FinalData = Momo25_Data()
-                    return FinalData.Momo_25_Data('momo', Firm, os.path.join(DataPath), userID)
-                elif num_cols == 23:
-                    logger.debug("col 23")
-                    FinalData = Momo23_Data()
-                    return FinalData.Momo_23_Data('momo', Firm, os.path.join(DataPath), userID)
-                elif num_cols == 24:
-                    logger.debug("col 24")
-                    FinalData = Momo24_Data1()
-                    return FinalData.Momo_24_Data1('momo', Firm, os.path.join(DataPath), userID)
-                elif num_cols == 26:
-                    logger.debug("col 26")
-                    FinalData = Momo26_Data()
-                    return FinalData.Momo_26_Data('momo', Firm, os.path.join(DataPath), userID)
-                elif num_cols == 27:
-                    logger.debug("col 27")
-                    FinalData = Momo27_Data()
-                    return FinalData.Momo_27_Data('momo', Firm, os.path.join(DataPath), userID)
-                elif num_cols == 28:
-                    logger.debug("col 28")
-                    FinalData = Momo28_Data()
-                    return FinalData.Momo_28_Data('momo', Firm, os.path.join(DataPath), userID)
-                else:
-                    logger.debug("col else")
-                    FinalData = Momo3_Data()
-                    return FinalData.Momo3_Data('momo', Firm, os.path.join(DataPath), userID)
-            elif DataPath.split('.')[-1] == 'pdf':
-                logger.debug("pdf")
-                momo = Momo_Pdf()
-                return momo.getOrder(Firm, os.path.join(DataPath))
-            else:
-                FinalData = Momo_Datap()
-                return FinalData.Momo_Datap('momo', Firm, os.path.join(DataPath),userID)
+                    return FinalData.Momo_25_Data('momo', Firm, os.path.join(DataPath),userID)
+                if DataPath.split('.')[-1] != 'xls':
+                    momo = Momo24csv_Data()
+                    return  momo.Momo_24_Data('momo', Firm,os.path.join(DataPath),userID)
+
         elif Supplier =='myfone':
-            FinalData = Myfone_Data()
-            return FinalData.Myfone_Data('myfone', Firm, os.path.join(DataPath),userID)
+            logger.debug('myfone')
+            if supplierType == 'home-delivery':
+                logger.debug('home-delivery')
+                if DataPath.endswith(".html"):
+                    FinalData = Myfone22table_Data()
+                    return FinalData.Myfone_22_Data('myfone', Firm, os.path.join(DataPath), userID)
+                if DataPath.endswith(".csv"):
+                    FinalData = Momo24csv_Data()
+                    return  FinalData.Momo_24_Data('myfone', Firm, os.path.join(DataPath), userID)
+
         elif Supplier == 'payeasy':
-            if DataPath.split('.')[-1] != 'csv':
-                data = xlrd.open_workbook(os.path.join(DataPath))
-                table = data.sheets()[0]
-                num_cols = table.ncols
-                if num_cols == 22:
-                    FinalData = payeasy_Data()
-                    return FinalData.payeasy_Data('payeasy', Firm, os.path.join(DataPath), userID)
-            else:
-              FinalData = payeasy_Data2()
-              return FinalData.payeasy_Data2('payeasy', Firm, os.path.join(DataPath),userID)
+            logger.debug('payeasy')
+            if supplierType == 'home-delivery':
+                logger.debug( 'home-delivery')
+                FinalData = payeasy_Data()
+                return FinalData.payeasy_Data('payeasy', Firm, os.path.join(DataPath),userID)
+            if supplierType == 'instore-pickup':
+                logger.debug('instore-pickup')
+                print 'instore-pickup'
+                FinalData = payeasy_Data()
+                return FinalData.payeasy_Data('payeasy', Firm, os.path.join(DataPath),userID)
+
         elif Supplier == 'pchome':
-            FinalData = PCHome_Data()
-            return FinalData.PCHome_Data('Pchome', Firm, os.path.join(DataPath),userID)
-        elif Supplier == 'pchome1':
-            FinalData = PCHome2_Data()
-            return FinalData.PCHome2_Data('Pchome', Firm, os.path.join(DataPath),userID)
-        elif Supplier == 'pchome2':
-            FinalData = PCHome3_Data()
-            return FinalData.PCHome3_Data('Pchome',Firm, os.path.join(DataPath),userID)
+            logger.debug('pchome')
+            if supplierType == 'home-delivery':
+                logger.debug( 'home-delivery')
+                FinalData = PCHome_Data()
+                return FinalData.PCHome_Data('Pchome', Firm, os.path.join(DataPath),userID)
+            if supplierType == 'instore-pickup':
+                logger.debug('instore-pickup')
+                print 'instore-pickup'
+                FinalData = PCHome_Data()
+                return FinalData.PCHome_Data('Pchome', Firm, os.path.join(DataPath),userID)
+
         elif Supplier == 'udn':
-            if DataPath.split('.')[-1] == 'xls':
-                data = xlrd.open_workbook(os.path.join(DataPath))
-                table = data.sheets()[0]
-                num_cols = table.ncols
-                if num_cols == 13:
-                    FinalData = UDN_Data()
-                    return FinalData.UDN_Data('UDN', Firm, os.path.join(DataPath), userID)
-                elif num_cols == 15:
-                    FinalData = Udn15_Data()
-                    return FinalData.Udn_15_Data('udn', Firm, os.path.join(DataPath), userID)
-                elif num_cols == 27:
-                    FinalData = UDN_Data2()
-                    return FinalData.UDN_Data2('UDN', Firm, os.path.join(DataPath), userID)
-                elif num_cols == 28:
-                    FinalData = UDN_Data3()
-                    return FinalData.UDN_Data3('UDN', Firm, os.path.join(DataPath), userID)
-                elif num_cols == 29:
-                    FinalData = Udn29_Data()
-                    return FinalData.Udn_29_Data('udn', Firm, os.path.join(DataPath), userID)
-                elif num_cols == 30:
+            logger.debug('udn')
+            if supplierType == 'home-delivery':
+                logger.debug( 'home-delivery')
+                if DataPath.endswith(".xls"):
                     FinalData = Udn30_Data()
-                    return FinalData.Udn_30_Data('udn', Firm, os.path.join(DataPath), userID)
+                    return FinalData.Udn_30_Data('myfone', Firm, os.path.join(DataPath), userID)
+                if DataPath.endswith(".csv"):
+                    FinalData = UDN30csv_Data()
+                    return  FinalData.UDN_30_Data('myfone', Firm, os.path.join(DataPath), userID)
+
         elif Supplier == 'yahoo':
-            if DataPath.split('.')[-1] == 'xls':
-                data=xlrd.open_workbook(os.path.join(DataPath))
-                table=data.sheets()[0]
-                num_cols=table.ncols
-                if num_cols == 26:
-                    FinalData = Yahoo_Data()
-                    return FinalData.Yahood_Data('yahoo', Firm, os.path.join(DataPath),userID)
-                elif num_cols == 22:
-                    FinalData = Yahoos_Data()
-                    return FinalData.Yahoos_Data('yahoo', Firm, os.path.join(DataPath),userID)
-                else:
-                    FinalData = Yahoo3_Data()
-                    return FinalData.Yahoo3_Data('yahoo', Firm, os.path.join(DataPath),userID)
-            else:
-                with open(os.path.join(DataPath), 'rb') as f:
-                    reader = csv.reader(f, delimiter=',',skipinitialspace=True)
-                    first_row = next(reader)
-                    num_cols = len(first_row)
-                    if num_cols == 13 :
-                        FinalData = Yahoo1_Data()
-                        return FinalData.Yahoo1_Data('yahoo', Firm, os.path.join(DataPath),userID)
-                    else:
-                        FinalData = Yahoo2_Data()
-                        return FinalData.Yahoo2_Data('yahoo', Firm, os.path.join(DataPath),userID)
+            logger.debug('yahoo')
+            if supplierType == 'home-delivery':
+                logger.debug( 'home-delivery')
+                FinalData = Yahoo_Data()
+                return FinalData.Yahood_Data('yahoo', Firm, os.path.join(DataPath),userID)
+            if supplierType == 'instore-pickup':
+                logger.debug('instore-pickup')
+                print 'instore-pickup'
+                FinalData = Yahoo_Data()
+                return FinalData.Yahoos_Data('yahoo', Firm, os.path.join(DataPath),userID)
+
         elif Supplier == '91mai':
-            FinalData = Nine_Data()
-            return FinalData.Nine_Data(u'九易'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
+            logger.debug('91mai')
+            if supplierType == 'home-delivery':
+                logger.debug( 'home-delivery')
+                FinalData = Nine_Data()
+                return FinalData.Nine_Data(u'九易', Firm, os.path.join(DataPath),userID)
+            if supplierType == 'instore-pickup':
+                logger.debug('instore-pickup')
+                print 'instore-pickup'
+                FinalData = Nine_Data()
+                return FinalData.Nine_Data(u'九易'.encode('utf-8'), Firm, os.path.join(DataPath),userID)
+
         elif Supplier == 'treemall':
-            FinalData = TREE_Data()
-            return FinalData.TREE_Data(u'國泰Tree'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
+            logger.debug('treemall')
+            if supplierType == 'home-delivery':
+                logger.debug( 'home-delivery')
+                FinalData = TREE_Data()
+                return FinalData.TREE_Data(u'國泰Tree'.encode('utf-8'), Firm, os.path.join(DataPath),userID)
+            if supplierType == 'instore-pickup':
+                logger.debug('instore-pickup')
+                print 'instore-pickup'
+                FinalData = TREE_Data()
+                return FinalData.TREE_Data(u'國泰Tree'.encode('utf-8'), Firm, os.path.join(DataPath),userID)
+
         elif Supplier == 'gomaji':
-            FinalData = MAJI_Data()
-            return FinalData.MAJI_Data(u'夠麻吉'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
+            logger.debug('gomaji')
+            if supplierType == 'home-delivery':
+                logger.debug( 'home-delivery')
+                FinalData =MAJI_Data()
+                return FinalData.MAJI_Data(u'夠麻吉'.encode('utf-8'), Firm, os.path.join(DataPath),userID)
+            if supplierType == 'instore-pickup':
+                logger.debug('instore-pickup')
+                print 'instore-pickup'
+                FinalData = MAJI_Data()
+                return FinalData.MAJI_Data(u'夠麻吉'.encode('utf-8'), Firm, os.path.join(DataPath),userID)
+
         elif Supplier == 'etmall':
-            FinalData = GM16_Data()
-            return FinalData.GM_16_Data(u'東森購物'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
+            logger.debug('etmall')
+            if supplierType == 'home-delivery':
+                logger.debug( 'home-delivery')
+                if DataPath.endswith(".xls"):
+                    FinalData = GM16_Data()
+                    return FinalData.GM_16_Data(u'東森購物'.encode("utf-8"), Firm, os.path.join(DataPath), userID)
+                if DataPath.endswith(".csv"):
+                    FinalData = Etmall29csv_Data()
+                    return  FinalData.Etmall_29_Data(u'東森購物'.encode("utf-8"), Firm, os.path.join(DataPath), userID)
+
         elif Supplier == 'books':
-            FinalData = Book_Data()
-            return FinalData.Book_Data(u'博客來'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
+            logger.debug('books')
+            if supplierType == 'home-delivery':
+                logger.debug( 'home-delivery')
+                FinalData = Book_Data()
+                return FinalData.Book_Data(u'博客來'.encode('utf-8'), Firm, os.path.join(DataPath),userID)
+            if supplierType == 'instore-pickup':
+                logger.debug('instore-pickup')
+                print 'instore-pickup'
+                FinalData = Book_Data()
+                return FinalData.Book_Data(u'博客來'.encode('utf-8'), Firm, os.path.join(DataPath),userID)
+
         elif Supplier == 'umall':
-            FinalData = UMall_Data()
-            return FinalData.UMall_Data(u'森森購物'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
+            logger.debug('umall')
+            if supplierType == 'home-delivery':
+                logger.debug( 'home-delivery')
+                FinalData = Umall30csv_Data()
+                return FinalData.Umall_30_Data(u'森森購物'.encode('utf-8'), Firm, os.path.join(DataPath),userID)
+
         elif Supplier == 'yahoomall':
-            if DataPath.split('.')[-1] == 'xls' or DataPath.split('.')[-1] == 'xlsx':
-                data = xlrd.open_workbook(os.path.join(DataPath))
-                table = data.sheets()[0]
-                num_cols = table.ncols
-                if num_cols == 16:
-                    FinalData = Yahoo_DataS1()
-                    return FinalData.Yahoo_DataS1(u'超級商城'.encode("utf-8"), Firm, os.path.join(DataPath), userID)
-                elif num_cols == 24:
-                    FinalData = YahooS24_Data()
-                    return FinalData.YahooS_24_Data(u'超級商城'.encode("utf-8"), Firm, os.path.join(DataPath), userID)
-                elif num_cols == 29:
-                    FinalData = YahooS29_Data()
-                    return FinalData.YahooS_29_Data(u'超級商城'.encode("utf-8"), Firm, os.path.join(DataPath), userID)
+            logger.debug('yahoomall')
+            # if supplierType == 'home-delivery':
+            #     logger.debug( 'home-delivery')
+            #     FinalData = YahooS29_Data()
+            #     return FinalData.YahooS_29_Data(u'超級商城'.encode('utf-8'), Firm, os.path.join(DataPath),userID)
+            if supplierType == 'instore-pickup':
+                logger.debug('instore-pickup')
+                print 'instore-pickup'
+                FinalData = YahooS24table_Data()
+                return FinalData.YahooS_24_Data(u'超級商城'.encode('utf-8'), Firm, os.path.join(DataPath),userID)
+
         elif Supplier == 'amart':
-            FinalData = LoveBuy_Data()
-            return FinalData.LoveBuy_Data(u'愛買'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
+            logger.debug('amart')
+            if supplierType == 'home-delivery':
+                logger.debug( 'home-delivery')
+                FinalData = LoveBuy_Data()
+                return FinalData.LoveBuy_Data(u'愛買'.encode('utf-8'), Firm, os.path.join(DataPath),userID)
+            if supplierType == 'instore-pickup':
+                logger.debug('instore-pickup')
+                print 'instore-pickup'
+                FinalData = LoveBuy_Data()
+                return FinalData.LoveBuy_Data(u'愛買'.encode('utf-8'), Firm, os.path.join(DataPath),userID)
+
         elif Supplier == 'rakuten':
-            FinalData = Lotte_Data()
-            return FinalData.Lotte_Data(u'樂天'.encode("utf-8"), Firm, os.path.join(DataPath),userID)
+            logger.debug('rakuten')
+            if supplierType == 'home-delivery':
+                logger.debug( 'home-delivery')
+                FinalData = Lotte_Data()
+                return FinalData.Lotte_Data(u'樂天'.encode('utf-8'), Firm, os.path.join(DataPath),userID)
+            if supplierType == 'instore-pickup':
+                logger.debug('instore-pickup')
+                print 'instore-pickup'
+                FinalData = Lotte_Data()
+                return FinalData.Lotte_Data(u'樂天'.encode('utf-8'), Firm, os.path.join(DataPath),userID)
 
+        elif Supplier == 'savesafe':
+            logger.debug('savesafe')
+            if supplierType == 'home-delivery':
+                logger.debug( 'home-delivery')
+                FinalData = Savesafe22table_Data()
+                return FinalData.Savesafe_22_Data(u'大買家', Firm, os.path.join(DataPath),userID)
+            # if supplierType == 'instore-pickup':
+            #     logger.debug('instore-pickup')
+            #     print 'instore-pickup'
+            #     FinalData = Savesafe22table_Data()
+            #     return FinalData.Savesafe_22_Data(u'大買家', Firm, os.path.join(DataPath),userID)
 
+        elif Supplier == 'babyhome':
+            logger.debug('babyhome')
+            if supplierType == 'home-delivery':
+                logger.debug( 'home-delivery')
+                FinalData = Babyhome17_Data()
+                return FinalData.Babyhome_17_Data('babyhome', Firm, os.path.join(DataPath), userID)
+            # if supplierType == 'instore-pickup':
+            #     logger.debug('instore-pickup')
+            #     print 'instore-pickup'
+            #     FinalData = Babyhome17_Data()
+            #     return FinalData.Babyhome_17_Date('babyhome', Firm, os.path.join(DataPath),userID)
 
+        elif Supplier == 'friday':
+            logger.debug('friday')
+            if supplierType == 'home-delivery':
+                logger.debug( 'home-delivery')
+                FinalData = Friday16_Data()
+                return FinalData.Friday_16_Data('friday', Firm, os.path.join(DataPath), userID)
+            # if supplierType == 'instore-pickup':
+            #     logger.debug('instore-pickup')
+            #     print 'instore-pickup'
+            #     FinalData = Friday17_Data()
+            #     return FinalData.Friday_17_Data('friday', Firm, os.path.join(DataPath),userID)
 
+        elif Supplier == 'momomall':
+            logger.debug('momomall')
+            if supplierType == 'home-delivery':
+                logger.debug( 'home-delivery')
+                FinalData = Momomall21_Data()
+                return FinalData.Momomall_21_Data(u'摩天商城', Firm, os.path.join(DataPath), userID)
 
+        elif Supplier == 'ihergo':
+            logger.debug('ihergo')
+            if supplierType == 'home-delivery':
+                logger.debug( 'home-delivery')
+                FinalData = Ihergo22_Data()
+                return FinalData.Ihergo_22_Data('Ihergo', Firm, os.path.join(DataPath), userID)
+            # if supplierType == 'instore-pickup':
+            #     logger.debug('instore-pickup')
+            #     print 'instore-pickup'
+            #     FinalData = Friday17_Data()
+            #     return FinalData.Friday_17_Data('friday', Firm, os.path.join(DataPath),userID)
 
 
 if __name__ == '__main__':

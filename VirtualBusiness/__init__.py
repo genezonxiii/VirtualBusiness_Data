@@ -40,6 +40,18 @@ class convertType():
         except Exception as e:
             logging.ERROR(e.message)
 
+    def ToDateTimeYYYYMMDDHHMM(self,value):
+        try:
+            if value== None :
+                return None
+            elif value=='':
+                return None
+            else:
+                dateObj=datetime.datetime.strptime(str(value),'%Y/%m/%d/%H/%M')
+                return dateObj
+        except Exception as e:
+            logging.ERROR(e.message)
+
     def ToDateTimeYMD(self,value):
         try:
             if value== None :
@@ -48,6 +60,30 @@ class convertType():
                 return None
             else:
                 dateObj=datetime.datetime.strptime(str(value),'%Y-%m-%d')
+                return dateObj
+        except Exception as e:
+            logging.ERROR(e.message)
+
+    def ToDateTimeYMDHMS(self,value):
+        try:
+            if value== None :
+                return None
+            elif value=='':
+                return None
+            else:
+                dateObj=datetime.datetime.strptime(str(value),'%Y-%m-%d %H:%M:%S')
+                return dateObj
+        except Exception as e:
+            logging.ERROR(e.message)
+
+    def ToDateTimeYMDHMSF(self,value):
+        try:
+            if value== None :
+                return None
+            elif value=='':
+                return None
+            else:
+                dateObj=datetime.datetime.strptime(str(value),'%Y-%m-%d %H:%M:%S.%f')
                 return dateObj
         except Exception as e:
             logging.ERROR(e.message)
@@ -117,6 +153,17 @@ class convertType():
         except Exception as e:
             logging.ERROR(e.message)
 
+    def ToStringNoEncode(self,value):
+        try:
+            if value== None :
+                return None
+            elif value=='':
+                return ''
+            else:
+                return value
+        except Exception as e:
+            logging.ERROR(e.message)
+
     def ToBoolean(self,value):
         try:
             if value == True:
@@ -166,7 +213,10 @@ class Sale():
         self.p_product_id = self.convert.ToString(value.encode('utf-8'))
 
     def setProduct_name(self,value):
-        self.p_product_name = self.convert.ToString(value.encode("utf-8"))
+        self.p_product_name = self.convert.ToString(value.decode('utf-8').encode("utf-8"))
+
+    def setProduct_name_NoEncode(self,value):
+        self.p_product_name = self.convert.ToStringNoEncode(value)
 
     def setC_Product_id(self,value):
         self.p_c_product_id = self.convert.ToString(value.encode('utf-8'))
@@ -182,8 +232,16 @@ class Sale():
             self.p_name = None
             self.o_name = None
         else:
+            self.p_name = self.aes.AESencrypt('p@ssw0rd', value.decode('utf-8').encode('utf-8'), True)
+            self.o_name = self.convert.ToString(value.decode('utf-8').encode('utf-8'))
+
+    def setNameNoEncode(self,value):
+        if value == None or value == '' or value == 'NULL':
+            self.p_name = None
+            self.o_name = None
+        else:
             self.p_name = self.aes.AESencrypt('p@ssw0rd', value.encode('utf-8'), True)
-            self.o_name = self.convert.ToString(value.encode('utf-8'))
+            self.o_name = self.convert.ToStringNoEncode(value)
 
     def setInvoice(self,value):
         self.p_invoice = self.convert.ToString(value.encode('utf-8'))
@@ -206,8 +264,17 @@ class Sale():
     def setTrans_list_date_YYYYMMDD(self,value):
         self.p_trans_list_date = self.convert.ToDateTimeYYYYMMDD(value)
 
+    def setTrans_list_date_YYYYMMDDHHMM(self,value):
+        self.p_trans_list_date = self.convert.ToDateTimeYYYYMMDDHHMM(value)
+
     def setTrans_list_date_YMD(self,value):
         self.p_trans_list_date = self.convert.ToDateTimeYMD(value)
+
+    def setTrans_list_date_YMDHMS(self,value):
+        self.p_trans_list_date = self.convert.ToDateTimeYMDHMS(value)
+
+    def setTrans_list_date_YMDHMSF(self,value):
+        self.p_trans_list_date = self.convert.ToDateTimeYMDHMSF(value)
 
     def setTrans_list_date_YYYYMMDD_float(self,value):
         self.p_trans_list_date = self.convert.ToDateTimeYYYYMMDD_float(value)
@@ -224,8 +291,17 @@ class Sale():
     def setSale_date_YMD(self,value):
         self.p_sale_date = self.convert.ToDateTimeYMD(value)
 
+    def setSale_date_YMDHMS(self,value):
+        self.p_sale_date = self.convert.ToDateTimeYMDHMS(value)
+
+    def setSale_date_YMDHMSF(self,value):
+        self.p_sale_date = self.convert.ToDateTimeYMDHMSF(value)
+
     def setSale_date_YYYYMMDD(self,value):
         self.p_sale_date = self.convert.ToDateTimeYYYYMMDD(value)
+
+    def setSale_date_YYYYMMDDHHMM(self,value):
+        self.p_sale_date = self.convert.ToDateTimeYYYYMMDDHHMM(value)
 
     def setSale_date_YYYYMMDD_float(self,value):
         self.p_sale_date = self.convert.ToDateTimeYYYYMMDD_float(value)
@@ -336,16 +412,32 @@ class Customer():
             self.p_name = None
             self.o_name = None
         else:
+            self.p_name = self.aes.AESencrypt('p@ssw0rd', value.decode('utf-8').encode('utf-8'), True)
+            self.o_name = self.convert.ToString(value.decode('utf-8').encode('utf-8'))
+
+    def setNameNoEncode(self,value):
+        if value == None or value == '' or value == 'NULL':
+            self.p_name = None
+            self.o_name = None
+        else:
             self.p_name = self.aes.AESencrypt('p@ssw0rd', value.encode('utf-8'), True)
-            self.o_name = self.convert.ToString(value.encode('utf-8'))
+            self.o_name = self.convert.ToStringNoEncode(value)
 
     def setAddress(self,value):
         if value == None or value == '' or value == 'NULL':
             self.p_address = None
             self.o_address = None
         else:
+            self.p_address = self.aes.AESencrypt('p@ssw0rd', value.decode('utf-8').encode('utf-8'), True)
+            self.o_address = self.convert.ToString(value.decode('utf-8').encode('utf-8'))
+
+    def setAddressNoEncode(self,value):
+        if value == None or value == '' or value == 'NULL':
+            self.p_address = None
+            self.o_address = None
+        else:
             self.p_address = self.aes.AESencrypt('p@ssw0rd', value.encode('utf-8'), True)
-            self.o_address = self.convert.ToString(value.encode('utf-8'))
+            self.o_address = self.convert.ToStringNoEncode(value)
 
     def setPhone(self,value):
         if value == None or value == '' or value == 'NULL':

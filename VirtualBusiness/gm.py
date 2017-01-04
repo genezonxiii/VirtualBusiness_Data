@@ -88,17 +88,17 @@ class GM16_Data():
             self.sale.setTrans_list_date_YYYYMMDD_float(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
             self.sale.setSale_date_YYYYMMDD_float(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
             self.sale.setC_Product_id(' ')
-            self.sale.setProduct_name(table.cell(row_index, self.TitleList.index(self.TitleTuple[6])).value)
+            self.sale.setProduct_name_NoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[6])).value)
             self.sale.setQuantity(table.cell(row_index, self.TitleList.index(self.TitleTuple[7])).value)
             self.sale.setPrice(None)
-            self.sale.setName(table.cell(row_index, self.TitleList.index(self.TitleTuple[3])).value)
+            self.sale.setNameNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[3])).value)
 
             self.customer.setGroup_id(GroupID)
-            self.customer.setName(table.cell(row_index, self.TitleList.index(self.TitleTuple[3])).value)
+            self.customer.setNameNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[3])).value)
             self.customer.setPhone(table.cell(row_index, self.TitleList.index(self.TitleTuple[5])).value[1:])
             self.customer.setMobile(table.cell(row_index, self.TitleList.index(self.TitleTuple[5])).value)
             self.customer.setPost(None)
-            self.customer.setAddress(table.cell(row_index, self.TitleList.index(self.TitleTuple[4])).value)
+            self.customer.setAddressNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[4])).value)
         except Exception as e :
             print e.message
             logging.error(e.message)

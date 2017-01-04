@@ -90,46 +90,53 @@ class Udn30_Data():
             self.sale.setTrans_list_date_udn(table.cell(row_index, self.TitleList.index(self.TitleTuple[0])).value)
             self.sale.setSale_date_YYYYMMDD(table.cell(row_index, self.TitleList.index(self.TitleTuple[3])).value)
             self.sale.setC_Product_id(str(table.cell(row_index, self.TitleList.index(self.TitleTuple[9])).value).split('.')[0])
-            self.sale.setProduct_name(table.cell(row_index, self.TitleList.index(self.TitleTuple[10])).value)
+            self.sale.setProduct_name_NoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[10])).value)
             self.sale.setQuantity(table.cell(row_index, self.TitleList.index(self.TitleTuple[11])).value)
             self.sale.setPrice(table.cell(row_index, self.TitleList.index(self.TitleTuple[12])).value)
-            self.sale.setName(table.cell(row_index, self.TitleList.index(self.TitleTuple[4])).value)
+            self.sale.setNameNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[4])).value)
 
             self.customer.setGroup_id(GroupID)
-            self.customer.setName(table.cell(row_index, self.TitleList.index(self.TitleTuple[4])).value)
+            self.customer.setNameNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[4])).value)
             self.customer.setPhone(table.cell(row_index, self.TitleList.index(self.TitleTuple[5])).value)
             self.customer.setMobile(table.cell(row_index, self.TitleList.index(self.TitleTuple[6])).value)
             self.customer.setPost(table.cell(row_index, self.TitleList.index(self.TitleTuple[7])).value)
-            self.customer.setAddress(table.cell(row_index, self.TitleList.index(self.TitleTuple[8])).value)
+            self.customer.setAddressNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[8])).value)
         except Exception as e :
             print e.message
             logging.error(e.message)
 
     def updateDB_Customer(self):
         try:
+            logger.debug("updateDB_Customer - 1")
             # insert or update table tb_customer
             updatecustomer = updateCustomer()
             self.customer.setCustomer_id(
                 updatecustomer.checkCustomerid(self.customer.getGroup_id(), self.customer.get_Name(), self.customer.get_Address(), \
                                                self.customer.get_phone(), self.customer.get_Mobile(), self.customer.get_Email()))
 
+            logger.debug("updateDB_Customer - 2")
             if self.customer.getCustomer_id() == None:
                 self.customer.setCustomer_id(uuid.uuid4())
                 CustomereSQL = (
                     self.customer.getCustomer_id(), self.customer.getGroup_id(), self.customer.getName(), \
                     self.customer.getAddress(), self.customer.getphone(), self.customer.getMobile(), \
                     self.customer.getEmail(), self.customer.getPost(), self.customer.getClass(), self.customer.getMemo(), self.sale.getUser_id())
+                logger.debug(CustomereSQL)
                 self.mysqlconnect.cursor.callproc('sp_insert_customer_bysys', CustomereSQL)
             else:
                 CustomereSQL = (self.customer.getCustomer_id(), self.customer.getGroup_id(), self.customer.getName(), \
                                 self.customer.getAddress(), self.customer.getphone(), self.customer.getMobile(), \
                                 self.customer.getEmail(), self.customer.getPost(), self.customer.getClass(), \
                                 self.customer.getMemo(),self.sale.getUser_id())
+                logger.debug(CustomereSQL)
                 self.mysqlconnect.cursor.callproc('sp_update_customer', CustomereSQL)
 
+            logger.debug("updateDB_Customer - 3")
             CustomereSQL = (self.customer.getCustomer_id(), self.customer.getGroup_id(), self.customer.get_Name(), \
                             self.customer.get_Address(), self.customer.get_phone(), self.customer.get_Mobile(), \
                             self.customer.get_Email())
+            logger.debug("updateDB_Customer - 4")
+            logger.debug(CustomereSQL)
             updatecustomer.updataData(CustomereSQL)
         except Exception as e :
             print e.message
