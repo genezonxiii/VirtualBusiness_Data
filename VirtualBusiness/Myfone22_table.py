@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 #__author__ = '10408001'
-import time, BeautifulSoup
+import time
+import BeautifulSoup
 import logging
 from ToMysql import ToMysql
 import uuid
@@ -160,7 +161,7 @@ class Myfone22table_Data():
             raise
 
 if __name__ == '__main__':
-    myfone = Myfone22_Data()
+    myfone = Myfone22table_Data()
     # groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
     print myfone.Myfone_22_Data('Myfone',groupid, u'C:\\Users\\10509002\\Documents\\電商檔案\\網購平台訂單資訊\\Myfone\\2014\\2014.07.30\\deliveryA (1).xls','system')

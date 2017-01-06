@@ -24,6 +24,9 @@ class UDN30csv_Data():
     def readFile(self, _file):
         cr = open(_file, 'rb')
 
+        del self.header[:]
+        del self.content[:]
+
         i = 0
         for row in cr:
             str = row.split(',')
@@ -145,7 +148,7 @@ class UDN30csv_Data():
             raise
 
 if __name__ == '__main__':
-    udn = UDN30_Data()
+    udn = UDN30csv_Data()
     groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
     print udn.UDN_30_Data('udn',groupid, u'C:\\Users\\10509002\\Documents\\電商檔案\\網購平台訂單資訊\\UDN\\2015.10.05\\Order_20151005134725437.csv','system')

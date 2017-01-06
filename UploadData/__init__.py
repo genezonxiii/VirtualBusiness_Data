@@ -35,6 +35,8 @@ from VirtualBusiness.Babyhome17 import Babyhome17_Data
 from VirtualBusiness.Friday16 import Friday16_Data
 from VirtualBusiness.Momomall21 import Momomall21_Data
 from VirtualBusiness.ihergo22 import Ihergo22_Data
+from VirtualBusiness.Gohappy22_csv import Gohappy22csv_Data
+from VirtualBusiness.Myfone19_csv import Myfone19csv_Data
 
 logger = logging.getLogger(__name__)
 
@@ -81,9 +83,9 @@ class VirtualBusiness():
         elif Supplier =='gohappy':
             logger.debug('gohappy')
             if supplierType == 'home-delivery':
-                logger.debug( 'instore-pickup')
-                FinalData = GoHappy_Data()
-                return FinalData.GoHappy_Data('GoHappy', Firm, os.path.join(DataPath),userID)
+                logger.debug('home-delivery')
+                FinalData = Gohappy22csv_Data()
+                return FinalData.Gohappy_22_Data('Gohappy', Firm, os.path.join(DataPath),userID)
 
         elif Supplier =='ibon':
             logger.debug('ibon')
@@ -124,11 +126,11 @@ class VirtualBusiness():
         elif Supplier =='momo':
             logger.debug("momo")
             if supplierType == 'home-delivery':
-                logger.debug( 'home-delivery')
-                if DataPath.split('.')[-1] == 'xls':
+                logger.debug('home-delivery')
+                if DataPath.endswith(".xls"):
                     FinalData = Momo25_Data()
                     return FinalData.Momo_25_Data('momo', Firm, os.path.join(DataPath),userID)
-                if DataPath.split('.')[-1] != 'xls':
+                if DataPath.endswith(".csv"):
                     momo = Momo24csv_Data()
                     return  momo.Momo_24_Data('momo', Firm,os.path.join(DataPath),userID)
 
@@ -136,12 +138,13 @@ class VirtualBusiness():
             logger.debug('myfone')
             if supplierType == 'home-delivery':
                 logger.debug('home-delivery')
+                # DataPath = DataPath.split('.')[0] + '.html'
                 if DataPath.endswith(".html"):
                     FinalData = Myfone22table_Data()
                     return FinalData.Myfone_22_Data('myfone', Firm, os.path.join(DataPath), userID)
                 if DataPath.endswith(".csv"):
-                    FinalData = Momo24csv_Data()
-                    return  FinalData.Momo_24_Data('myfone', Firm, os.path.join(DataPath), userID)
+                    FinalData = Myfone19csv_Data()
+                    return  FinalData.Myfone_19_Data('myfone', Firm, os.path.join(DataPath), userID)
 
         elif Supplier == 'payeasy':
             logger.debug('payeasy')
@@ -170,13 +173,13 @@ class VirtualBusiness():
         elif Supplier == 'udn':
             logger.debug('udn')
             if supplierType == 'home-delivery':
-                logger.debug( 'home-delivery')
+                logger.debug('home-delivery')
                 if DataPath.endswith(".xls"):
                     FinalData = Udn30_Data()
-                    return FinalData.Udn_30_Data('myfone', Firm, os.path.join(DataPath), userID)
+                    return FinalData.Udn_30_Data('udn', Firm, os.path.join(DataPath), userID)
                 if DataPath.endswith(".csv"):
                     FinalData = UDN30csv_Data()
-                    return  FinalData.UDN_30_Data('myfone', Firm, os.path.join(DataPath), userID)
+                    return FinalData.UDN_30_Data('udn', Firm, os.path.join(DataPath), userID)
 
         elif Supplier == 'yahoo':
             logger.debug('yahoo')
@@ -230,12 +233,12 @@ class VirtualBusiness():
             logger.debug('etmall')
             if supplierType == 'home-delivery':
                 logger.debug( 'home-delivery')
-                if DataPath.endswith(".xls"):
-                    FinalData = GM16_Data()
-                    return FinalData.GM_16_Data(u'東森購物'.encode("utf-8"), Firm, os.path.join(DataPath), userID)
+                # if DataPath.endswith(".xls"):
+                #     FinalData = GM16_Data()
+                #     return FinalData.GM_16_Data(u'東森購物'.encode("utf-8"), Firm, os.path.join(DataPath), userID)
                 if DataPath.endswith(".csv"):
-                    FinalData = Etmall29csv_Data()
-                    return  FinalData.Etmall_29_Data(u'東森購物'.encode("utf-8"), Firm, os.path.join(DataPath), userID)
+                    FinalData = Umall30csv_Data()
+                    return  FinalData.Umall_30_Data(u'東森購物'.encode("utf-8"), Firm, os.path.join(DataPath), userID)
 
         elif Supplier == 'books':
             logger.debug('books')
@@ -253,8 +256,8 @@ class VirtualBusiness():
             logger.debug('umall')
             if supplierType == 'home-delivery':
                 logger.debug( 'home-delivery')
-                FinalData = Umall30csv_Data()
-                return FinalData.Umall_30_Data(u'森森購物'.encode('utf-8'), Firm, os.path.join(DataPath),userID)
+                FinalData = Etmall29csv_Data()
+                return FinalData.Etmall_29_Data(u'森森購物'.encode('utf-8'), Firm, os.path.join(DataPath),userID)
 
         elif Supplier == 'yahoomall':
             logger.debug('yahoomall')
@@ -292,10 +295,10 @@ class VirtualBusiness():
                 FinalData = Lotte_Data()
                 return FinalData.Lotte_Data(u'樂天'.encode('utf-8'), Firm, os.path.join(DataPath),userID)
 
-        elif Supplier == 'savesafe':
-            logger.debug('savesafe')
+        elif Supplier == 'bigbuy':
+            logger.debug('bigbuy')
             if supplierType == 'home-delivery':
-                logger.debug( 'home-delivery')
+                logger.debug('home-delivery')
                 FinalData = Savesafe22table_Data()
                 return FinalData.Savesafe_22_Data(u'大買家', Firm, os.path.join(DataPath),userID)
             # if supplierType == 'instore-pickup':
@@ -330,8 +333,8 @@ class VirtualBusiness():
 
         elif Supplier == 'momomall':
             logger.debug('momomall')
-            if supplierType == 'home-delivery':
-                logger.debug( 'home-delivery')
+            if supplierType == 'instore-pickup':
+                logger.debug('instore-pickup')
                 FinalData = Momomall21_Data()
                 return FinalData.Momomall_21_Data(u'摩天商城', Firm, os.path.join(DataPath), userID)
 

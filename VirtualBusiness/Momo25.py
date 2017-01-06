@@ -47,7 +47,7 @@ class Momo25_Data():
             data = xlrd.open_workbook(path)
             table = data.sheets()[0]
 
-            totalRows = table.nrows - 2
+            totalRows = table.nrows - 1
 
             # 存放excel中全部的欄位名稱
             self.TitleList = []
@@ -97,17 +97,17 @@ class Momo25_Data():
             self.sale.setTrans_list_date(table.cell(row_index, self.TitleList.index(self.TitleTuple[3])).value)
             self.sale.setSale_date(table.cell(row_index, self.TitleList.index(self.TitleTuple[3])).value)
             self.sale.setC_Product_id(str(table.cell(row_index, self.TitleList.index(self.TitleTuple[5])).value).split('.')[0])
-            self.sale.setProduct_name(table.cell(row_index, self.TitleList.index(self.TitleTuple[6])).value)
+            self.sale.setProduct_name_NoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[6])).value)
             self.sale.setQuantity(table.cell(row_index, self.TitleList.index(self.TitleTuple[7])).value)
             self.sale.setPrice(table.cell(row_index, self.TitleList.index(self.TitleTuple[8])).value)
-            self.sale.setName(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
+            self.sale.setNameNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
 
             self.customer.setGroup_id(GroupID)
-            self.customer.setName(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
+            self.customer.setNameNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
             self.customer.setPhone(None)
             self.customer.setMobile(None)
             self.customer.setPost(None)
-            self.customer.setAddress(table.cell(row_index, self.TitleList.index(self.TitleTuple[2])).value)
+            self.customer.setAddressNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[2])).value)
         except Exception as e :
             print e.message
             logging.error(e.message)

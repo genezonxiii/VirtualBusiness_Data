@@ -94,7 +94,7 @@ class Savesafe22table_Data():
             # print dict_list[row_index][u'訂單編號']
             self.sale.setGroup_id(GroupID)
             self.sale.setUser_id(UserID)
-            self.sale.setOrder_source(supplier)
+            self.sale.setOrder_sourceNodecode(supplier)
             self.sale.setOrder_No(dict_list[row_index][u'訂單編號'])
             self.sale.setTrans_list_date_YMDHMS(dict_list[row_index][u'接單時間'])
             self.sale.setSale_date_YMDHMS(dict_list[row_index][u'接單時間'])
@@ -160,9 +160,7 @@ class Savesafe22table_Data():
             raise
 
 if __name__ == '__main__':
-    savesafe = Savesafe22_Data()
+    savesafe = Savesafe22table_Data()
     # groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
     print savesafe.Savesafe_22_Data('Savesafe',groupid, u'C:\\Users\\10509002\\Documents\\電商檔案\\網購平台訂單資訊\\大買家\\2015.03.10\\20153101358368282.xls','system')
-    # print yahoo.checkCustomerid('data_09221433(test).xlsx','鍾妮',\
-    #                       '111台北市士林區中山北路六段77號','02-24609497','0966056315',None)

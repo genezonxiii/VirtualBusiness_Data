@@ -9,7 +9,7 @@ from VirtualBusiness import Sale,Customer,updateCustomer
 
 logger = logging.getLogger(__name__)
 
-class Myfone19_Data():
+class Myfone19csv_Data():
     Data = None
     mysqlconnect = None
     sale , customer = None, None
@@ -23,6 +23,9 @@ class Myfone19_Data():
 
     def readFile(self, _file):
         cr = open(_file, 'rb')
+
+        del self.header[:]
+        del self.content[:]
 
         i = 0
         for row in cr:
@@ -155,7 +158,7 @@ class Myfone19_Data():
             raise
 
 if __name__ == '__main__':
-    myfone = Myfone19_Data()
+    myfone = Myfone19csv_Data()
     groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
     print myfone.Myfone_19_Data('myfone',groupid, u'C:\\Users\\10509002\\Documents\\電商檔案\\網購平台訂單資訊\\Myfone\\2014\\2014.09.15\\deliveryA.csv','system')
