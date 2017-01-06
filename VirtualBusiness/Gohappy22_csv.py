@@ -9,7 +9,7 @@ from VirtualBusiness import Sale,Customer,updateCustomer
 
 logger = logging.getLogger(__name__)
 
-class Gohappy22_Data():
+class Gohappy22csv_Data():
     Data = None
     mysqlconnect = None
     sale , customer = None, None
@@ -23,6 +23,9 @@ class Gohappy22_Data():
 
     def readFile(self, _file):
         cr = open(_file, 'rb')
+
+        del self.header[:]
+        del self.content[:]
 
         i = 0
         for row in cr:
@@ -81,7 +84,7 @@ class Gohappy22_Data():
             self.sale.setGroup_id(GroupID)
             self.sale.setUser_id(UserID)
             self.sale.setOrder_source(supplier)
-            self.sale.setOrder_No(row[3])
+            self.sale.setOrder_No(row[3].lstrip("\\'"))
             self.sale.setTrans_list_date_YMDHMSF(row[0].lstrip("\\'"))
             self.sale.setSale_date_YMDHMSF(row[0].lstrip("\\'"))
             self.sale.setC_Product_id(row[21].lstrip("\\'").split('\n')[0])
@@ -145,7 +148,7 @@ class Gohappy22_Data():
             raise
 
 if __name__ == '__main__':
-    gohappy = Gohappy22_Data()
+    gohappy = Gohappy22csv_Data()
     groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
     print gohappy.Gohappy_22_Data('gohappy',groupid, u'C:\\Users\\10509002\\Documents\\電商檔案\\網購平台訂單資訊\\GoHappy\\2014.08.18\\OrderData_42242.csv','system')

@@ -24,6 +24,9 @@ class Momo24csv_Data():
     def readFile(self, _file):
         cr = open(_file, 'rb')
 
+        del self.header[:]
+        del self.content[:]
+
         i = 0
         for row in cr:
             str = row.split(',')
@@ -89,16 +92,33 @@ class Momo24csv_Data():
             row = self.content[row_index]
 
             print row[2]
+
+            logger.debug(row[2][0:14])
+            logger.debug(row[9])
+            logger.debug(row[12])
+            logger.debug(row[13])
+            logger.debug(row[16])
+            logger.debug(row[17])
             self.sale.setGroup_id(GroupID)
+            logger.debug("1")
             self.sale.setUser_id(UserID)
+            logger.debug("2")
             self.sale.setOrder_source(supplier)
+            logger.debug("3")
             self.sale.setOrder_No(row[2][0:14])
+            logger.debug("4")
             self.sale.setTrans_list_date(row[9])
+            logger.debug("5")
             self.sale.setSale_date(row[9])
+            logger.debug("6")
             self.sale.setC_Product_id(row[12])
-            self.sale.setProduct_name(row[13])
+            logger.debug("7")
+            self.sale.setProduct_name_NoEncode(row[13])
+            logger.debug("8")
             self.sale.setQuantity(row[16])
+            logger.debug("9")
             self.sale.setPrice(row[17])
+            logger.debug("10")
             self.sale.setName(row[3])
 
             self.customer.setGroup_id(GroupID)

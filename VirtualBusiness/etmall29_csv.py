@@ -24,6 +24,9 @@ class Etmall29csv_Data():
     def readFile(self, _file):
         cr = open(_file, 'rb')
 
+        del self.header[:]
+        del self.content[:]
+
         i = 0
         for row in cr:
             str = row.split(',')

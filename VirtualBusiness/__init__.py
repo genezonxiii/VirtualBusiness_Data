@@ -12,6 +12,8 @@ import logging
 import time
 import mysql.connector
 
+logger = logging.getLogger(__name__)
+
 class convertType():
     def __init__(self):
         pass
@@ -26,7 +28,7 @@ class convertType():
                 dateObj=datetime.datetime.strptime(str(value),'%Y/%m/%d %H:%M')
                 return dateObj
         except Exception as e:
-            logging.ERROR(e.message)
+            logger.ERROR(e.message)
 
     def ToDateTimeYYYYMMDD(self,value):
         try:
@@ -38,7 +40,7 @@ class convertType():
                 dateObj=datetime.datetime.strptime(str(value),'%Y/%m/%d')
                 return dateObj
         except Exception as e:
-            logging.ERROR(e.message)
+            logger.ERROR(e.message)
 
     def ToDateTimeYYYYMMDDHHMM(self,value):
         try:
@@ -50,7 +52,7 @@ class convertType():
                 dateObj=datetime.datetime.strptime(str(value),'%Y/%m/%d/%H/%M')
                 return dateObj
         except Exception as e:
-            logging.ERROR(e.message)
+            logger.ERROR(e.message)
 
     def ToDateTimeYMD(self,value):
         try:
@@ -62,7 +64,7 @@ class convertType():
                 dateObj=datetime.datetime.strptime(str(value),'%Y-%m-%d')
                 return dateObj
         except Exception as e:
-            logging.ERROR(e.message)
+            logger.ERROR(e.message)
 
     def ToDateTimeYMDHMS(self,value):
         try:
@@ -74,7 +76,7 @@ class convertType():
                 dateObj=datetime.datetime.strptime(str(value),'%Y-%m-%d %H:%M:%S')
                 return dateObj
         except Exception as e:
-            logging.ERROR(e.message)
+            logger.ERROR(e.message)
 
     def ToDateTimeYMDHMSF(self,value):
         try:
@@ -86,7 +88,7 @@ class convertType():
                 dateObj=datetime.datetime.strptime(str(value),'%Y-%m-%d %H:%M:%S.%f')
                 return dateObj
         except Exception as e:
-            logging.ERROR(e.message)
+            logger.ERROR(e.message)
 
     def ToDateTimeYYYYMMDD_float(self,value):
         try:
@@ -99,7 +101,7 @@ class convertType():
                 dateObj=datetime.datetime.strptime(ct.getdate(value),'%Y/%m/%d')
                 return dateObj
         except Exception as e:
-            logging.ERROR(e.message)
+            logger.ERROR(e.message)
 
     def ToDateTime2(self,value):
         try:
@@ -111,7 +113,7 @@ class convertType():
                 dateObj=datetime.datetime.strptime(str(value),'%Y/%m/%d/%H/%M')
                 return dateObj
         except Exception as e:
-            logging.ERROR(e.message)
+            logger.ERROR(e.message)
 
     def getdate(self, date):
         __s_date = datetime.date(1899, 12, 31).toordinal() - 1
@@ -129,7 +131,7 @@ class convertType():
             else:
                 return int(float(value))
         except Exception as e:
-            logging.ERROR(e.message)
+            logger.ERROR(e.message)
 
     def ToFloat(self,value):
         try:
@@ -140,7 +142,7 @@ class convertType():
             else:
                 return float(value.replace(",",""))
         except Exception as e:
-            logging.ERROR(e.message)
+            logger.ERROR(e.message)
 
     def ToString(self,value):
         try:
@@ -151,7 +153,7 @@ class convertType():
             else:
                 return str(value)
         except Exception as e:
-            logging.ERROR(e.message)
+            logger.ERROR(e.message)
 
     def ToStringNoEncode(self,value):
         try:
@@ -162,7 +164,7 @@ class convertType():
             else:
                 return value
         except Exception as e:
-            logging.ERROR(e.message)
+            logger.ERROR(e.message)
 
     def ToBoolean(self,value):
         try:
@@ -171,7 +173,7 @@ class convertType():
             else:
                 return False
         except Exception as e :
-            logging.ERROR(e.message)
+            logger.ERROR(e.message)
 
 class Sale():
     p_sale_id, p_seq_no, p_group_id, p_order_no = None, None, None, None
@@ -546,11 +548,11 @@ class updateCustomer():
             else:
                 return result[6]
         except mysql.connector.Error:
-            logging.error("Connection DB Error")
+            logger.error("Connection DB Error")
             raise
         except Exception as e:
             print e.message
-            logging.error(e.message)
+            logger.error(e.message)
             raise
 
     def updataData(self,parameter):
@@ -563,11 +565,11 @@ class updateCustomer():
             self.conn.commit()
             return True
         except mysql.connector.Error:
-            logging.error("Connection DB Error")
+            logger.error("Connection DB Error")
             raise
             return False
         except Exception as e:
-            logging.error(e.message)
+            logger.error(e.message)
             raise
             return False
 
@@ -577,10 +579,10 @@ class updateCustomer():
             self.conn = mysql.connector.connect(user=config.dbUser, password=config.dbPassword,
                                        host=config.dbHost, database=config.dbName)
         except mysql.connector.Error:
-            logging.error("Connection DB Error")
+            logger.error("Connection DB Error")
             raise
         except Exception as e:
-            logging.error(e.message)
+            logger.error(e.message)
             raise
 
     def __del__(self):
@@ -608,11 +610,11 @@ class ASAP():
     def ASAP_Data(self,supplier,GroupID,path,collection_order,collection_client):
         logging.basicConfig(filename='pyupload.log', level=logging.DEBUG, format='%(asctime)s %(message)s', datefmt='%Y/%m/%d %I:%M:%S %p')
         logging.Formatter.converter = time.gmtime
-        logging.info('===ASAP===')
-        logging.debug('supplier:' + supplier)
-        logging.debug('GroupID:' + GroupID)
-        logging.debug('path:' + path)
-        logging.debug('UserID:' + UserID)
+        logger.info('===ASAP===')
+        logger.debug('supplier:' + supplier)
+        logger.debug('GroupID:' + GroupID)
+        logger.debug('path:' + path)
+        logger.debug('UserID:' + UserID)
         
         #mysql connector object
         mysqlconnect=ToMysql()
