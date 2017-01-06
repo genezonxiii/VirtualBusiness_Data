@@ -1,10 +1,43 @@
 # -*-  coding: utf-8  -*-
 # __author__ = '10408001'
+from GroupBuy.buy123 import buy123
+from GroupBuy.chinatime import chinatime
+from GroupBuy.crazymike import Crazymike
+from GroupBuy.food123 import food123
+from GroupBuy.gomaji import gomaji
+from GroupBuy.HerBuy import HerBuy
+from GroupBuy.Ibon import Ibon
+from GroupBuy.Life17 import Life17
+from GroupBuy.mybenefit import Mybenefit
+from GroupBuy.pcone import Pcone
+from GroupBuy.popular import popular
+from GroupBuy.sale123 import Sale123
+import os
+
+class FileProcess():
+    def __init__(self):
+        pass
+
+    def transferFile(self,UserID, DataPath, LogisticsID=2, ProductCode=None ):
+        GroupID = DataPath.split('/')[4]                        #group id
+        Platform = DataPath.split("/")[2]                      #平台
+        OutputFile = os.path.basename(DataPath).split(".")[0]  #輸出檔案名稱
+        outPutPath = ExcelTemplate()
+        OutputFile = outPutPath.T_Cat_OutputFilePath + OutputFile +".xls" #輸出檔案路徑及名稱
+
+        GB = None
+        if Platform == 'bigbuy' :
+            GB = buy123()
+        elif Platform == 'UUU' :
+            GB = chinatime()
+
+        return GB.parserFile(GroupID,UserID,LogisticsID,ProductCode,DataPath,OutputFile)
 
 class ExcelTemplate():
-    T_Cat_OutputFile = None
+    T_Cat_OutputFilePath, T_Cat_TemplateFile = None, None
     def __init__(self):
-        self.T_Cat_OutputFile = u'C:/Users/10408001/Desktop/出貨單.xls'
+        self.T_Cat_TemplateFile = '/data/vbGroupbuy/TCat.xls'
+        self.T_Cat_OutputFilePath = '/data/vbGroupbuy_output/'
 
         # LogisticsID  :  1	中華郵政
         # LogisticsID  :  2	黑貓宅急便

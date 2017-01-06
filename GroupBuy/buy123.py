@@ -1,6 +1,6 @@
 # -*-  coding: utf-8  -*-
 # __author__ = '10408001'
-import datetime,time
+import datetime,time,json
 import logging
 import xlrd,xlwt
 from ToMysql import ToMysql
@@ -8,6 +8,7 @@ import uuid
 from VirtualBusiness import Customer,updateCustomer
 from xlutils.copy import copy
 from GroupBuy import ExcelTemplate
+
 #生活市集
 class buy123():
     mysqlconnect = None
@@ -93,6 +94,8 @@ class buy123():
             data = xlrd.open_workbook(inputFile)
             table = data.sheets()[0]
             result = []
+            success = False
+            resultinfo = ""
             # 讀 excel 檔
             for row_index in range(1, table.nrows):
                 tmp=[]
@@ -103,12 +106,16 @@ class buy123():
                 tmp.append(table.cell(row_index, 5).value)                                      #檔次名稱
                 tmp.append(self.ReplaceField(table.cell(row_index, 6).value,u'盒'))              #訂購方案
                 tmp.append(table.cell(row_index, 7).value)                                      #組數
-                tmp.append('')                                                                   #訂購人
+                tmp.append(self.ReplaceField(table.cell(row_index, 8).value,'/'))                #訂購人                                                   #訂購人
                 result.append(tmp)
             self.writeXls(LogisticsID,result,outputFile)
+            success = True
         except Exception as e :
             logging.error(e.message)
+            resultinfo = e.message
             return 'failure'
+        finally:
+            return json.dumps({"success": success, "info": resultinfo,"download": outputFile}, sort_keys=False)
 
     def writeXls(self,LogisticsID,data,outputFile):
         if LogisticsID == 2 :
@@ -118,7 +125,7 @@ class buy123():
     def writeT_catXls(self,data,outputFile):
         try:
             Template = ExcelTemplate()
-            fileTemplate =  Template.T_Cat_OutputFile
+            fileTemplate =  Template.T_Cat_TemplateFile
             rb = xlrd.open_workbook(fileTemplate)
             file = copy(rb)
             table = file.get_sheet(0)
@@ -140,9 +147,9 @@ class buy123():
                 table.write(i, 14, int(row[5]))      # 盒數
                 table.write(i, 15, int(row[5])*int(row[6]))  # 總數量
                 self.customer.setGroup_id(self.GroupID)
-                self.customer.setName(row[1])
+                self.customer.setNameNoEncode(row[1])
                 self.customer.setMobile(row[3])
-                self.customer.setAddress(row[2])
+                self.customer.setAddressNoEncode(row[2])
                 # insert or update table tb_customer
                 self.updateDB_Customer()
                 i += 1
@@ -186,6 +193,6 @@ class buy123():
 
 if __name__ == '__main__':
     buy = buy123()
-    buy.parserFile('robintest', 'test', 2, 'MS',
+    print buy.parserFile('robintest', 'test', 2, 'MS',
                   inputFile=u'C:/Users/10408001/Desktop/團購平台訂單資訊/生活市集/原始檔/2016.12.05/2016-12-05_生活市集_BY123375489F_悠活原力有限公司_(0822食品高毛利)欣敏立清益生菌-蔓越莓多多(32點5%策略性商品)_未出貨.xls', \
                   outputFile=u'C:/Users/10408001/Desktop/20161228-1出貨單.xls')

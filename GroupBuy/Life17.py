@@ -3,6 +3,7 @@
 
 import logging
 import xlrd
+import json
 from GroupBuy.buy123 import buy123
 #17P團購
 class Life17(buy123):
@@ -17,6 +18,8 @@ class Life17(buy123):
             data = xlrd.open_workbook(inputFile)
             table = data.sheets()[0]
             result = []
+            success = False
+            resultinfo = ""
             # 讀 excel 檔
             for row_index in range(1, table.nrows):
                 tmp = []
@@ -31,10 +34,14 @@ class Life17(buy123):
                 tmp.append(table.cell(row_index, 9).value)  # 訂單份數
                 tmp.append("")  # 訂購人
                 result.append(tmp)
-            # self.writeXls(LogisticsID, result, outputFile)
+            self.writeXls(LogisticsID, result, outputFile)
+            success = True
         except Exception as e:
             logging.error(e.message)
+            resultinfo = e.message
             return 'failure'
+        finally:
+            return json.dumps({"success": success, "info": resultinfo,"download": outputFile}, sort_keys=False)
 
 if __name__ == '__main__':
     buy = Life17()

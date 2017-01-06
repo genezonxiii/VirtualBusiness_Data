@@ -3,6 +3,7 @@
 
 import logging
 import xlrd
+import json
 from GroupBuy.buy123 import buy123
 #中時團購
 class chinatime(buy123):
@@ -28,6 +29,8 @@ class chinatime(buy123):
             data = xlrd.open_workbook(inputFile)
             table = data.sheets()[0]
             result = []
+            success = False
+            resultinfo = ""
             orderNo,Name,Address,CellPhone="","","",""
             # 讀 excel 檔
             for row_index in range(1, table.nrows):
@@ -52,9 +55,13 @@ class chinatime(buy123):
                 result.append(tmp)
 
             self.writeXls(LogisticsID, result, outputFile)
+            success = True
         except Exception as e:
             logging.error(e.message)
+            resultinfo = e.message
             return 'failure'
+        finally:
+            return json.dumps({"success": success, "info": resultinfo,"download": outputFile}, sort_keys=False)
 
 if __name__ == '__main__':
     buy = chinatime()

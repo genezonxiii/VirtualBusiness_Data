@@ -1,7 +1,7 @@
 # -*-  coding: utf-8  -*-
 # __author__ = '10408001'
-
 import logging
+import json
 from GroupBuy.buy123 import buy123
 from bs4 import BeautifulSoup
 # HerBuy
@@ -13,6 +13,8 @@ class HerBuy(buy123):
             file = open(inputFile).read()
             soup = BeautifulSoup(file, 'xml')
             workbook = []
+            success = False
+            resultinfo = ""
             for sheet in soup.findAll('Worksheet'):
                 sheet_as_list = []
                 for row in sheet.findAll('Row'):
@@ -44,9 +46,13 @@ class HerBuy(buy123):
                         else:
                             break
             self.writeXls(LogisticsID, result, outputFile)
+            success = True
         except Exception as e:
             logging.error(e.message)
+            resultinfo = e.message
             return 'failure'
+        finally:
+            return json.dumps({"success": success, "info": resultinfo,"download": outputFile}, sort_keys=False)
 
 if __name__ == '__main__':
     buy = HerBuy()

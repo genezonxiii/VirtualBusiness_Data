@@ -2,6 +2,7 @@
 # __author__ = '10408001'
 import logging
 import codecs
+import json
 from GroupBuy.buy123 import buy123
 # 小P團購
 class popular(buy123):
@@ -11,6 +12,8 @@ class popular(buy123):
         try:
             data = codecs.open(inputFile,'rb',encoding='big5')
             tmpdata,result = [],[]
+            success = False
+            resultinfo = ""
             # 讀 csv 檔
             i = 0
             for row in data:
@@ -42,9 +45,13 @@ class popular(buy123):
                 result.append(tmp)
 
             self.writeXls(LogisticsID, result, outputFile)
+            success = True
         except Exception as e:
             logging.error(e.message)
+            resultinfo = e.message
             return 'failure'
+        finally:
+            return json.dumps({"success": success, "info": resultinfo,"download": outputFile}, sort_keys=False)
 
 
 if __name__ == '__main__':
