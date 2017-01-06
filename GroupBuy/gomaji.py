@@ -1,18 +1,12 @@
 # -*-  coding: utf-8  -*-
 # __author__ = '10408001'
-import datetime,time
 import logging
-import xlrd,xlwt
-from ToMysql import ToMysql
-import uuid
-from VirtualBusiness import Customer,updateCustomer
-from xlutils.copy import copy
-from GroupBuy import ExcelTemplate
+import xlrd
 from GroupBuy.buy123 import buy123
-
+# gomaji
 class gomaji(buy123):
     # 解析原始檔
-    def parserXls(self, GroupID, UserID, LogisticsID=2, ProductCode=None, inputFile=None, outputFile=None):
+    def parserFile(self, GroupID, UserID, LogisticsID=2, ProductCode=None, inputFile=None, outputFile=None):
         self.init_log('Gomaji_Data', GroupID, UserID, ProductCode, inputFile)
         try:
             data = xlrd.open_workbook(inputFile)
@@ -38,6 +32,6 @@ class gomaji(buy123):
 
 if __name__ == '__main__':
     buy = gomaji()
-    buy.parserXls('robintest', 'test', 2 , 'MS',
+    buy.parserFile('robintest', 'test', 2 , 'MS',
                   inputFile=u'C:/Users/10408001/Desktop/團購平台訂單資訊/gomaji/原始檔/2016.12.27/142642_204347_s.xls', \
                   outputFile=u'C:/Users/10408001/Desktop/20161229-gomaji出貨單.xls')

@@ -8,7 +8,7 @@ import uuid
 from VirtualBusiness import Customer,updateCustomer
 from xlutils.copy import copy
 from GroupBuy import ExcelTemplate
-
+#生活市集
 class buy123():
     mysqlconnect = None
     customer = None
@@ -87,7 +87,7 @@ class buy123():
         self.ProductCode = ProductCode
 
     #解析原始檔
-    def parserXls(self, GroupID, UserID, LogisticsID=2, ProductCode=None, inputFile=None, outputFile=None):
+    def parserFile(self, GroupID, UserID, LogisticsID=2, ProductCode=None, inputFile=None, outputFile=None):
         self.init_log('Buy123_Data',GroupID, UserID , ProductCode , inputFile)
         try:
             data = xlrd.open_workbook(inputFile)
@@ -186,6 +186,6 @@ class buy123():
 
 if __name__ == '__main__':
     buy = buy123()
-    buy.parserXls('robintest', 'test', 2, 'MS',
+    buy.parserFile('robintest', 'test', 2, 'MS',
                   inputFile=u'C:/Users/10408001/Desktop/團購平台訂單資訊/生活市集/原始檔/2016.12.05/2016-12-05_生活市集_BY123375489F_悠活原力有限公司_(0822食品高毛利)欣敏立清益生菌-蔓越莓多多(32點5%策略性商品)_未出貨.xls', \
                   outputFile=u'C:/Users/10408001/Desktop/20161228-1出貨單.xls')
