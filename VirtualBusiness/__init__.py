@@ -318,6 +318,9 @@ class Sale():
         # self.p_order_source = self.convert.ToString(value.encode('utf-8'))
         self.p_order_source = self.convert.ToString(value.decode('utf-8').encode('utf-8'))
 
+    def setOrder_sourceNodecode(self,value):
+        self.p_order_source = self.convert.ToString(value.encode('utf-8'))
+
 
     def setIsreturn(self,value):
         self.p_isreturn = self.convert.ToBoolean(value)

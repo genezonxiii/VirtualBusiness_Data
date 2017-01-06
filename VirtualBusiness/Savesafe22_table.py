@@ -94,7 +94,7 @@ class Savesafe22table_Data():
             # print dict_list[row_index][u'訂單編號']
             self.sale.setGroup_id(GroupID)
             self.sale.setUser_id(UserID)
-            self.sale.setOrder_source(supplier)
+            self.sale.setOrder_sourceNodecode(supplier)
             self.sale.setOrder_No(dict_list[row_index][u'訂單編號'])
             self.sale.setTrans_list_date_YMDHMS(dict_list[row_index][u'接單時間'])
             self.sale.setSale_date_YMDHMS(dict_list[row_index][u'接單時間'])

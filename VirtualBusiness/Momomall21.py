@@ -83,7 +83,7 @@ class Momomall21_Data():
         try:
             self.sale.setGroup_id(GroupID)
             self.sale.setUser_id(UserID)
-            self.sale.setOrder_source(supplier)
+            self.sale.setOrder_sourceNodecode(supplier)
             self.sale.setOrder_No(table.cell(row_index, self.TitleList.index(self.TitleTuple[0])).value)
             self.sale.setTrans_list_date(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
             self.sale.setSale_date(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
