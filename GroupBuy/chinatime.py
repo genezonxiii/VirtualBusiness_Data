@@ -25,11 +25,11 @@ class chinatime(buy123):
     # 解析原始檔
     def parserFile(self, GroupID, UserID, LogisticsID=2, ProductCode=None, inputFile=None, outputFile=None):
         self.init_log('chinatime_Data', GroupID, UserID, ProductCode, inputFile)
+        success = False
         try:
             data = xlrd.open_workbook(inputFile)
             table = data.sheets()[0]
             result = []
-            success = False
             resultinfo = ""
             orderNo,Name,Address,CellPhone="","","",""
             # 讀 excel 檔

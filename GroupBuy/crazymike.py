@@ -14,10 +14,10 @@ class Crazymike(buy123):
     # 解析原始檔
     def parserFile(self, GroupID, UserID, LogisticsID=2, ProductCode=None, inputFile=None, outputFile=None):
         self.init_log('Popular_Data', GroupID, UserID, ProductCode, inputFile)
+        success = False
         try:
             data = codecs.open(inputFile,'rb',encoding='big5')
             tmpdata,result = [],[]
-            success = False
             resultinfo = ""
             # 讀 csv 檔
             i = 0

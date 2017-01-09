@@ -7,7 +7,13 @@ from ToMysql import ToMysql
 import uuid
 from VirtualBusiness import Customer,updateCustomer
 from xlutils.copy import copy
-from GroupBuy import ExcelTemplate
+# from GroupBuy import ExcelTemplate
+#FilePath
+class ExcelTemplate():
+    T_Cat_OutputFilePath, T_Cat_TemplateFile = None, None
+    def __init__(self):
+        self.T_Cat_TemplateFile = '/data/vbGroupbuy/Logistics_Tcat.xls'
+        self.T_Cat_OutputFilePath = '/data/vbGroupbuy_output/'
 
 #生活市集
 class buy123():
@@ -90,11 +96,11 @@ class buy123():
     #解析原始檔
     def parserFile(self, GroupID, UserID, LogisticsID=2, ProductCode=None, inputFile=None, outputFile=None):
         self.init_log('Buy123_Data',GroupID, UserID , ProductCode , inputFile)
+        success = False
         try:
             data = xlrd.open_workbook(inputFile)
             table = data.sheets()[0]
             result = []
-            success = False
             resultinfo = ""
             # 讀 excel 檔
             for row_index in range(1, table.nrows):

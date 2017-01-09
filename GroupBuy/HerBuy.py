@@ -4,16 +4,20 @@ import logging
 import json
 from GroupBuy.buy123 import buy123
 from bs4 import BeautifulSoup
+
 # HerBuy
 class HerBuy(buy123):
     # 解析原始檔
     def parserFile(self, GroupID, UserID, LogisticsID=2, ProductCode=None, inputFile=None, outputFile=None):
         self.init_log('HerBuy_Data', GroupID, UserID, ProductCode, inputFile)
+        print inputFile
+        success = False
         try:
+            print 'test'
             file = open(inputFile).read()
+            print 'stop'
             soup = BeautifulSoup(file, 'xml')
             workbook = []
-            success = False
             resultinfo = ""
             for sheet in soup.findAll('Worksheet'):
                 sheet_as_list = []
@@ -26,7 +30,7 @@ class HerBuy(buy123):
                             pass
                     sheet_as_list.append(row_as_list)
                 workbook.append(sheet_as_list)
-
+            print  "testt"
             result = []
             for row in workbook:
                 for i in range(len(row)):
@@ -46,6 +50,7 @@ class HerBuy(buy123):
                         else:
                             break
             self.writeXls(LogisticsID, result, outputFile)
+            print outputFile
             success = True
         except Exception as e:
             logging.error(e.message)

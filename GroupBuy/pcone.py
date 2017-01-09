@@ -11,11 +11,11 @@ class Pcone(buy123):
     # 解析原始檔
     def parserFile(self, GroupID, UserID, LogisticsID=2, ProductCode=None, inputFile=None, outputFile=None):
         self.init_log('Sale123_Data', GroupID, UserID, ProductCode, inputFile)
+        success = False
         try:
             data = xlrd.open_workbook(inputFile)
             table = data.sheets()[0]
             result = []
-            success = False
             resultinfo = ""
             # 讀 excel 檔
             for row_index in range(1, table.nrows):

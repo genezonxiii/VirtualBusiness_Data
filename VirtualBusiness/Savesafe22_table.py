@@ -104,7 +104,7 @@ class Savesafe22table_Data():
             self.sale.setQuantity(dict_list[row_index][u'商品數量'])
             self.sale.setPrice(dict_list[row_index][u'供貨成本(未稅)'])
             self.sale.setNameNoEncode(dict_list[row_index][u'收貨人'])
-
+            logger.debug('收貨人')
             self.customer.setGroup_id(GroupID)
             self.customer.setNameNoEncode(dict_list[row_index][u'收貨人'])
             self.customer.setPhone(dict_list[row_index][u'聯絡電話'])
@@ -163,4 +163,4 @@ if __name__ == '__main__':
     savesafe = Savesafe22table_Data()
     # groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
-    print savesafe.Savesafe_22_Data('Savesafe',groupid, u'C:\\Users\\10509002\\Documents\\電商檔案\\網購平台訂單資訊\\大買家\\2015.03.10\\20153101358368282.xls','system')
+    print savesafe.Savesafe_22_Data('Savesafe',groupid, '/Users/csi/Documents/6f27e56d-019e-4fa4-8a56-f0585572fb14.html','system')

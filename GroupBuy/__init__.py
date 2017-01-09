@@ -1,6 +1,7 @@
 # -*-  coding: utf-8  -*-
 # __author__ = '10408001'
-from GroupBuy.buy123 import buy123
+import logging
+from GroupBuy.buy123 import buy123,ExcelTemplate
 from GroupBuy.chinatime import chinatime
 from GroupBuy.crazymike import Crazymike
 from GroupBuy.food123 import food123
@@ -14,30 +15,69 @@ from GroupBuy.popular import popular
 from GroupBuy.sale123 import Sale123
 import os
 
+logger = logging.getLogger(__name__)
+
 class FileProcess():
     def __init__(self):
         pass
 
-    def transferFile(self,UserID, DataPath, LogisticsID=2, ProductCode=None ):
-        GroupID = DataPath.split('/')[4]                        #group id
-        Platform = DataPath.split("/")[2]                      #平台
+    def transferFile(self, DataPath, UserID , LogisticsID=2, ProductCode=None ):
+        GroupID = DataPath.split('/')[5]                        #group id
+        Platform = DataPath.split("/")[3]                      #平台
         OutputFile = os.path.basename(DataPath).split(".")[0]  #輸出檔案名稱
         outPutPath = ExcelTemplate()
         OutputFile = outPutPath.T_Cat_OutputFilePath + OutputFile +".xls" #輸出檔案路徑及名稱
-
+        print "1"
+        print Platform
         GB = None
-        if Platform == 'bigbuy' :
+        if Platform == 'lifemarket' :
+            logger.debug("生活市集")
             GB = buy123()
-        elif Platform == 'UUU' :
+        elif Platform == 'chinatime' :
+            logger.debug("中時團購")
             GB = chinatime()
+        elif Platform == 'pcone' :
+            logger.debug("松果購物")
+            GB = Pcone()
+        elif Platform == 'popular' :
+            logger.debug("小P大團購")
+            GB = popular()
+        elif Platform == 'sister' :
+            logger.debug("姊妹購物網")
+            GB = Sale123()
+        elif Platform == 'healthmike' :
+            logger.debug("健康麥克")
+            GB = Crazymike()
+        elif Platform == 'delicious' :
+            logger.debug("好吃宅配網")
+            GB = food123()
+        elif Platform == 'chinaugo' :
+            logger.debug("中華優購")
+            GB = Mybenefit()
+        elif Platform == 'ibon' :
+            logger.debug("Ibon")
+            GB = Ibon()
+        elif Platform == '17life' :
+            logger.debug("17life")
+            GB = Life17()
+        elif Platform == 'herbuy' :
+            logger.debug("好買寶貝")
+            GB = HerBuy()
+        elif Platform == 'gomaji' :
+            logger.debug("夠麻吉")
+            GB = gomaji()
+        # elif Platform == 'shopline' :
+        #     logger.debug("Shopline")
+        #     GB =
+        # elif Platform == 'charmingmall' :
+        #     logger.debug("俏美魔")
+        #     GB =
+        # elif Platform == 'mintyday' :
+        #     logger.debug("清新好日")
+        #     GB =
 
         return GB.parserFile(GroupID,UserID,LogisticsID,ProductCode,DataPath,OutputFile)
 
-class ExcelTemplate():
-    T_Cat_OutputFilePath, T_Cat_TemplateFile = None, None
-    def __init__(self):
-        self.T_Cat_TemplateFile = '/data/vbGroupbuy/TCat.xls'
-        self.T_Cat_OutputFilePath = '/data/vbGroupbuy_output/'
 
         # LogisticsID  :  1	中華郵政
         # LogisticsID  :  2	黑貓宅急便
