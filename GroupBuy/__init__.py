@@ -27,8 +27,6 @@ class FileProcess():
         OutputFile = os.path.basename(DataPath).split(".")[0]  #輸出檔案名稱
         outPutPath = ExcelTemplate()
         OutputFile = outPutPath.T_Cat_OutputFilePath + OutputFile +".xls" #輸出檔案路徑及名稱
-        print "1"
-        print Platform
         GB = None
         if Platform == 'lifemarket' :
             logger.debug("生活市集")
@@ -133,3 +131,9 @@ class FileProcess():
         # LogisticsID  :  52	全球快遞
         # LogisticsID  :  53	好運袋
         # LogisticsID  :  54	聯合統配股份有限公司
+
+
+if __name__ == '__main__':
+    test = FileProcess()
+    print test.transferFile(u'/data/vbGroupbuy/lifemarket/general/396a2df8-472e-11e6-806e-000c29c1d067/2016-12-05_生活市集_BY123377302F.xls','robintest', 2, 'DS')
+    # print 'finish'

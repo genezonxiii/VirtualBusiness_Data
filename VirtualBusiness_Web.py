@@ -89,7 +89,7 @@ class GroupBuy():
         logger.debug('data[3]:' + data[3])
 
         Upload = FileProcess()
-        return Upload.transferFile(data[0], data[1],data[2],data[3])
+        return Upload.transferFile(data[0], data[1],int(data[2]),data[3])
 
 class Shipper():
     def GET(self, name):
