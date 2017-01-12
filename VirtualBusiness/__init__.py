@@ -9,7 +9,7 @@ import uuid
 import ToMysql
 import ToMongodb
 import logging
-import time
+import time , chardet
 import mysql.connector
 
 logger = logging.getLogger(__name__)
@@ -605,6 +605,17 @@ class DBSetting():
         # self.dbUser = 'root'
         # self.dbPassword = 'mysql'
 
+class detectFile():
+    def __init__(self):
+        pass
+
+    def detect(self,filename):
+        try:
+            File = open(filename).read()
+            result = chardet.detect(File)
+            return result.get('encoding')
+        except Exception as e:
+            logger.error(e.message)
 class ASAP():
     Data=None
     def __init__(self):

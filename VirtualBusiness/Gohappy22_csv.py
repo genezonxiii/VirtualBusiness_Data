@@ -6,39 +6,41 @@ import csv
 from ToMysql import ToMysql
 import uuid
 from VirtualBusiness import Sale,Customer,updateCustomer
+from VirtualBusiness.momo24_csv import Momo24csv_Data
+import codecs
 
 logger = logging.getLogger(__name__)
 
-class Gohappy22csv_Data():
-    Data = None
-    mysqlconnect = None
-    sale , customer = None, None
-    header = []
-    content = []
-
-    def __init__(self):
-        # mysql connector object
-        self.mysqlconnect = ToMysql()
-        self.mysqlconnect.connect()
-
-    def readFile(self, _file):
-        cr = open(_file, 'rb')
-
-        del self.header[:]
-        del self.content[:]
-
-        i = 0
-        for row in cr:
-            str = row.split(',')
-
-            if i == 0:
-                self.header.append([r for r in str])
-            else:
-                # print "content"
-                temp = [r for r in str]
-                self.content.append(temp)
-
-            i += 1
+class Gohappy22csv_Data(Momo24csv_Data):
+    # Data = None
+    # mysqlconnect = None
+    # sale , customer = None, None
+    # header = []
+    # content = []
+    #
+    # def __init__(self):
+    #     # mysql connector object
+    #     self.mysqlconnect = ToMysql()
+    #     self.mysqlconnect.connect()
+    #
+    # def readFile(self, _file):
+    #     cr = open(_file, 'rb')
+    #
+    #     del self.header[:]
+    #     del self.content[:]
+    #
+    #     i = 0
+    #     for row in cr:
+    #         str = row.split(',')
+    #
+    #         if i == 0:
+    #             self.header.append([r for r in str])
+    #         else:
+    #             # print "content"
+    #             temp = [r for r in str]
+    #             self.content.append(temp)
+    #
+    #         i += 1
 
     def Gohappy_22_Data(self, supplier, GroupID, path, UserID):
         logging.basicConfig(filename='/data/VirtualBusiness_Data/pyupload.log',
@@ -88,17 +90,17 @@ class Gohappy22csv_Data():
             self.sale.setTrans_list_date_YMDHMSF(row[0].lstrip("\\'"))
             self.sale.setSale_date_YMDHMSF(row[0].lstrip("\\'"))
             self.sale.setC_Product_id(row[21].lstrip("\\'").split('\n')[0])
-            self.sale.setProduct_name(row[5].decode('big5').encode('utf-8').lstrip("\\'"))
+            self.sale.setProduct_name_NoEncode(row[5].lstrip("\\'"))
             self.sale.setQuantity(row[6][row[6].find("("):].strip("()").lstrip("\\'"))
             self.sale.setPrice(row[6][:row[6].find("(")].strip("'").lstrip("\\'"))
-            self.sale.setName(row[9].decode('big5').encode('utf-8').lstrip("\\'"))
+            self.sale.setNameNoEncode(row[9].lstrip("\\'"))
 
             self.customer.setGroup_id(GroupID)
-            self.customer.setName(row[9].decode('big5').encode('utf-8').lstrip("\\'"))
+            self.customer.setNameNoEncode(row[9].lstrip("\\'"))
             self.customer.setPhone(row[11].lstrip("'").lstrip("\\'"))
             self.customer.setMobile(row[12].lstrip("'").lstrip("\\'"))
             self.customer.setPost(None)
-            self.customer.setAddress(row[10].decode('big5').encode('utf-8').lstrip("'"))
+            self.customer.setAddressNoEncode(row[10].lstrip("'"))
         except Exception as e :
             print e.message
             logging.error(e.message)
@@ -151,4 +153,4 @@ if __name__ == '__main__':
     gohappy = Gohappy22csv_Data()
     groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
-    print gohappy.Gohappy_22_Data('gohappy',groupid, u'C:\\Users\\10509002\\Documents\\電商檔案\\網購平台訂單資訊\\GoHappy\\2014.08.18\\OrderData_42242.csv','system')
+    print gohappy.Gohappy_22_Data('gohappy',groupid, '/Users/csi/Desktop/for_Joe_test/網購/gohappy/宅配/OrderData_42242.csv','system')

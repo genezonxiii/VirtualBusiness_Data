@@ -4,8 +4,8 @@ import time, BeautifulSoup
 import logging
 from ToMysql import ToMysql
 import uuid
-from VirtualBusiness import Sale,Customer,updateCustomer
-import string
+from VirtualBusiness import Sale,Customer,updateCustomer,detectFile
+import codecs
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +28,7 @@ class Savesafe22table_Data():
             result.append([])
             allcols = row.findAll('td')
             for col in allcols:
-                thestrings = [unicode(s) for s in col.findAll(text=True)]
+                thestrings = [s for s in col.findAll(text=True)]
                 thetext = ''.join(thestrings)
                 result[-1].append(thetext)
         return result
@@ -47,23 +47,26 @@ class Savesafe22table_Data():
         logger.debug('UserID:' + UserID)
         try:
             content = ""
-            with open(path, 'rb') as f:
-                for line in f:
-                    content += line
+            detect = detectFile()
 
+            if detect.detect(path) == "Big5":
+                with codecs.open(path, 'rb',encoding="Big5") as f:
+                    for line in f:
+                        content += line
+            else:
+                with codecs.open(path, 'rb',encoding="utf-8") as f:
+                    for line in f:
+                        content += line
             table = BeautifulSoup.BeautifulSoup(content)
             list = self.makelist(table)
             rows = iter(list)
             headers = [col for col in next(rows)]
-
             dict_list = []
             for row in rows:
                 values = [col for col in row]
                 d = dict(zip(headers, values))
 
                 dict_list.append(d)
-
-            logger.debug(dict_list)
 
             # for i in range(0, 2):
             #     print dict_list[i][u'訂單編號']
@@ -99,12 +102,10 @@ class Savesafe22table_Data():
             self.sale.setTrans_list_date_YMDHMS(dict_list[row_index][u'接單時間'])
             self.sale.setSale_date_YMDHMS(dict_list[row_index][u'接單時間'])
             self.sale.setC_Product_id(dict_list[row_index][u'商品貨號'])
-            print dict_list[row_index][u'商品名稱']
             self.sale.setProduct_name_NoEncode(dict_list[row_index][u'商品名稱'])
             self.sale.setQuantity(dict_list[row_index][u'商品數量'])
             self.sale.setPrice(dict_list[row_index][u'供貨成本(未稅)'])
             self.sale.setNameNoEncode(dict_list[row_index][u'收貨人'])
-            logger.debug('收貨人')
             self.customer.setGroup_id(GroupID)
             self.customer.setNameNoEncode(dict_list[row_index][u'收貨人'])
             self.customer.setPhone(dict_list[row_index][u'聯絡電話'])

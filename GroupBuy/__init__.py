@@ -135,5 +135,5 @@ class FileProcess():
 
 if __name__ == '__main__':
     test = FileProcess()
-    print test.transferFile(u'/data/vbGroupbuy/lifemarket/general/396a2df8-472e-11e6-806e-000c29c1d067/2016-12-05_生活市集_BY123377302F.xls','robintest', 2, 'DS')
+    print test.transferFile(u'/data/vbGroupbuy/delicious/general/396a2df8-472e-11e6-806e-000c29c1d067/2016-12-05_好吃宅配網_FD12377160F_悠活原力有限公司_(0822食品高毛利)欣敏立清益生菌-蔓越莓多多(32點5%策略性商品)_未出貨.xls','robintest', 2, 'DS')
     # print 'finish'

@@ -5,7 +5,8 @@ import logging
 import xlrd
 from ToMysql import ToMysql
 import uuid
-from VirtualBusiness import Sale,Customer,updateCustomer
+from VirtualBusiness import Sale,Customer,updateCustomer,detectFile
+import codecs
 
 logger = logging.getLogger(__name__)
 
@@ -22,7 +23,16 @@ class Momo24csv_Data():
         self.mysqlconnect.connect()
 
     def readFile(self, _file):
-        cr = open(_file, 'rb')
+        try:
+            cr = None
+            detect = detectFile()
+            result = detect.detect(_file)
+            if result == 'Big5':
+                cr = codecs.open(_file, 'rb',encoding='Big5')
+            else:
+                cr = codecs.open(_file, 'rb',encoding='utf-8')
+        except Exception as e:
+            logger.error(e.message)
 
         del self.header[:]
         del self.content[:]
@@ -36,7 +46,8 @@ class Momo24csv_Data():
             else:
                 # print "content"
                 temp = [r for r in str]
-                self.content.append(temp)
+                if temp[0] <> "":
+                    self.content.append(temp)
 
             i += 1
 
@@ -49,6 +60,8 @@ class Momo24csv_Data():
         #     print row[9]
         #     print row[13]
         #     print row[16]
+
+
 
     def Momo_24_Data(self, supplier, GroupID, path, UserID):
         logging.basicConfig(filename='/data/VirtualBusiness_Data/pyupload.log',
@@ -91,42 +104,24 @@ class Momo24csv_Data():
         try:
             row = self.content[row_index]
 
-            print row[2]
-
-            logger.debug(row[2][0:14])
-            logger.debug(row[9])
-            logger.debug(row[12])
-            logger.debug(row[13])
-            logger.debug(row[16])
-            logger.debug(row[17])
             self.sale.setGroup_id(GroupID)
-            logger.debug("1")
             self.sale.setUser_id(UserID)
-            logger.debug("2")
             self.sale.setOrder_source(supplier)
-            logger.debug("3")
             self.sale.setOrder_No(row[2][0:14])
-            logger.debug("4")
             self.sale.setTrans_list_date(row[9])
-            logger.debug("5")
             self.sale.setSale_date(row[9])
-            logger.debug("6")
             self.sale.setC_Product_id(row[12])
-            logger.debug("7")
             self.sale.setProduct_name_NoEncode(row[13])
-            logger.debug("8")
             self.sale.setQuantity(row[16])
-            logger.debug("9")
             self.sale.setPrice(row[17])
-            logger.debug("10")
-            self.sale.setName(row[3])
+            self.sale.setNameNoEncode(row[3])
 
             self.customer.setGroup_id(GroupID)
-            self.customer.setName(row[3])
+            self.customer.setNameNoEncode(row[3])
             self.customer.setPhone(None)
             self.customer.setMobile(None)
             self.customer.setPost(None)
-            self.customer.setAddress(row[4])
+            self.customer.setAddressNoEncode(row[4])
         except Exception as e :
             print e.message
             logging.error(e.message)
@@ -179,6 +174,6 @@ if __name__ == '__main__':
     momo = Momo24csv_Data()
     groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
-    print momo.Momo_24_Data('yahoo',groupid, u'C:\\Users\\10509002\\Documents\\電商檔案\\網購平台訂單資訊\\momo\\2016.05.13\\A1102_3_2_008992_20160513102705.csv','system')
+    print momo.Momo_24_Data('yahoo',groupid, '/Users/csi/Desktop/35ee0b33-ade9-4bce-8b9c-67b4a1807689.csv','system')
     # print yahoo.checkCustomerid('data_09221433(test).xlsx','鍾妮',\
     #                       '111台北市士林區中山北路六段77號','02-24609497','0966056315',None)

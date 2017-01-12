@@ -8,7 +8,7 @@ import logging
 import time
 from VirtualBusiness.test import Test_Data
 from VirtualBusiness.ASAP import ASAP_Data
-from VirtualBusiness.Go_Happy import GoHappy_Data
+# from VirtualBusiness.Go_Happy import GoHappy_Data
 from VirtualBusiness.ibon import IBON_Data
 from VirtualBusiness.Life import Life_Data
 from VirtualBusiness.Line_mart import LineMart_Data
@@ -22,13 +22,13 @@ from VirtualBusiness.UDN30_csv import UDN30csv_Data
 from VirtualBusiness.Nine import Nine_Data
 from VirtualBusiness.Tree import TREE_Data
 from VirtualBusiness.MaJi import MAJI_Data
-from VirtualBusiness.gm import GM16_Data
+# from VirtualBusiness.gm import GM16_Data
 from VirtualBusiness.etmall29_csv import Etmall29csv_Data
 from VirtualBusiness.Book import Book_Data
 from VirtualBusiness.Umall30_csv import Umall30csv_Data
 from VirtualBusiness.LoveBuy import LoveBuy_Data
 from VirtualBusiness.Lotte import Lotte_Data
-from VirtualBusiness.Yahoo_d import Yahoo_Data
+# from VirtualBusiness.Yahoo_d import Yahoo_Data
 from VirtualBusiness.Yahoomall24_table import YahooS24table_Data
 from VirtualBusiness.Savesafe22_table import Savesafe22table_Data
 from VirtualBusiness.Babyhome17 import Babyhome17_Data

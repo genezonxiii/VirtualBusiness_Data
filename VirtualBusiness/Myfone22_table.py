@@ -164,4 +164,4 @@ if __name__ == '__main__':
     myfone = Myfone22table_Data()
     # groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
-    print myfone.Myfone_22_Data('Myfone',groupid, u'C:\\Users\\10509002\\Documents\\電商檔案\\網購平台訂單資訊\\Myfone\\2014\\2014.07.30\\deliveryA (1).xls','system')
+    print myfone.Myfone_22_Data('Myfone',groupid, '/Users/csi/Desktop/for_Joe_test/網購/myfone/宅配/deliveryA (1).xls','system')

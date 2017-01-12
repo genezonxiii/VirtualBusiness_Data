@@ -39,7 +39,7 @@ class Ihergo22_Data():
             data = xlrd.open_workbook(path)
             table = data.sheets()[0]
 
-            totalRows = table.nrows - 5
+            totalRows = table.nrows - 4
 
             # 存放excel中全部的欄位名稱
             self.TitleList = []

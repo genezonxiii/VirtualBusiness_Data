@@ -6,39 +6,40 @@ import csv
 from ToMysql import ToMysql
 import uuid
 from VirtualBusiness import Sale,Customer,updateCustomer
+from VirtualBusiness.momo24_csv import Momo24csv_Data
 
 logger = logging.getLogger(__name__)
 
-class Umall30csv_Data():
-    Data = None
-    mysqlconnect = None
-    sale , customer = None, None
-    header = []
-    content = []
-
-    def __init__(self):
-        # mysql connector object
-        self.mysqlconnect = ToMysql()
-        self.mysqlconnect.connect()
-
-    def readFile(self, _file):
-        cr = open(_file, 'rb')
-
-        del self.header[:]
-        del self.content[:]
-
-        i = 0
-        for row in cr:
-            str = row.split(',')
-
-            if i == 0:
-                self.header.append([r for r in str])
-            else:
-                # print "content"
-                temp = [r for r in str]
-                self.content.append(temp)
-
-            i += 1
+class Umall30csv_Data(Momo24csv_Data):
+    # Data = None
+    # mysqlconnect = None
+    # sale , customer = None, None
+    # header = []
+    # content = []
+    #
+    # def __init__(self):
+    #     # mysql connector object
+    #     self.mysqlconnect = ToMysql()
+    #     self.mysqlconnect.connect()
+    #
+    # def readFile(self, _file):
+    #     cr = open(_file, 'rb')
+    #
+    #     del self.header[:]
+    #     del self.content[:]
+    #
+    #     i = 0
+    #     for row in cr:
+    #         str = row.split(',')
+    #
+    #         if i == 0:
+    #             self.header.append([r for r in str])
+    #         else:
+    #             # print "content"
+    #             temp = [r for r in str]
+    #             self.content.append(temp)
+    #
+    #         i += 1
 
     def Umall_30_Data(self, supplier, GroupID, path, UserID):
         logging.basicConfig(filename='/data/VirtualBusiness_Data/pyupload.log',
@@ -88,17 +89,17 @@ class Umall30csv_Data():
             self.sale.setTrans_list_date_YYYYMMDD(row[20])
             self.sale.setSale_date_YYYYMMDD(row[20])
             self.sale.setC_Product_id(row[6])
-            self.sale.setProduct_name(row[7].decode('big5').encode('utf-8'))
+            self.sale.setProduct_name_NoEncode(row[7])
             self.sale.setQuantity(row[12])
             self.sale.setPrice(row[13])
-            self.sale.setName(row[14].decode('big5').encode('utf-8'))
+            self.sale.setNameNoEncode(row[14])
 
             self.customer.setGroup_id(GroupID)
-            self.customer.setName(row[14].decode('big5').encode('utf-8'))
+            self.customer.setNameNoEncode(row[14])
             self.customer.setPhone(row[16].lstrip("'"))
             self.customer.setMobile(row[15].lstrip("'"))
             self.customer.setPost(None)
-            self.customer.setAddress(row[17].decode('big5').encode('utf-8'))
+            self.customer.setAddressNoEncode(row[17])
         except Exception as e :
             print e.message
             logging.error(e.message)
@@ -148,7 +149,7 @@ class Umall30csv_Data():
             raise
 
 if __name__ == '__main__':
-    umall = Umall30_Data()
+    umall = Umall30csv_Data()
     groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
-    print umall.Umall_30_Data('umall',groupid, u'C:\\Users\\10509002\\Documents\\電商檔案\\網購平台訂單資訊\\東森\\2014\\2014.08.27\\zip-temp\\cso_export_1409122226554.csv','system')
+    print umall.Umall_30_Data('umall',groupid, '/Users/csi/Desktop/for_Joe_test/網購/東森/宅配/cso_export_1409122226554.csv','system')

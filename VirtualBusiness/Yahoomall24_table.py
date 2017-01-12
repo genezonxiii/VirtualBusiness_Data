@@ -163,4 +163,4 @@ if __name__ == '__main__':
     yahooS = YahooS24table_Data()
     # groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
-    print yahooS.YahooS_24_Data('Yahoomall',groupid, u'C:\\Users\\10509002\\Documents\\電商檔案\\網購平台訂單資訊\\Yahoo商城\\2015.02.26\\storders.xls','system')
+    print yahooS.YahooS_24_Data('Yahoomall',groupid, '/Users/csi/Desktop/for_Joe_test/網購/Yahoo商城/超取/storders.xls','system')

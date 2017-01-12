@@ -6,49 +6,41 @@ import csv
 from ToMysql import ToMysql
 import uuid
 from VirtualBusiness import Sale,Customer,updateCustomer
+from VirtualBusiness.momo24_csv import Momo24csv_Data
 
 logger = logging.getLogger(__name__)
 
-class Myfone19csv_Data():
-    Data = None
-    mysqlconnect = None
-    sale , customer = None, None
-    header = []
-    content = []
+class Myfone19csv_Data(Momo24csv_Data):
+    # Data = None
+    # mysqlconnect = None
+    # sale , customer = None, None
+    # header = []
+    # content = []
+    #
+    # def __init__(self):
+    #     # mysql connector object
+    #     self.mysqlconnect = ToMysql()
+    #     self.mysqlconnect.connect()
+    #
+    # def readFile(self, _file):
+    #     cr = open(_file, 'rb')
+    #
+    #     del self.header[:]
+    #     del self.content[:]
+    #
+    #     i = 0
+    #     for row in cr:
+    #         str = row.split(',')
+    #
+    #         if i == 0:
+    #             self.header.append([r for r in str])
+    #         else:
+    #             # print "content"
+    #             temp = [r for r in str]
+    #             self.content.append(temp)
+    #
+    #         i += 1
 
-    def __init__(self):
-        # mysql connector object
-        self.mysqlconnect = ToMysql()
-        self.mysqlconnect.connect()
-
-    def readFile(self, _file):
-        cr = open(_file, 'rb')
-
-        del self.header[:]
-        del self.content[:]
-
-        i = 0
-        for row in cr:
-            str = row.split(',')
-
-            if i == 0:
-                self.header.append([r for r in str])
-            else:
-                # print "content"
-                temp = [r for r in str]
-                self.content.append(temp)
-
-            i += 1
-
-        # print "++++++++"
-        # for row in self.content:
-        #     print "====="
-        #     print row[2]
-        #     print row[3]
-        #     print row[4]
-        #     print row[9]
-        #     print row[13]
-        #     print row[16]
 
     def Myfone_19_Data(self, supplier, GroupID, path, UserID):
         logging.basicConfig(filename='/data/VirtualBusiness_Data/pyupload.log',
@@ -98,17 +90,17 @@ class Myfone19csv_Data():
             self.sale.setTrans_list_date_YMDHMS(row[0])
             self.sale.setSale_date_YMDHMS(row[0])
             self.sale.setC_Product_id(row[6])
-            self.sale.setProduct_name(row[7].decode('big5').encode('utf-8'))
+            self.sale.setProduct_name_NoEncode(row[7])
             self.sale.setQuantity(row[10])
             self.sale.setPrice(row[12])
-            self.sale.setName(row[13].decode('big5').encode('utf-8'))
+            self.sale.setNameNoEncode(row[13])
 
             self.customer.setGroup_id(GroupID)
-            self.customer.setName(row[13].decode('big5').encode('utf-8'))
+            self.customer.setNameNoEncode(row[13])
             self.customer.setPhone(row[15])
             self.customer.setMobile(row[15])
             self.customer.setPost(None)
-            self.customer.setAddress(row[16].decode('big5').encode('utf-8'))
+            self.customer.setAddressNoEncode(row[16])
         except Exception as e :
             print e.message
             logging.error(e.message)
@@ -161,6 +153,6 @@ if __name__ == '__main__':
     myfone = Myfone19csv_Data()
     groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
-    print myfone.Myfone_19_Data('myfone',groupid, u'C:\\Users\\10509002\\Documents\\電商檔案\\網購平台訂單資訊\\Myfone\\2014\\2014.09.15\\deliveryA.csv','system')
+    print myfone.Myfone_19_Data('myfone',groupid, '/Users/csi/Desktop/for_Joe_test/網購/myfone/宅配/deliveryA.csv','system')
     # print yahoo.checkCustomerid('data_09221433(test).xlsx','鍾妮',\
     #                       '111台北市士林區中山北路六段77號','02-24609497','0966056315',None)

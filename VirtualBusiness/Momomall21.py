@@ -151,4 +151,4 @@ if __name__ == '__main__':
     momomall = Momomall21_Data()
     # groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
-    print momomall.Momomall_21_Data('momomall',groupid,u'C:\\Users\\10509002\\Documents\\電商檔案\\網購平台訂單資訊\\摩天商城\\2015.11.17\\C103_CheckGoods_101790_20151117121457.xls','system')
+    print momomall.Momomall_21_Data('momomall',groupid,'/Users/csi/Desktop/for_Joe_test/網購/momo摩天商城/宅配/C103_CheckGoods_101790_20151117121457.xls','system')
