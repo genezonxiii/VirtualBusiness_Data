@@ -36,7 +36,7 @@ class chinatime(buy123):
             for row_index in range(1, table.nrows):
                 tmp = []
                 if table.cell(row_index, 0).value <> "":
-                    orderNo = self.ReplaceField(str(table.cell(row_index, 0).value), '.')
+                    orderNo = table.cell(row_index, 0).value
                 tmp.append(orderNo) #訂單編號
                 if table.cell(row_index, 2).value <> "":
                     Name = table.cell(row_index, 2).value
@@ -66,5 +66,5 @@ class chinatime(buy123):
 if __name__ == '__main__':
     buy = chinatime()
     buy.parserFile('robintest', 'test',2, 'MS',
-                  inputFile=u'C:/Users/10408001/Desktop/團購平台訂單資訊/中時團購網/原始檔/20161020待出貨訂單列表.xlsx', \
-                  outputFile=u'C:/Users/10408001/Desktop/20161229-chinatime出貨單.xls')
+                  inputFile=u'/Users/csi/Desktop/團購/中時團購/general/396a2df8-472e-11e6-806e-000c29c1d067/20161020待出貨訂單列表.xlsx', \
+                  outputFile=u'/Users/csi/Desktop/20161229-chinatime出貨單.xls')
