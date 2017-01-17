@@ -114,18 +114,17 @@ class buy123():
                 tmp.append(table.cell(row_index, 7).value)                                      #組數
                 tmp.append(self.ReplaceField(table.cell(row_index, 8).value,'/'))                #訂購人                                                   #訂購人
                 result.append(tmp)
-            self.writeXls(LogisticsID,result,outputFile)
-            success = True
+            success = self.writeXls(LogisticsID,result,outputFile)
         except Exception as e :
             logging.error(e.message)
             resultinfo = e.message
-            return 'failure'
+            success = False
         finally:
             return json.dumps({"success": success, "info": resultinfo,"download": outputFile}, sort_keys=False)
 
     def writeXls(self,LogisticsID,data,outputFile):
         if LogisticsID == 2 :
-            self.writeT_catXls(data,outputFile)
+            return self.writeT_catXls(data,outputFile)
 
     #寫入黑貓出貨單內容
     def writeT_catXls(self,data,outputFile):
@@ -136,6 +135,7 @@ class buy123():
             file = copy(rb)
             table = file.get_sheet(0)
             i = 1
+            success = False
             for row in data:
                 d1 = datetime.datetime.strftime(datetime.date.today(),'%Y/%m/%d')
                 d2 = datetime.datetime.strftime(datetime.date.today()+ datetime.timedelta(days=1), '%Y/%m/%d')
@@ -162,10 +162,12 @@ class buy123():
             self.mysqlconnect.db.commit()
             self.mysqlconnect.dbClose()
             file.save(outputFile)
+            success = True
         except Exception as e :
             logging.error(e.message)
-            return 'failure'
-
+            return False
+        finally:
+            return success
     #將訂購人資料寫入 DB
     def updateDB_Customer(self):
         try:
