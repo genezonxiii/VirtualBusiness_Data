@@ -25,16 +25,15 @@ class Sale123(buy123):
                 tmp.append(table.cell(row_index, 2).value)  # 收件地址
                 tmp.append('0' + self.ReplaceField(str(table.cell(row_index, 3).value), '.'))  # 電話
                 tmp.append(table.cell(row_index, 5).value)  # 檔次名稱
-                tmp.append(self.ReplaceField(table.cell(row_index,6).value,u"盒"))  # 訂購方案
+                tmp.append(self.ReplaceField(table.cell(row_index, 6).value.split('.')[1], u'盒'))  # 訂購方案
                 tmp.append(table.cell(row_index, 7).value)  # 訂單份數
                 tmp.append('')  # 訂購人
                 result.append(tmp)
-            self.writeXls(LogisticsID, result, outputFile)
-            success = True
+            success = self.writeXls(LogisticsID, result, outputFile)
         except Exception as e:
             logging.error(e.message)
             resultinfo = e.message
-            return 'failure'
+            success = False
         finally:
             return json.dumps({"success": success, "info": resultinfo,"download": outputFile}, sort_keys=False)
 

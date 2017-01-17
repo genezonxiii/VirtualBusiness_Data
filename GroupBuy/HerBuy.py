@@ -49,13 +49,11 @@ class HerBuy(buy123):
                             result.append(tmp)
                         else:
                             break
-            self.writeXls(LogisticsID, result, outputFile)
-            print outputFile
-            success = True
+            success = self.writeXls(LogisticsID, result, outputFile)
         except Exception as e:
             logging.error(e.message)
             resultinfo = e.message
-            return 'failure'
+            success = False
         finally:
             return json.dumps({"success": success, "info": resultinfo,"download": outputFile}, sort_keys=False)
 

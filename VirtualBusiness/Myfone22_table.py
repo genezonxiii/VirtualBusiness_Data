@@ -6,7 +6,7 @@ import logging
 from ToMysql import ToMysql
 import uuid
 from VirtualBusiness import Sale,Customer,updateCustomer
-import string
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -68,8 +68,9 @@ class Myfone22table_Data():
 
             # for i in range(0, 2):
             #     print dict_list[i][u'訂單編號']
-
+            resultinfo = ''
             for row_index in range(0, len(dict_list)-1):
+                totalRows = len(d)
                 self.sale = Sale()
                 self.customer = Customer()
                 #Parser Data from xls
@@ -82,11 +83,16 @@ class Myfone22table_Data():
                 self.customer = None
             self.mysqlconnect.db.commit()
             self.mysqlconnect.dbClose()
-            logger.info('===Myfone22_Data SUCCESS===')
-            return 'success'
-        except Exception as e :
-            logger.error(e.message)
-            return 'failure'
+
+            success = True
+
+        except Exception as inst:
+            logger.error(inst.args)
+            resultinfo = inst.args
+
+        finally:
+            logger.debug('===Myfone22table_Data finally===')
+            return json.dumps({"success": success, "info": resultinfo, "total": totalRows}, sort_keys=False)
 
     def parserData(self,dict_list,row_index,GroupID,UserID,supplier):
         try:
@@ -164,4 +170,4 @@ if __name__ == '__main__':
     myfone = Myfone22table_Data()
     # groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
-    print myfone.Myfone_22_Data('Myfone',groupid, '/Users/csi/Desktop/for_Joe_test/網購/myfone/宅配/deliveryA (1).xls','system')
+    print myfone.Myfone_22_Data('Myfone',groupid, u'C:\\Users\\10509002\\Documents\\電商檔案\\網購平台訂單資訊\\Myfone\\2014\\2014.07.30\\deliveryA (1).xls','system')

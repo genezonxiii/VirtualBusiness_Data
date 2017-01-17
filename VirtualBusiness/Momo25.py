@@ -9,6 +9,13 @@ from VirtualBusiness import Sale,Customer,updateCustomer
 
 logger = logging.getLogger(__name__)
 
+#FilePath
+class ExcelTemplate():
+    T_Cat_OutputFilePath, T_Cat_TemplateFile = None, None
+    def __init__(self):
+        self.T_Cat_TemplateFile = '/data/vbupload/Logistics_Tcat.xls'
+        self.T_Cat_OutputFilePath = '/data/vbupload_output/'
+
 class Momo25_Data():
     Data = None
     mysqlconnect = None
@@ -34,7 +41,7 @@ class Momo25_Data():
         self.mysqlconnect = ToMysql()
         self.mysqlconnect.connect()
 
-    def Momo_25_Data(self, supplier, GroupID, path, UserID):
+    def Momo_25_Data(self, supplier, GroupID, path, UserID, OutputFile):
 
         try:
 

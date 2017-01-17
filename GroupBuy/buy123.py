@@ -12,7 +12,7 @@ from xlutils.copy import copy
 class ExcelTemplate():
     T_Cat_OutputFilePath, T_Cat_TemplateFile = None, None
     def __init__(self):
-        self.T_Cat_TemplateFile = '/data/vbGroupbuy/Logistics_Tcat.xls'
+        self.T_Cat_TemplateFile = 'C:\\Users\\10509002\\Desktop\\Logistics_Tcat.xls'
         self.T_Cat_OutputFilePath = '/data/vbGroupbuy_output/'
 
 #生活市集
@@ -141,7 +141,7 @@ class buy123():
                 d2 = datetime.datetime.strftime(datetime.date.today()+ datetime.timedelta(days=1), '%Y/%m/%d')
                 table.write(i,0,d1)             # 收件日
                 table.write(i, 1,d2)            # 配達日
-                table.write(i,3,row[0])         # 訂單編號
+                # table.write(i,3,row[0])         # 訂單編號
                 table.write(i, 5, row[7])       # 訂購人
                 table.write(i, 6, row[1])       # 收件人
                 table.write(i, 7, row[2])       # 收件地址

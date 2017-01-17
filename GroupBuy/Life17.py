@@ -29,17 +29,16 @@ class Life17(buy123):
                 tmp.append('0' + self.ReplaceField(str(table.cell(row_index, 4).value), '.'))  # 電話
                 tmp.append(table.cell(row_index, 6).value)  # 方案名稱
                 #暫時以 "菌" 及"包" 來判斷,需要跟悠活原力確認
-                word = self.ReplaceField(table.cell(row_index, 6).value,u"包")
+                word = self.ReplaceField(table.cell(row_index, 6).value.split('.')[1],u"包")
                 tmp.append(int(word[word.find(u"菌")+1:])/30) # 訂購方案
                 tmp.append(table.cell(row_index, 9).value)  # 訂單份數
                 tmp.append("")  # 訂購人
                 result.append(tmp)
-            self.writeXls(LogisticsID, result, outputFile)
-            success = True
+            success = self.writeXls(LogisticsID, result, outputFile)
         except Exception as e:
             logging.error(e.message)
             resultinfo = e.message
-            return 'failure'
+            success = False
         finally:
             return json.dumps({"success": success, "info": resultinfo,"download": outputFile}, sort_keys=False)
 

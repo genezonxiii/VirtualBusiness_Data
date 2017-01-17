@@ -53,13 +53,11 @@ class chinatime(buy123):
                 tmp.append(table.cell(row_index, 6).value)  # 訂單份數
                 tmp.append("")  # 訂購人
                 result.append(tmp)
-
-            self.writeXls(LogisticsID, result, outputFile)
-            success = True
+            success = self.writeXls(LogisticsID, result, outputFile)
         except Exception as e:
             logging.error(e.message)
             resultinfo = e.message
-            return 'failure'
+            success = False
         finally:
             return json.dumps({"success": success, "info": resultinfo,"download": outputFile}, sort_keys=False)
 
