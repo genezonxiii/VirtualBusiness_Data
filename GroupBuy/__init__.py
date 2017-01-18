@@ -26,7 +26,7 @@ class FileProcess():
         Platform = DataPath.split("/")[3]                      #平台
         OutputFile = os.path.basename(DataPath).split(".")[0]  #輸出檔案名稱
         outPutPath = ExcelTemplate()
-        OutputFile = outPutPath.T_Cat_OutputFilePath + Platform + '/' + GroupID +'/' + OutputFile +".xls" #輸出檔案路徑及名稱
+        OutputFile = outPutPath.T_Cat_OutputFilePath + OutputFile +".xls" #輸出檔案路徑及名稱
         GB = None
         if Platform == 'lifemarket' :
             logger.debug("生活市集")
@@ -135,5 +135,5 @@ class FileProcess():
 
 if __name__ == '__main__':
     test = FileProcess()
-    print test.transferFile(u'C:/data/vbGroupbuy/delicious/general/396a2df8-472e-11e6-806e-000c29c1d067/1324.xls','robintest', 2, 'DS')
+    print test.transferFile(u'/data/vbGroupbuy/delicious/general/396a2df8-472e-11e6-806e-000c29c1d067/2017-01-18_好吃宅配網_FD12381462F_悠活原力有限公司_欣敏立清益生菌-紅蘋果多多_未出貨.xls','robintest', 2, 'DS')
     # print 'finish'

@@ -25,7 +25,11 @@ class Pcone(buy123):
                 tmp.append(table.cell(row_index, 8).value)  # 收件地址
                 tmp.append('0' + self.ReplaceField(str(table.cell(row_index, 7).value), '.'))  # 電話
                 tmp.append(table.cell(row_index, 9).value)  # 商品
-                tmp.append(self.ReplaceField(table.cell(row_index, 11).value.split('.')[1],u'入'))  # 方案
+                # tmp.append(self.ReplaceField(table.cell(row_index, 11).value.split('.')[1],u'入'))  # 方案
+                order = self.ReplaceField(table.cell(row_index, 11).value, u'入')
+                if order in ".":
+                    order = order.split(".")[1]
+                tmp.append(order)
                 tmp.append(1)  # 訂單份數
                 tmp.append(self.ReplaceField(table.cell(row_index, 2).value,'/'))  # 訂購人
                 result.append(tmp)

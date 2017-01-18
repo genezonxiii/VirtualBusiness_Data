@@ -7,12 +7,14 @@ from ToMysql import ToMysql
 import uuid
 from VirtualBusiness import Customer,updateCustomer
 from xlutils.copy import copy
+
+logger = logging.getLogger(__name__)
 # from GroupBuy import ExcelTemplate
 #FilePath
 class ExcelTemplate():
     T_Cat_OutputFilePath, T_Cat_TemplateFile = None, None
     def __init__(self):
-        self.T_Cat_TemplateFile = 'C:\\Users\\10509002\\Desktop\\Logistics_Tcat.xls'
+        self.T_Cat_TemplateFile = '/data/vbGroupbuy/Logistics_Tcat.xls'
         self.T_Cat_OutputFilePath = '/data/vbGroupbuy_output/'
 
 #生活市集
@@ -109,8 +111,12 @@ class buy123():
                 tmp.append(self.ReplaceField(table.cell(row_index, 1).value,'(',1))              # 收件人
                 tmp.append(table.cell(row_index, 2).value)                                      #收件地址
                 tmp.append('0' + self.ReplaceField(str(table.cell(row_index, 3).value),'.'))      #電話
-                tmp.append(table.cell(row_index, 5).value)                                      #檔次名稱
-                tmp.append(self.ReplaceField(table.cell(row_index, 6).value,u'盒'))              #訂購方案
+                tmp.append(table.cell(row_index, 5).value)  #檔次名稱
+                order = self.ReplaceField(table.cell(row_index, 6).value,u'盒')
+                if order in ".":
+                    order = order.split(".")[1]
+                tmp.append(order)              #訂購方案
+                # tmp.append(self.ReplaceField(table.cell(row_index, 6).value,u'盒'))              #訂購方案
                 tmp.append(table.cell(row_index, 7).value)                                      #組數
                 tmp.append(self.ReplaceField(table.cell(row_index, 8).value,'/'))                #訂購人                                                   #訂購人
                 result.append(tmp)
@@ -156,13 +162,21 @@ class buy123():
                 self.customer.setNameNoEncode(row[1])
                 self.customer.setMobile(row[3])
                 self.customer.setAddressNoEncode(row[2])
+                logger.debug('17')
                 # insert or update table tb_customer
                 self.updateDB_Customer()
+                logger.debug('18')
                 i += 1
+            logger.debug('19')
             self.mysqlconnect.db.commit()
+            logger.debug('20')
             self.mysqlconnect.dbClose()
+            logger.debug('1')
+            logger.debug(outputFile)
             file.save(outputFile)
+            logger.debug('2')
             success = True
+            logger.debug('3')
         except Exception as e :
             logging.error(e.message)
             return False
