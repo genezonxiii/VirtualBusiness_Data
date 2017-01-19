@@ -616,6 +616,7 @@ class detectFile():
             return result.get('encoding')
         except Exception as e:
             logger.error(e.message)
+
 class ASAP():
     Data=None
     def __init__(self):

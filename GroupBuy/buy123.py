@@ -7,15 +7,62 @@ from ToMysql import ToMysql
 import uuid
 from VirtualBusiness import Customer,updateCustomer
 from xlutils.copy import copy
+import smtplib
+from email.mime.application import MIMEApplication
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from os.path import basename
 
 logger = logging.getLogger(__name__)
 # from GroupBuy import ExcelTemplate
 #FilePath
 class ExcelTemplate():
     T_Cat_OutputFilePath, T_Cat_TemplateFile = None, None
+    MailSender , MailReceiver , SMTPServer = None , None , None
     def __init__(self):
         self.T_Cat_TemplateFile = '/data/vbGroupbuy/Logistics_Tcat.xls'
         self.T_Cat_OutputFilePath = '/data/vbGroupbuy_output/'
+        # Aber 正式用
+        # self.MailSender = 'pscaber@cloud.pershing.com.tw'
+        # self.MailReceiver =['joeyang@pershing.com.tw','hsuanmeng@pershing.com.tw','']
+        # self.SMTPServer = 'cloud-pershing-com-tw.mail.protection.outlook.com'
+        # Local 測試用
+        self.MailSender = 'hsuanmeng@pershing.com.tw'
+        # self.MailReceiver = ['joeyang@pershing.com.tw', 'hsuanmeng@pershing.com.tw', 'christinewei@pershing.com.tw']
+        self.MailReceiver = ['metaliu@pershing.com.tw']
+        self.SMTPServer = 'ms1.pershing.com.tw'
+
+#Send Mail
+class SendMail():
+    def __init__(self):
+        pass
+
+    def sendmail(self, server, sender, receivers, Message, filename):
+        try:
+            msg = MIMEMultipart()
+            msg['Subject'] = u'悠活錯誤檔案'
+            msg["From"] = sender
+            msg["To"] = ', '.join(receivers)
+            msg.preamble = 'This is test mail'
+            body = Message + filename
+            # body = "Python test mail"
+            msg.attach(MIMEText(body, _charset='utf-8'))
+            # msg.attach(MIMEText(Message, 'plain'))
+            with open(filename, "rb") as fil:
+                part = MIMEApplication(
+                    fil.read(),
+                    Name=basename(filename)
+                )
+                part['Content-Disposition'] = 'attachment; filename="%s"' % basename(filename)
+                msg.attach(part)
+
+            smtpObj = smtplib.SMTP(server)
+            smtpObj.sendmail(sender, receivers, msg.as_string())
+            logger.info("Successfully sent email")
+        except Exception as e:
+            logger.error(e.message)
+            logger.error("Error: unable to send email")
+
 
 #生活市集
 class buy123():
@@ -126,6 +173,9 @@ class buy123():
             resultinfo = e.message
             success = False
         finally:
+            if success == False :
+                Message = UserID + ' Transfer File Failure , File Path is :'
+                self.sendMailToPSC(Message,inputFile)
             return json.dumps({"success": success, "info": resultinfo,"download": outputFile}, sort_keys=False)
 
     def writeXls(self,LogisticsID,data,outputFile):
@@ -182,6 +232,7 @@ class buy123():
             return False
         finally:
             return success
+
     #將訂購人資料寫入 DB
     def updateDB_Customer(self):
         try:
@@ -213,8 +264,14 @@ class buy123():
             logging.error(e.message)
             raise
 
+    #將錯誤檔案寄給 Joe，Avery,Christine
+    def sendMailToPSC(self, MailContent , inputFile):
+        Template = ExcelTemplate()
+        Mail = SendMail()
+        Mail.sendmail(Template.SMTPServer,Template.MailSender,Template.MailReceiver,MailContent,inputFile)
+
 if __name__ == '__main__':
     buy = buy123()
     print buy.parserFile('robintest', 'test', 2, 'MS',
-                  inputFile=u'C:/Users/10408001/Desktop/團購平台訂單資訊/生活市集/原始檔/2016.12.05/2016-12-05_生活市集_BY123375489F_悠活原力有限公司_(0822食品高毛利)欣敏立清益生菌-蔓越莓多多(32點5%策略性商品)_未出貨.xls', \
-                  outputFile=u'C:/Users/10408001/Desktop/20161228-1出貨單.xls')
+                  inputFile='/Users/csi/Desktop/團購/姊妹購物網/general/396a2df8-472e-11e6-806e-000c29c1d067/2016-12-02_姊妹購物網_AY12390480F_悠活原力有限公司_欣敏立清益生菌-草莓多多_未出貨.xls', \
+                  outputFile='/Users/csi/Desktop/2016-12-02_姊妹購物網_AY12390480F_悠活原力有限公司_欣敏立清益生菌-草莓多多_未出貨.xls')

@@ -1,7 +1,7 @@
 # -*-  coding: utf-8  -*-
 # __author__ = '10408001'
 import logging
-from GroupBuy.buy123 import buy123,ExcelTemplate
+from GroupBuy.buy123 import buy123 , ExcelTemplate
 from GroupBuy.chinatime import chinatime
 from GroupBuy.crazymike import Crazymike
 from GroupBuy.food123 import food123
@@ -14,6 +14,7 @@ from GroupBuy.pcone import Pcone
 from GroupBuy.popular import popular
 from GroupBuy.sale123 import Sale123
 import os
+
 
 logger = logging.getLogger(__name__)
 
@@ -135,5 +136,5 @@ class FileProcess():
 
 if __name__ == '__main__':
     test = FileProcess()
-    print test.transferFile(u'/data/vbGroupbuy/delicious/general/396a2df8-472e-11e6-806e-000c29c1d067/2017-01-18_好吃宅配網_FD12381462F_悠活原力有限公司_欣敏立清益生菌-紅蘋果多多_未出貨.xls','robintest', 2, 'DS')
+    print test.transferFile(u'/data/vbGroupbuy/sister/general/396a2df8-472e-11e6-806e-000c29c1d067/2017-01-16_生活市集_BY123399014F_悠活原力有限公司_欣敏立清益生菌-紅蘋果多多_未出貨.xls','robintest', 2, 'DS')
     # print 'finish'

@@ -52,6 +52,9 @@ class Crazymike(buy123):
             resultinfo = e.message
             success = False
         finally:
+            if success == False :
+                Message = UserID + u' 轉檔錯誤，檔案路徑為 ：'
+                self.sendMailToPSC(Message,inputFile)
             return json.dumps({"success": success, "info": resultinfo, "download": outputFile}, sort_keys=False)
 
 
