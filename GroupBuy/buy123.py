@@ -113,8 +113,8 @@ class buy123():
                 tmp.append('0' + self.ReplaceField(str(table.cell(row_index, 3).value),'.'))      #電話
                 tmp.append(table.cell(row_index, 5).value)  #檔次名稱
                 order = self.ReplaceField(table.cell(row_index, 6).value,u'盒')
-                if order in ".":
-                    order = order.split(".")[1]
+                if "." in order :
+                    order = order.split(".")[1].strip()
                 tmp.append(order)              #訂購方案
                 # tmp.append(self.ReplaceField(table.cell(row_index, 6).value,u'盒'))              #訂購方案
                 tmp.append(table.cell(row_index, 7).value)                                      #組數
