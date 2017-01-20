@@ -23,14 +23,13 @@ class ExcelTemplate():
         self.T_Cat_TemplateFile = '/data/vbGroupbuy/Logistics_Tcat.xls'
         self.T_Cat_OutputFilePath = '/data/vbGroupbuy_output/'
         # Aber 正式用
-        # self.MailSender = 'pscaber@cloud.pershing.com.tw'
-        # self.MailReceiver =['joeyang@pershing.com.tw','hsuanmeng@pershing.com.tw','']
-        # self.SMTPServer = 'cloud-pershing-com-tw.mail.protection.outlook.com'
+        self.MailSender = 'pscaber@cloud.pershing.com.tw'
+        self.MailReceiver =['joeyang@pershing.com.tw', 'hsuanmeng@pershing.com.tw', 'christinewei@pershing.com.tw']
+        self.SMTPServer = 'cloud-pershing-com-tw.mail.protection.outlook.com'
         # Local 測試用
-        self.MailSender = 'hsuanmeng@pershing.com.tw'
+        # self.MailSender = 'hsuanmeng@pershing.com.tw'
         # self.MailReceiver = ['joeyang@pershing.com.tw', 'hsuanmeng@pershing.com.tw', 'christinewei@pershing.com.tw']
-        self.MailReceiver = ['metaliu@pershing.com.tw']
-        self.SMTPServer = 'ms1.pershing.com.tw'
+        # self.SMTPServer = 'ms1.pershing.com.tw'
 
 #Send Mail
 class SendMail():
