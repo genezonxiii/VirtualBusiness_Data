@@ -62,7 +62,6 @@ class SendMail():
             logger.error(e.message)
             logger.error("Error: unable to send email")
 
-
 #生活市集
 class buy123():
     mysqlconnect = None
@@ -177,6 +176,7 @@ class buy123():
                 self.sendMailToPSC(Message,inputFile)
             return json.dumps({"success": success, "info": resultinfo,"download": outputFile}, sort_keys=False)
 
+    # 判斷轉出出貨格式
     def writeXls(self,LogisticsID,data,outputFile):
         if LogisticsID == 2 :
             return self.writeT_catXls(data,outputFile)
