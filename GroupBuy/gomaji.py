@@ -25,9 +25,10 @@ class gomaji(buy123):
                 tmp.append(table.cell(row_index, 10).value)  # 方案名稱
                 # tmp.append(self.getResultForDigit(self.ReplaceField(table.cell(row_index, 10).value.split('.')[1], u'盒'))) # 方案名稱盒數
                 order = self.ReplaceField(table.cell(row_index, 10).value, u'盒')
-                if order in ".":
-                    order = order.split(".")[1]
+                if "." in order :
+                    order = order.split(".")[1].strip()
                 tmp.append(order)
+                tmp.append(self.getResultForDigit(order))
                 # tmp.append(self.getResultForDigit(self.ReplaceField(table.cell(row_index, 10).value, u'盒')))  # 方案名稱盒
                 tmp.append(table.cell(row_index, 9).value)  # 訂單份數
                 tmp.append(table.cell(row_index, 5).value)  # 訂購人
