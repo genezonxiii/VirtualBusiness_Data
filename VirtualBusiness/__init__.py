@@ -181,7 +181,7 @@ class Sale():
     p_customer_id, p_name, p_invoice,o_name = None, None, None, None
     p_quantity, p_price = 0, 0.0
     p_invoice_date, p_trans_list_date, p_dis_date, p_sale_date, p_return_date = None, None, None, None, None
-    p_memo, p_order_source = None, None
+    p_memo, p_order_source, p_deliveryway = None, None, None
     p_isreturn = False
     aes,convert = None ,None
 
@@ -321,6 +321,8 @@ class Sale():
     def setOrder_sourceNodecode(self,value):
         self.p_order_source = self.convert.ToString(value.encode('utf-8'))
 
+    def setDeliveryway(self,value):
+        self.p_deliveryway = self.convert.ToString(value.encode('utf-8'))
 
     def setIsreturn(self,value):
         self.p_isreturn = self.convert.ToBoolean(value)

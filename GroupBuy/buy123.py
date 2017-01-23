@@ -12,6 +12,7 @@ from email.mime.application import MIMEApplication
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from os.path import basename
+import re
 
 logger = logging.getLogger(__name__)
 # from GroupBuy import ExcelTemplate
@@ -67,10 +68,11 @@ class buy123():
     mysqlconnect = None
     customer = None
     GroupID , UserID , ProductCode = None , None , None
+    RegularEX = None
     def __init__(self):
         self.mysqlconnect = ToMysql()
         self.mysqlconnect.connect()
-
+        self.RegularEX = []
     # 把 Excel 欄位中的 text:u 等字元 replace
     def ConvertText(self, SourceString):
         return SourceString.replace("text:u", "").replace("'", "")
@@ -262,8 +264,37 @@ class buy123():
         Mail = SendMail()
         Mail.sendmail(Template.SMTPServer,Template.MailSender,Template.MailReceiver,MailContent,inputFile)
 
+    # 取得 Regular Express
+    def getRegularEx(self,GroupID):
+        parameter = [GroupID]
+        self.mysqlconnect.cursor.callproc('sp_get_regularexpress',parameter)
+        # tmp = None
+        for result in self.mysqlconnect.cursor.stored_results():
+            tmp = result.fetchall()
+        for row in tmp:
+            value = {"compile": row[0],"search":row[1]}
+            self.RegularEX.append(value)
+
+    # 使用 RegularExpress 解析"方案名稱"中的數量
+    def parserRegularEx(self,GroupID,value):
+        self.getRegularEx(GroupID)
+        matchWord = None
+        try:
+            for row in self.RegularEX:
+                print row.get("compile"),row.get("search")
+                if re.compile(row.get("compile")).match(value):
+                    matchWord = re.search(row.get("search"), value)
+                if matchWord <> None :
+                    break
+            if matchWord:
+                found = matchWord.group(1)
+                return found
+        except Exception as e :
+            print e.message
+            raise e
+
 if __name__ == '__main__':
     buy = buy123()
-    print buy.parserFile('robintest', 'test', 2, 'MS',
+    print buy.parserFile('cbcc3138-5603-11e6-a532-000d3a800878', 'test', 2, 'MS',
                   inputFile='/Users/csi/Desktop/團購/姊妹購物網/general/396a2df8-472e-11e6-806e-000c29c1d067/2016-12-02_姊妹購物網_AY12390480F_悠活原力有限公司_欣敏立清益生菌-草莓多多_未出貨.xls', \
                   outputFile='/Users/csi/Desktop/2016-12-02_姊妹購物網_AY12390480F_悠活原力有限公司_欣敏立清益生菌-草莓多多_未出貨.xls')
