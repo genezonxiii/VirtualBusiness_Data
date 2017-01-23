@@ -73,8 +73,8 @@ class ShipperData():
                          }
                 ClientData.append(r)
             return ClientData
-        except MySQLdb.Error, e:
-            return "MySQL Error %d:  %s" % (e.args[0], e.args[1])
+        except Exception as e :
+            print e.message
 
 
 class VBsale_Analytics():

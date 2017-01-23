@@ -136,5 +136,5 @@ class FileProcess():
 
 if __name__ == '__main__':
     test = FileProcess()
-    print test.transferFile(u'/data/vbGroupbuy/17life/general/396a2df8-472e-11e6-806e-000c29c1d067/10443867_[24H出貨]欣敏立清-青蘋果多多益生菌_出貨清冊.xls','robintest', 2, 'DS')
+    print test.transferFile(u'/data/vbGroupbuy/delicious/general/396a2df8-472e-11e6-806e-000c29c1d067/20170123_好吃1.xls','robintest', 2, 'DS')
     # print 'finish'

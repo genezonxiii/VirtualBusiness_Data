@@ -11,7 +11,7 @@ from VirtualBusiness.test import Test_Data
 # from VirtualBusiness.ibon import IBON_Data
 # from VirtualBusiness.Life import Life_Data
 # from VirtualBusiness.Line_mart import LineMart_Data
-from VirtualBusiness.Momo25 import Momo25_Data,ExcelTemplate
+from VirtualBusiness.Momo25 import Momo25_Data
 from VirtualBusiness.momo24_csv import Momo24csv_Data
 from VirtualBusiness.Myfone22_table import Myfone22table_Data
 # from VirtualBusiness.payeasy import payeasy_Data
