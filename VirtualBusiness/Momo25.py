@@ -10,11 +10,11 @@ from VirtualBusiness import Sale,Customer,updateCustomer
 logger = logging.getLogger(__name__)
 
 #FilePath
-class ExcelTemplate():
-    T_Cat_OutputFilePath, T_Cat_TemplateFile = None, None
-    def __init__(self):
-        self.T_Cat_TemplateFile = '/data/vbupload/Logistics_Tcat.xls'
-        self.T_Cat_OutputFilePath = '/data/vbupload_output/'
+# class ExcelTemplate():
+#     T_Cat_OutputFilePath, T_Cat_TemplateFile = None, None
+#     def __init__(self):
+#         self.T_Cat_TemplateFile = '/data/vbupload/Logistics_Tcat.xls'
+#         self.T_Cat_OutputFilePath = '/data/vbupload_output/'
 
 class Momo25_Data():
     Data = None
@@ -41,7 +41,7 @@ class Momo25_Data():
         self.mysqlconnect = ToMysql()
         self.mysqlconnect.connect()
 
-    def Momo_25_Data(self, supplier, GroupID, path, UserID, OutputFile):
+    def Momo_25_Data(self, supplier, GroupID, path, UserID):
 
         try:
 
@@ -108,6 +108,8 @@ class Momo25_Data():
             self.sale.setQuantity(table.cell(row_index, self.TitleList.index(self.TitleTuple[7])).value)
             self.sale.setPrice(table.cell(row_index, self.TitleList.index(self.TitleTuple[8])).value)
             self.sale.setNameNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
+            # 訂單類型
+            self.sale.setDeliveryway("1")   #宅配: 1, 超取711: 2, 超取全家: 3
 
             self.customer.setGroup_id(GroupID)
             self.customer.setNameNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
@@ -155,7 +157,8 @@ class Momo25_Data():
             SaleSQL = (self.sale.getGroup_id(), self.sale.getOrder_No(), self.sale.getUser_id(), self.sale.getProduct_name(), \
                        self.sale.getC_Product_id(), self.customer.getCustomer_id(), self.sale.getName(), self.sale.getQuantity(), \
                        self.sale.getPrice(), self.sale.getInvoice(), self.sale.getInvoice_date(), self.sale.getTrans_list_date(), \
-                       self.sale.getDis_date(), self.sale.getMemo(), self.sale.getSale_date(), self.sale.getOrder_source())
+                       self.sale.getDis_date(), self.sale.getMemo(), self.sale.getSale_date(), self.sale.getOrder_source(),\
+                       self.sale.getDeliveryway())
             self.mysqlconnect.cursor.callproc('p_tb_sale', SaleSQL)
             return
         except Exception as e :

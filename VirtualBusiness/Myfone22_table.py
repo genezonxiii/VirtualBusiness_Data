@@ -111,6 +111,7 @@ class Myfone22table_Data():
             self.sale.setQuantity(dict_list[row_index][u'數量'])
             self.sale.setPrice(dict_list[row_index][u'小計'])
             self.sale.setNameNoEncode(dict_list[row_index][u'收件人'])
+            self.sale.setDeliveryway('1')    #宅配: 1, 超取711: 2, 超取全家: 3
 
             self.customer.setGroup_id(GroupID)
             self.customer.setNameNoEncode(dict_list[row_index][u'收件人'])
@@ -158,13 +159,13 @@ class Myfone22table_Data():
             SaleSQL = (self.sale.getGroup_id(), self.sale.getOrder_No(), self.sale.getUser_id(), self.sale.getProduct_name(), \
                        self.sale.getC_Product_id(), self.customer.getCustomer_id(), self.sale.getName(), self.sale.getQuantity(), \
                        self.sale.getPrice(), self.sale.getInvoice(), self.sale.getInvoice_date(), self.sale.getTrans_list_date(), \
-                       self.sale.getDis_date(), self.sale.getMemo(), self.sale.getSale_date(), self.sale.getOrder_source())
+                       self.sale.getDis_date(), self.sale.getMemo(), self.sale.getSale_date(), self.sale.getOrder_source(), \
+                       self.sale.getDeliveryway())
             self.mysqlconnect.cursor.callproc('p_tb_sale', SaleSQL)
             return
         except Exception as e :
             print e.message
             logging.error(e.message)
-            raise
 
 if __name__ == '__main__':
     myfone = Myfone22table_Data()

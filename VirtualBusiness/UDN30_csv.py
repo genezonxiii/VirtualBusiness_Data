@@ -10,35 +10,6 @@ from VirtualBusiness.momo24_csv import Momo24csv_Data
 logger = logging.getLogger(__name__)
 
 class UDN30csv_Data(Momo24csv_Data):
-    # Data = None
-    # mysqlconnect = None
-    # sale , customer = None, None
-    # header = []
-    # content = []
-    #
-    # def __init__(self):
-    #     # mysql connector object
-    #     self.mysqlconnect = ToMysql()
-    #     self.mysqlconnect.connect()
-    #
-    # def readFile(self, _file):
-    #     cr = open(_file, 'rb')
-    #
-    #     del self.header[:]
-    #     del self.content[:]
-    #
-    #     i = 0
-    #     for row in cr:
-    #         str = row.split(',')
-    #
-    #         if i == 0:
-    #             self.header.append([r.strip('"') for r in str])
-    #         else:
-    #             # print "content"
-    #             temp = [r.strip('"') for r in str]
-    #             self.content.append(temp)
-    #
-    #         i += 1
 
     def UDN_30_Data(self, supplier, GroupID, path, UserID):
         logging.basicConfig(filename='/data/VirtualBusiness_Data/pyupload.log',
@@ -92,6 +63,7 @@ class UDN30csv_Data(Momo24csv_Data):
             self.sale.setQuantity(row[19].strip('"'))
             self.sale.setPrice(row[21].strip('"'))
             self.sale.setNameNoEncode(row[5])
+            self.sale.setDeliveryway('1')   #宅配: 1, 超取711: 2, 超取全家: 3
 
             self.customer.setGroup_id(GroupID)
             self.customer.setNameNoEncode(row[6])
@@ -103,54 +75,9 @@ class UDN30csv_Data(Momo24csv_Data):
             print e.message
             logging.error(e.message)
 
-    def updateDB_Customer(self):
-        try:
-            # insert or update table tb_customer
-            updatecustomer = updateCustomer()
-            self.customer.setCustomer_id(
-                updatecustomer.checkCustomerid(self.customer.getGroup_id(), self.customer.get_Name(), self.customer.get_Address(), \
-                                               self.customer.get_phone(), self.customer.get_Mobile(), self.customer.get_Email()))
-
-            if self.customer.getCustomer_id() == None:
-                self.customer.setCustomer_id(uuid.uuid4())
-                CustomereSQL = (
-                    self.customer.getCustomer_id(), self.customer.getGroup_id(), self.customer.getName(), \
-                    self.customer.getAddress(), self.customer.getphone(), self.customer.getMobile(), \
-                    self.customer.getEmail(), self.customer.getPost(), self.customer.getClass(), self.customer.getMemo(), self.sale.getUser_id())
-                self.mysqlconnect.cursor.callproc('sp_insert_customer_bysys', CustomereSQL)
-            else:
-                CustomereSQL = (self.customer.getCustomer_id(), self.customer.getGroup_id(), self.customer.getName(), \
-                                self.customer.getAddress(), self.customer.getphone(), self.customer.getMobile(), \
-                                self.customer.getEmail(), self.customer.getPost(), self.customer.getClass(), \
-                                self.customer.getMemo(),self.sale.getUser_id())
-                self.mysqlconnect.cursor.callproc('sp_update_customer', CustomereSQL)
-
-            CustomereSQL = (self.customer.getCustomer_id(), self.customer.getGroup_id(), self.customer.get_Name(), \
-                            self.customer.get_Address(), self.customer.get_phone(), self.customer.get_Mobile(), \
-                            self.customer.get_Email())
-            updatecustomer.updataData(CustomereSQL)
-        except Exception as e :
-            print e.message
-            logging.error(e.message)
-            raise
-
-    def updateDB_Sale(self):
-        try:
-            SaleSQL = (self.sale.getGroup_id(), self.sale.getOrder_No(), self.sale.getUser_id(), self.sale.getProduct_name(), \
-                       self.sale.getC_Product_id(), self.customer.getCustomer_id(), self.sale.getName(), self.sale.getQuantity(), \
-                       self.sale.getPrice(), self.sale.getInvoice(), self.sale.getInvoice_date(), self.sale.getTrans_list_date(), \
-                       self.sale.getDis_date(), self.sale.getMemo(), self.sale.getSale_date(), self.sale.getOrder_source())
-            self.mysqlconnect.cursor.callproc('p_tb_sale', SaleSQL)
-            return
-        except Exception as e :
-            print e.message
-            logging.error(e.message)
-            raise
 
 if __name__ == '__main__':
     udn = UDN30csv_Data()
     groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
     print udn.UDN_30_Data('udn',groupid, '/Users/csi/Desktop/for_Joe_test/網購/UDN/宅配/Order_20151005134725437.csv','system')
-    # print yahoo.checkCustomerid('data_09221433(test).xlsx','鍾妮',\
-    #                       '111台北市士林區中山北路六段77號','02-24609497','0966056315',None)

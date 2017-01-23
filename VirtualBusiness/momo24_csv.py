@@ -51,16 +51,6 @@ class Momo24csv_Data():
 
             i += 1
 
-        # print "++++++++"
-        # for row in self.content:
-        #     print "====="
-        #     print row[2]
-        #     print row[3]
-        #     print row[4]
-        #     print row[9]
-        #     print row[13]
-        #     print row[16]
-
 
 
     def Momo_24_Data(self, supplier, GroupID, path, UserID):
@@ -115,6 +105,7 @@ class Momo24csv_Data():
             self.sale.setQuantity(row[16])
             self.sale.setPrice(row[17])
             self.sale.setNameNoEncode(row[3])
+            self.sale.setDeliveryway('1') #宅配: 1, 超取711: 2, 超取全家: 3
 
             self.customer.setGroup_id(GroupID)
             self.customer.setNameNoEncode(row[3])
@@ -162,7 +153,8 @@ class Momo24csv_Data():
             SaleSQL = (self.sale.getGroup_id(), self.sale.getOrder_No(), self.sale.getUser_id(), self.sale.getProduct_name(), \
                        self.sale.getC_Product_id(), self.customer.getCustomer_id(), self.sale.getName(), self.sale.getQuantity(), \
                        self.sale.getPrice(), self.sale.getInvoice(), self.sale.getInvoice_date(), self.sale.getTrans_list_date(), \
-                       self.sale.getDis_date(), self.sale.getMemo(), self.sale.getSale_date(), self.sale.getOrder_source())
+                       self.sale.getDis_date(), self.sale.getMemo(), self.sale.getSale_date(), self.sale.getOrder_source(),\
+                       self.sale.getDeliveryway())
             self.mysqlconnect.cursor.callproc('p_tb_sale', SaleSQL)
             return
         except Exception as e :
@@ -172,8 +164,6 @@ class Momo24csv_Data():
 
 if __name__ == '__main__':
     momo = Momo24csv_Data()
-    groupid = ""
+    # groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
     print momo.Momo_24_Data('yahoo',groupid, '/Users/csi/Desktop/35ee0b33-ade9-4bce-8b9c-67b4a1807689.csv','system')
-    # print yahoo.checkCustomerid('data_09221433(test).xlsx','鍾妮',\
-    #                       '111台北市士林區中山北路六段77號','02-24609497','0966056315',None)

@@ -390,6 +390,9 @@ class Sale():
     def getOrder_source(self):
         return self.p_order_source
 
+    def getDeliveryway(self):
+        return self.p_deliveryway
+
     def getIsreturn(self):
         return self.p_isreturn
 
