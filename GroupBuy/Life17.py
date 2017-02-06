@@ -26,7 +26,8 @@ class Life17(buy123):
                 tmp.append(table.cell(row_index, 1).value) #訂單編號
                 tmp.append(table.cell(row_index, 3).value)  # 收件人
                 tmp.append(table.cell(row_index, 5).value)  # 收件地址
-                tmp.append('0' + self.ReplaceField(str(table.cell(row_index, 4).value), '.'))  # 電話
+                # tmp.append('0' + self.ReplaceField(str(table.cell(row_index, 4).value), '.'))  # 電話
+                tmp.append(str(table.cell(row_index, 4).value))
                 tmp.append(table.cell(row_index, 6).value)  # 方案名稱
                 #暫時以 "菌" 及"包" 來判斷,需要跟悠活原力確認
                 word = self.ReplaceField(table.cell(row_index, 6).value,u"包")
@@ -41,15 +42,15 @@ class Life17(buy123):
             resultinfo = e.message
             success = False
         finally:
-            if success == False :
-                Message = UserID + u' 轉檔錯誤，檔案路徑為 ：'
-                self.sendMailToPSC(Message,inputFile)
+            # if success == False :
+                # Message = UserID + u' 轉檔錯誤，檔案路徑為 ：'
+                # self.sendMailToPSC(Message,inputFile)
             return json.dumps({"success": success, "info": resultinfo,"download": outputFile}, sort_keys=False)
 
 if __name__ == '__main__':
     buy = Life17()
     # word = buy.ReplaceField("[24H出貨]欣敏立清-草莓多多益生菌120包+贈德國Purafit-維他命C發泡錠Vitamin C","包")
     # print int(word[word.find("菌")+3:])/30
-    buy.parserFile('robintest', 'test',2, 'DS',
-                  inputFile=u'C:/Users/10408001/Desktop/團購平台訂單資訊/17P\原始檔/2016.12.26/10397319_[24H出貨]欣敏立清-草莓多多益生菌_出貨清冊 (1).xls', \
-                  outputFile=u'C:/Users/10408001/Desktop/20161229-17P出貨單.xls')
+    print buy.parserFile('cbcc3138-5603-11e6-a532-000d3a800878', 'test',2, 'DS',
+                  inputFile=u'C:\\Users\\10509002\\Desktop\\for_Joe_test\\團購\\17P\\10397319_[24H出貨]欣敏立清-草莓多多益生菌_出貨清冊.xls', \
+                  outputFile=u'C:\\Users\\10509002\\Desktop\\10397319_[24H出貨]欣敏立清-草莓多多益生菌_出貨清冊.xls')

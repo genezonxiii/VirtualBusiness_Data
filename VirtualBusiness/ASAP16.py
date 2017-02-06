@@ -1,5 +1,6 @@
-# -*-  coding: utf-8  -*-
-__author__ = '10409003'
+# -*- coding: utf-8 -*-
+#__author__ = '10408001'
+import datetime,time
 import logging
 import json
 import xlrd
@@ -10,24 +11,27 @@ from VirtualBusiness.Momo25 import Momo25_Data
 
 logger = logging.getLogger(__name__)
 
-class Udn30_Data(Momo25_Data):
+
+class Asap16_Data(Momo25_Data):
     Data = None
     mysqlconnect = None
     sale , customer = None, None
 
     # 預期要找出欄位的索引位置的欄位名稱
-    # 悠活原力
-    TitleTuple = (u'訂單通知函發送日', u'最遲出貨日', u'訂單編號', u'訂購日期',u'收貨人姓名',
-                  u'收貨人市話', u'收貨人手機', u'收件人郵遞區號', u'收貨人地址',u'商品編號',
-                  u'商品名稱+規格尺寸', u'訂購數量',u'售價(促銷價)',u'購物車編號')
-
+    TitleTuple = (u'訂單編號', u'接單時間', u'料號', u'商品名稱', u'數量',
+                  u'總售價', u'收貨人', u'手機', u'市話',u'地址')
     TitleList = []
 
-    def Udn_30_Data(self, supplier, GroupID, path, UserID):
+    def __init__(self):
+        # mysql connector object
+        self.mysqlconnect = ToMysql()
+        self.mysqlconnect.connect()
+
+    def Asap_16_Data(self, supplier, GroupID, path, UserID):
 
         try:
 
-            logger.debug("===Udn30_Data===")
+            logger.debug("===Asap16_Data===")
 
             success = False
             resultinfo = ""
@@ -36,11 +40,11 @@ class Udn30_Data(Momo25_Data):
             data = xlrd.open_workbook(path)
             table = data.sheets()[0]
 
-            totalRows = table.nrows - 2
+            totalRows = table.nrows - 1
 
             # 存放excel中全部的欄位名稱
             self.TitleList = []
-            for row_index in range(1, 2):
+            for row_index in range(0, 1):
                 for col_index in range(0, table.ncols):
                     self.TitleList.append(table.cell(row_index, col_index).value)
 
@@ -54,7 +58,7 @@ class Udn30_Data(Momo25_Data):
                     # print str(index) + TitleTuple[index]
                     # print (TitleList.index(TitleTuple[index]))
 
-            for row_index in range(2, table.nrows):
+            for row_index in range(1, table.nrows):
                 self.sale = Sale()
                 self.customer = Customer()
                 #Parser Data from xls
@@ -74,7 +78,7 @@ class Udn30_Data(Momo25_Data):
             logger.error(inst.args)
             resultinfo = inst.args
         finally:
-            logger.debug('===Udn30_Data finally===')
+            logger.debug('===Asap16_Data finally===')
             return json.dumps({"success": success, "info": resultinfo, "total": totalRows}, sort_keys=False)
 
     def parserData(self,table,row_index,GroupID,UserID,supplier):
@@ -82,29 +86,29 @@ class Udn30_Data(Momo25_Data):
             self.sale.setGroup_id(GroupID)
             self.sale.setUser_id(UserID)
             self.sale.setOrder_source(supplier)
-            self.sale.setOrder_No(table.cell(row_index, self.TitleList.index(self.TitleTuple[2])).value)
-            self.sale.setTrans_list_date_udn(table.cell(row_index, self.TitleList.index(self.TitleTuple[0])).value)
-            self.sale.setSale_date_YYYYMMDD(table.cell(row_index, self.TitleList.index(self.TitleTuple[3])).value)
-            self.sale.setC_Product_id(str(table.cell(row_index, self.TitleList.index(self.TitleTuple[9])).value).split('.')[0])
-            self.sale.setProduct_name_NoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[10])).value)
-            self.sale.setQuantity(table.cell(row_index, self.TitleList.index(self.TitleTuple[11])).value)
-            self.sale.setPrice(table.cell(row_index, self.TitleList.index(self.TitleTuple[12])).value)
-            self.sale.setNameNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[4])).value)
+            self.sale.setOrder_No(table.cell(row_index, self.TitleList.index(self.TitleTuple[0])).value)
+            self.sale.setTrans_list_date_MDHM(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
+            self.sale.setSale_date_MDHM(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
+            self.sale.setC_Product_id(str(table.cell(row_index, self.TitleList.index(self.TitleTuple[2])).value))
+            self.sale.setProduct_name_NoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[3])).value)
+            self.sale.setQuantity(table.cell(row_index, self.TitleList.index(self.TitleTuple[4])).value)
+            self.sale.setPrice(table.cell(row_index, self.TitleList.index(self.TitleTuple[5])).value)
+            self.sale.setNameNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[6])).value)
             self.sale.setDeliveryway('1')   #宅配: 1, 超取711: 2, 超取全家: 3
 
             self.customer.setGroup_id(GroupID)
-            self.customer.setNameNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[4])).value)
-            self.customer.setPhone(table.cell(row_index, self.TitleList.index(self.TitleTuple[5])).value)
-            self.customer.setMobile(table.cell(row_index, self.TitleList.index(self.TitleTuple[6])).value)
-            self.customer.setPost(table.cell(row_index, self.TitleList.index(self.TitleTuple[7])).value)
-            self.customer.setAddressNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[8])).value)
+            self.customer.setNameNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[6])).value)
+            self.customer.setPhone(table.cell(row_index, self.TitleList.index(self.TitleTuple[8])).value)
+            self.customer.setMobile(table.cell(row_index, self.TitleList.index(self.TitleTuple[7])).value)
+            self.customer.setPost(table.cell(row_index, self.TitleList.index(self.TitleTuple[9])).value[0:3])
+            self.customer.setAddressNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[9])).value[3:])
         except Exception as e :
             print e.message
             logging.error(e.message)
 
 
 if __name__ == '__main__':
-    udn = Udn30_Data()
+    buy = Asap16_Data()
     # groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
-    print udn.Udn_30_Data('udn',groupid,u'C:/Users/10509002/Desktop/for_Joe_test/網購/UDN/宅配/Order_20170105153248805.xls','system')
+    print buy.Asap_16_Data('asap',groupid,u'C:\\Users\\10509002\\Documents\\電商檔案\\2016\\0825-ASAP轉單-Vivian\\AJ8192_delivery_20160824084251.xls','system')

@@ -7,11 +7,11 @@ import xlrd
 import logging
 import time
 from VirtualBusiness.test import Test_Data
-# from VirtualBusiness.ASAP import ASAP_Data
-# from VirtualBusiness.ibon import IBON_Data
-# from VirtualBusiness.Life import Life_Data
+from VirtualBusiness.ASAP16 import Asap16_Data
+from VirtualBusiness.Yahoo26 import Yahoo26_Data
+from VirtualBusiness.Yahoo29 import Yahoo29_Data
 # from VirtualBusiness.Line_mart import LineMart_Data
-from VirtualBusiness.Momo25 import Momo25_Data,ExcelTemplate
+from VirtualBusiness.Momo25 import Momo25_Data
 from VirtualBusiness.momo24_csv import Momo24csv_Data
 from VirtualBusiness.Myfone22_table import Myfone22table_Data
 # from VirtualBusiness.payeasy import payeasy_Data
@@ -34,6 +34,7 @@ from VirtualBusiness.Momomall21 import Momomall21_Data
 from VirtualBusiness.ihergo22 import Ihergo22_Data
 from VirtualBusiness.Gohappy22_csv import Gohappy22csv_Data
 from VirtualBusiness.Myfone19_csv import Myfone19csv_Data
+from VirtualBusiness.yahoo_csv import Yahoo22csv_Data
 
 logger = logging.getLogger(__name__)
 
@@ -43,12 +44,10 @@ class VirtualBusiness():
     def __init__(self):
         pass
     def virtualbusiness(self,DataPath,userID):
-        Supplier = str(DataPath).split('/')[3]  #group id
-        Firm = str(DataPath).split('/')[5]      #平台
+        Supplier = str(DataPath).split('/')[3]  #平台
+        Firm = str(DataPath).split('/')[5]      #group id
         supplierType = str(DataPath).split('/')[4]  #訂單種類
         OutputFile = os.path.basename(DataPath).split(".")[0]  #輸出檔案名稱
-        outPutPath = ExcelTemplate()
-        OutputFile = outPutPath.T_Cat_OutputFilePath + Supplier + '/' + Firm +'/' + OutputFile +".xls" #輸出檔案路徑及名稱
 
         print Firm
         print Supplier
@@ -68,36 +67,36 @@ class VirtualBusiness():
             FinalData=Test_Data()
             return FinalData.Test_Data(Supplier,Firm,os.path.join(DataPath),userID)
 
-        # elif Supplier == 'asap':
-        #     logger.debug('asap')
-        #     if supplierType == 'home-delivery':
-        #         logger.debug( 'home-delivery')
-        #         FinalData = ASAP_Data()
-        #         return FinalData.ASAP_Data('ASAP', Firm, os.path.join(DataPath),userID, OutputFile)
+        elif Supplier == 'asap':
+            logger.debug('asap')
+            if supplierType == 'home-delivery':
+                logger.debug('home-delivery')
+                FinalData = Asap16_Data()
+                return FinalData.Asap_16_Data('Asap', Firm, os.path.join(DataPath), userID)
         #     if supplierType == 'instore-pickup':
         #         logger.debug('instore-pickup')
         #         print 'instore-pickup'
         #         FinalData = ASAP_Data()
-        #         return FinalData.ASAP_Data('ASAP', Firm, os.path.join(DataPath),userID, OutputFile)
+        #         return FinalData.ASAP_Data('ASAP', Firm, os.path.join(DataPath),userID)
 
         elif Supplier =='gohappy':
             logger.debug('gohappy')
             if supplierType == 'home-delivery':
                 logger.debug('home-delivery')
                 FinalData = Gohappy22csv_Data()
-                return FinalData.Gohappy_22_Data('Gohappy', Firm, os.path.join(DataPath),userID, OutputFile)
+                return FinalData.Gohappy_22_Data('Gohappy', Firm, os.path.join(DataPath),userID)
 
         # elif Supplier =='linemart':
         #     logger.debug('Line Mart')
         #     if supplierType == 'home-delivery':
         #         logger.debug('home-delivery')
         #         FinalData = LineMart_Data()
-        #         return FinalData.LineMart_Data('Line_Mart', Firm, os.path.join(DataPath),userID,OutputFile)
+        #         return FinalData.LineMart_Data('Line_Mart', Firm, os.path.join(DataPath),userID)
         #     if supplierType == 'instore-pickup':
         #         logger.debug('instore-pickup')
         #         print 'instore-pickup'
         #         FinalData = LineMart_Data()
-        #         return FinalData.LineMart_Data('Line_Mart', Firm, os.path.join(DataPath),userID,OutputFile)
+        #         return FinalData.LineMart_Data('Line_Mart', Firm, os.path.join(DataPath),userID)
 
         elif Supplier =='momo':
             logger.debug("momo")
@@ -105,10 +104,10 @@ class VirtualBusiness():
                 logger.debug('home-delivery')
                 if DataPath.endswith(".xls"):
                     FinalData = Momo25_Data()
-                    return FinalData.Momo_25_Data('momo', Firm, os.path.join(DataPath),userID,OutputFile)
+                    return FinalData.Momo_25_Data('momo', Firm, os.path.join(DataPath),userID)
                 if DataPath.endswith(".csv"):
                     momo = Momo24csv_Data()
-                    return  momo.Momo_24_Data('momo', Firm,os.path.join(DataPath),userID,OutputFile)
+                    return  momo.Momo_24_Data('momo', Firm,os.path.join(DataPath),userID)
 
         elif Supplier =='myfone':
             logger.debug('myfone')
@@ -117,34 +116,34 @@ class VirtualBusiness():
                 # DataPath = DataPath.split('.')[0] + '.html'
                 if DataPath.endswith(".html"):
                     FinalData = Myfone22table_Data()
-                    return FinalData.Myfone_22_Data('myfone', Firm, os.path.join(DataPath), userID,OutputFile)
+                    return FinalData.Myfone_22_Data('myfone', Firm, os.path.join(DataPath), userID)
                 if DataPath.endswith(".csv"):
                     FinalData = Myfone19csv_Data()
-                    return  FinalData.Myfone_19_Data('myfone', Firm, os.path.join(DataPath), userID,OutputFile)
+                    return  FinalData.Myfone_19_Data('myfone', Firm, os.path.join(DataPath), userID)
 
         # elif Supplier == 'payeasy':
         #     logger.debug('payeasy')
         #     if supplierType == 'home-delivery':
         #         logger.debug( 'home-delivery')
         #         FinalData = payeasy_Data()
-        #         return FinalData.payeasy_Data('payeasy', Firm, os.path.join(DataPath),userID,OutputFile)
+        #         return FinalData.payeasy_Data('payeasy', Firm, os.path.join(DataPath),userID)
         #     if supplierType == 'instore-pickup':
         #         logger.debug('instore-pickup')
         #         print 'instore-pickup'
         #         FinalData = payeasy_Data()
-        #         return FinalData.payeasy_Data('payeasy', Firm, os.path.join(DataPath),userID,OutputFile)
+        #         return FinalData.payeasy_Data('payeasy', Firm, os.path.join(DataPath),userID)
         #
         # elif Supplier == 'pchome':
         #     logger.debug('pchome')
         #     if supplierType == 'home-delivery':
         #         logger.debug( 'home-delivery')
         #         FinalData = PCHome_Data()
-        #         return FinalData.PCHome_Data('Pchome', Firm, os.path.join(DataPath),userID,OutputFile)
+        #         return FinalData.PCHome_Data('Pchome', Firm, os.path.join(DataPath),userID)
         #     if supplierType == 'instore-pickup':
         #         logger.debug('instore-pickup')
         #         print 'instore-pickup'
         #         FinalData = PCHome_Data()
-        #         return FinalData.PCHome_Data('Pchome', Firm, os.path.join(DataPath),userID,OutputFile)
+        #         return FinalData.PCHome_Data('Pchome', Firm, os.path.join(DataPath),userID)
 
         elif Supplier == 'udn':
             logger.debug('udn')
@@ -152,46 +151,49 @@ class VirtualBusiness():
                 logger.debug('home-delivery')
                 if DataPath.endswith(".xls"):
                     FinalData = Udn30_Data()
-                    return FinalData.Udn_30_Data('udn', Firm, os.path.join(DataPath), userID, OutputFile)
+                    return FinalData.Udn_30_Data('udn', Firm, os.path.join(DataPath), userID)
                 if DataPath.endswith(".csv"):
                     FinalData = UDN30csv_Data()
-                    return FinalData.UDN_30_Data('udn', Firm, os.path.join(DataPath), userID, OutputFile)
+                    return FinalData.UDN_30_Data('udn', Firm, os.path.join(DataPath), userID)
 
-        # elif Supplier == 'yahoo':
-        #     logger.debug('yahoo')
-        #     if supplierType == 'home-delivery':
-        #         logger.debug( 'home-delivery')
-        #         FinalData = Yahoo_Data()
-        #         return FinalData.Yahood_Data('yahoo', Firm, os.path.join(DataPath),userID, OutputFile)
-        #     if supplierType == 'instore-pickup':
-        #         logger.debug('instore-pickup')
-        #         print 'instore-pickup'
-        #         FinalData = Yahoo_Data()
-        #         return FinalData.Yahoos_Data('yahoo', Firm, os.path.join(DataPath),userID, OutputFile)
+        elif Supplier == 'yahoo':
+            logger.debug('yahoo')
+            if supplierType == 'home-delivery':
+                logger.debug( 'home-delivery')
+                FinalData = Yahoo26_Data()
+                return FinalData.Yahoo_26_Data('yahoo', Firm, os.path.join(DataPath),userID)
+            if supplierType == 'instore-pickup':
+                logger.debug('instore-pickup')
+                if DataPath.endswith(".xls") or DataPath.endswith(".xlsx"):
+                    FinalData = Yahoo29_Data()
+                    return FinalData.Yahoo_29_Data('yahoo', Firm, os.path.join(DataPath),userID)
+                if DataPath.endswith(".csv"):
+                    FinalData = Yahoo22csv_Data()
+                    return FinalData.Yahoo_22_Data('yahoo', Firm, os.path.join(DataPath), userID)
 
         # elif Supplier == '91mai':
         #     logger.debug('91mai')
         #     if supplierType == 'home-delivery':
         #         logger.debug( 'home-delivery')
         #         FinalData = Nine_Data()
-        #         return FinalData.Nine_Data(u'九易', Firm, os.path.join(DataPath),userID, OutputFile)
+        #         return FinalData.Nine_Data(u'九易', Firm, os.path.join(DataPath),userID)
         #     if supplierType == 'instore-pickup':
         #         logger.debug('instore-pickup')
         #         print 'instore-pickup'
         #         FinalData = Nine_Data()
-        #         return FinalData.Nine_Data(u'九易'.encode('utf-8'), Firm, os.path.join(DataPath),userID, OutputFile)
+        #         return FinalData.Nine_Data(u'九易'.encode('utf-8'), Firm, os.path.join(DataPath),userID)
         #
         # elif Supplier == 'treemall':
         #     logger.debug('treemall')
         #     if supplierType == 'home-delivery':
         #         logger.debug( 'home-delivery')
         #         FinalData = TREE_Data()
-        #         return FinalData.TREE_Data(u'國泰Tree'.encode('utf-8'), Firm, os.path.join(DataPath),userID, OutputFile)
+        #         return FinalData.TREE_Data(u'國泰Tree'.encode('utf-8'), Firm, os.path.join(DataPath),userID)
         #     if supplierType == 'instore-pickup':
         #         logger.debug('instore-pickup')
         #         print 'instore-pickup'
         #         FinalData = TREE_Data()
-        #         return FinalData.TREE_Data(u'國泰Tree'.encode('utf-8'), Firm, os.path.join(DataPath),userID, OutputFile)
+        #         return FinalData.TREE_Data(u'國泰Tree'.encode('utf-8'), Firm, os.path.join(DataPath),userID)
 
         elif Supplier == 'etmall':
             logger.debug('etmall')
@@ -202,26 +204,26 @@ class VirtualBusiness():
                 #     return FinalData.GM_16_Data(u'東森購物'.encode("utf-8"), Firm, os.path.join(DataPath), userID)
                 if DataPath.endswith(".csv"):
                     FinalData = Umall30csv_Data()
-                    return  FinalData.Umall_30_Data(u'東森購物'.encode("utf-8"), Firm, os.path.join(DataPath), userID, OutputFile)
+                    return  FinalData.Umall_30_Data(u'東森購物'.encode("utf-8"), Firm, os.path.join(DataPath), userID)
 
         # elif Supplier == 'books':
         #     logger.debug('books')
         #     if supplierType == 'home-delivery':
         #         logger.debug( 'home-delivery')
         #         FinalData = Book_Data()
-        #         return FinalData.Book_Data(u'博客來'.encode('utf-8'), Firm, os.path.join(DataPath),userID, OutputFile)
+        #         return FinalData.Book_Data(u'博客來'.encode('utf-8'), Firm, os.path.join(DataPath),userID)
         #     if supplierType == 'instore-pickup':
         #         logger.debug('instore-pickup')
         #         print 'instore-pickup'
         #         FinalData = Book_Data()
-        #         return FinalData.Book_Data(u'博客來'.encode('utf-8'), Firm, os.path.join(DataPath),userID, OutputFile)
+        #         return FinalData.Book_Data(u'博客來'.encode('utf-8'), Firm, os.path.join(DataPath),userID)
 
         elif Supplier == 'umall':
             logger.debug('umall')
             if supplierType == 'home-delivery':
                 logger.debug( 'home-delivery')
                 FinalData = Etmall29csv_Data()
-                return FinalData.Etmall_29_Data(u'森森購物'.encode('utf-8'), Firm, os.path.join(DataPath),userID, OutputFile)
+                return FinalData.Etmall_29_Data(u'森森購物'.encode('utf-8'), Firm, os.path.join(DataPath), userID)
 
         elif Supplier == 'yahoomall':
             logger.debug('yahoomall')
@@ -233,38 +235,38 @@ class VirtualBusiness():
                 logger.debug('instore-pickup')
                 print 'instore-pickup'
                 FinalData = YahooS24table_Data()
-                return FinalData.YahooS_24_Data(u'超級商城'.encode('utf-8'), Firm, os.path.join(DataPath),userID, OutputFile)
+                return FinalData.YahooS_24_Data(u'超級商城'.encode('utf-8'), Firm, os.path.join(DataPath),userID)
 
         # elif Supplier == 'amart':
         #     logger.debug('amart')
         #     if supplierType == 'home-delivery':
         #         logger.debug( 'home-delivery')
         #         FinalData = LoveBuy_Data()
-        #         return FinalData.LoveBuy_Data(u'愛買'.encode('utf-8'), Firm, os.path.join(DataPath),userID, OutputFile)
+        #         return FinalData.LoveBuy_Data(u'愛買'.encode('utf-8'), Firm, os.path.join(DataPath),userID)
         #     if supplierType == 'instore-pickup':
         #         logger.debug('instore-pickup')
         #         print 'instore-pickup'
         #         FinalData = LoveBuy_Data()
-        #         return FinalData.LoveBuy_Data(u'愛買'.encode('utf-8'), Firm, os.path.join(DataPath),userID, OutputFile)
+        #         return FinalData.LoveBuy_Data(u'愛買'.encode('utf-8'), Firm, os.path.join(DataPath),userID)
         #
         # elif Supplier == 'rakuten':
         #     logger.debug('rakuten')
         #     if supplierType == 'home-delivery':
         #         logger.debug( 'home-delivery')
         #         FinalData = Lotte_Data()
-        #         return FinalData.Lotte_Data(u'樂天'.encode('utf-8'), Firm, os.path.join(DataPath),userID, OutputFile)
+        #         return FinalData.Lotte_Data(u'樂天'.encode('utf-8'), Firm, os.path.join(DataPath),userID)
         #     if supplierType == 'instore-pickup':
         #         logger.debug('instore-pickup')
         #         print 'instore-pickup'
         #         FinalData = Lotte_Data()
-        #         return FinalData.Lotte_Data(u'樂天'.encode('utf-8'), Firm, os.path.join(DataPath),userID, OutputFile)
+        #         return FinalData.Lotte_Data(u'樂天'.encode('utf-8'), Firm, os.path.join(DataPath),userID)
 
         elif Supplier == 'bigbuy':
             logger.debug('bigbuy')
             if supplierType == 'home-delivery':
                 logger.debug('home-delivery')
                 FinalData = Savesafe22table_Data()
-                return FinalData.Savesafe_22_Data(u'大買家', Firm, os.path.join(DataPath),userID, OutputFile)
+                return FinalData.Savesafe_22_Data(u'大買家', Firm, os.path.join(DataPath),userID)
             # if supplierType == 'instore-pickup':
             #     logger.debug('instore-pickup')
             #     print 'instore-pickup'
@@ -276,7 +278,7 @@ class VirtualBusiness():
             if supplierType == 'home-delivery':
                 logger.debug( 'home-delivery')
                 FinalData = Babyhome17_Data()
-                return FinalData.Babyhome_17_Data('babyhome', Firm, os.path.join(DataPath), userID, OutputFile)
+                return FinalData.Babyhome_17_Data('babyhome', Firm, os.path.join(DataPath), userID)
             # if supplierType == 'instore-pickup':
             #     logger.debug('instore-pickup')
             #     print 'instore-pickup'
@@ -288,7 +290,7 @@ class VirtualBusiness():
             if supplierType == 'home-delivery':
                 logger.debug( 'home-delivery')
                 FinalData = Friday16_Data()
-                return FinalData.Friday_16_Data('friday', Firm, os.path.join(DataPath), userID, OutputFile)
+                return FinalData.Friday_16_Data('friday', Firm, os.path.join(DataPath), userID)
             # if supplierType == 'instore-pickup':
             #     logger.debug('instore-pickup')
             #     print 'instore-pickup'
@@ -300,14 +302,14 @@ class VirtualBusiness():
             if supplierType == 'instore-pickup':
                 logger.debug('instore-pickup')
                 FinalData = Momomall21_Data()
-                return FinalData.Momomall_21_Data(u'摩天商城', Firm, os.path.join(DataPath), userID, OutputFile)
+                return FinalData.Momomall_21_Data(u'摩天商城', Firm, os.path.join(DataPath), userID)
 
         elif Supplier == 'ihergo':
             logger.debug('ihergo')
             if supplierType == 'home-delivery':
                 logger.debug( 'home-delivery')
                 FinalData = Ihergo22_Data()
-                return FinalData.Ihergo_22_Data('Ihergo', Firm, os.path.join(DataPath), userID, OutputFile)
+                return FinalData.Ihergo_22_Data('Ihergo', Firm, os.path.join(DataPath), userID)
             # if supplierType == 'instore-pickup':
             #     logger.debug('instore-pickup')
             #     print 'instore-pickup'
@@ -317,6 +319,6 @@ class VirtualBusiness():
 if __name__ == '__main__':
     Business = VirtualBusiness()
     # Business.virtualbusiness("/data/vbupload/test/", "19647356")
-    Business.virtualbusiness("D:/vbdata/vbupload/momo/cbcc3138-5603-11e6-a532-000d3a800878/A1102_3_1_010031_20160301110142.xls", "19647356")
+    Business.virtualbusiness("C:/data/vbupload/asap/home-delivery/cbcc3138-5603-11e6-a532-000d3a800878/AJ8192_delivery_20160824084251.xls", "test")
 #     Business=VirtualBusiness()
 #     Business.virtualbusiness("C:/vbdata/vbupload/17life/7dcc2045-472e-11e6-806e-000c29c1d000/Data2.xls")

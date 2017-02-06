@@ -30,6 +30,18 @@ class convertType():
         except Exception as e:
             logger.ERROR(e.message)
 
+    def ToDateTimeMDHM(self,value):
+        try:
+            if value== None :
+                return None
+            elif value=='':
+                return None
+            else:
+                dateObj=datetime.datetime.strptime(str(value),'%m/%d %H:%M')
+                return dateObj
+        except Exception as e:
+            logger.ERROR(e.message)
+
     def ToDateTimeYYYYMMDD(self,value):
         try:
             if value== None :
@@ -62,6 +74,18 @@ class convertType():
                 return None
             else:
                 dateObj=datetime.datetime.strptime(str(value),'%Y-%m-%d')
+                return dateObj
+        except Exception as e:
+            logger.ERROR(e.message)
+
+    def ToDateTimeYMDHM(self,value):
+        try:
+            if value== None :
+                return None
+            elif value=='':
+                return None
+            else:
+                dateObj=datetime.datetime.strptime(str(value),'%Y-%m-%d %H:%M')
                 return dateObj
         except Exception as e:
             logger.ERROR(e.message)
@@ -103,6 +127,19 @@ class convertType():
         except Exception as e:
             logger.ERROR(e.message)
 
+    def ToDateTimeYMDHMS_float(self,value):
+        try:
+            if value== None :
+                return None
+            elif value=='':
+                return None
+            else:
+                ct = convertType()
+                dateObj=datetime.datetime.strptime(ct.xldate_to_datetime(value),"%Y-%m-%d %H:%M:%S")
+                return dateObj
+        except Exception as e:
+            logger.ERROR(e.message)
+
     def ToDateTime2(self,value):
         try:
             if value== None :
@@ -121,6 +158,14 @@ class convertType():
             date = int(date)
         d = datetime.date.fromordinal(__s_date + date)
         return d.strftime("%Y/%m/%d")
+
+    def xldate_to_datetime(self,xldate):
+        tempDate = datetime.datetime(1899, 12, 30)
+        deltaDays = datetime.timedelta(days=int(xldate))
+        secs = (int((xldate % 1) * 86400) - 60)
+        detlaSeconds = datetime.timedelta(seconds=secs)
+        TheTime = (tempDate + deltaDays + detlaSeconds)
+        return TheTime.strftime("%Y-%m-%d %H:%M:%S")
 
     def ToInt(self,value):
         try:
@@ -249,19 +294,22 @@ class Sale():
         self.p_invoice = self.convert.ToString(value.encode('utf-8'))
 
     def setQuantity(self,value):
-        self.p_quantity = self.convert.ToInt(value)
+        self.p_quantity = self.convert.ToInt(int(value))
 
     def setPrice(self,value):
         self.p_price = self.convert.ToFloat(value)
 
-    # def setPrice_str(self,value):
-    #     self.p_price = self.convert.ToString(value)
+    def setPrice_str(self,value):
+        self.p_price = self.convert.ToString(int(value))
 
     def setInvoice_date(self,value):
         self.p_invoice_date = self.convert.ToDateTime(value)
 
     def setTrans_list_date(self,value):
         self.p_trans_list_date = self.convert.ToDateTime(value)
+
+    def setTrans_list_date_MDHM(self,value):
+        self.p_trans_list_date = self.convert.ToDateTimeMDHM(value)
 
     def setTrans_list_date_YYYYMMDD(self,value):
         self.p_trans_list_date = self.convert.ToDateTimeYYYYMMDD(value)
@@ -272,6 +320,9 @@ class Sale():
     def setTrans_list_date_YMD(self,value):
         self.p_trans_list_date = self.convert.ToDateTimeYMD(value)
 
+    def setTrans_list_date_YMDHM(self,value):
+        self.p_trans_list_date = self.convert.ToDateTimeYMDHM(value)
+
     def setTrans_list_date_YMDHMS(self,value):
         self.p_trans_list_date = self.convert.ToDateTimeYMDHMS(value)
 
@@ -280,6 +331,9 @@ class Sale():
 
     def setTrans_list_date_YYYYMMDD_float(self,value):
         self.p_trans_list_date = self.convert.ToDateTimeYYYYMMDD_float(value)
+
+    def setTrans_list_date_YMDHMS_float(self,value):
+        self.p_trans_list_date = self.convert.ToDateTimeYMDHMS_float(value)
 
     def setTrans_list_date_udn(self,value):
         self.p_trans_list_date = self.convert.ToDateTime2(value)
@@ -290,11 +344,20 @@ class Sale():
     def setSale_date(self,value):
         self.p_sale_date = self.convert.ToDateTime(value)
 
+    def setSale_date_MDHM(self,value):
+        self.p_sale_date = self.convert.ToDateTimeMDHM(value)
+
     def setSale_date_YMD(self,value):
         self.p_sale_date = self.convert.ToDateTimeYMD(value)
 
     def setSale_date_YMDHMS(self,value):
         self.p_sale_date = self.convert.ToDateTimeYMDHMS(value)
+
+    def setSale_date_YMDHM(self,value):
+        self.p_sale_date = self.convert.ToDateTimeYMDHM(value)
+
+    def setSale_date_YMDHMS_float(self,value):
+        self.p_trans_list_date = self.convert.ToDateTimeYMDHMS_float(value)
 
     def setSale_date_YMDHMSF(self,value):
         self.p_sale_date = self.convert.ToDateTimeYMDHMSF(value)

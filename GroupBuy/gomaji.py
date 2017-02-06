@@ -27,7 +27,7 @@ class gomaji(buy123):
                 order = self.ReplaceField(table.cell(row_index, 10).value, u'盒')
                 if "." in order :
                     order = order.split(".")[1].strip()
-                tmp.append(order)
+                # tmp.append(order)
                 tmp.append(self.getResultForDigit(order))
                 # tmp.append(self.getResultForDigit(self.ReplaceField(table.cell(row_index, 10).value, u'盒')))  # 方案名稱盒
                 tmp.append(table.cell(row_index, 9).value)  # 訂單份數
