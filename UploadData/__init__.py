@@ -35,6 +35,7 @@ from VirtualBusiness.ihergo22 import Ihergo22_Data
 from VirtualBusiness.Gohappy22_csv import Gohappy22csv_Data
 from VirtualBusiness.Myfone19_csv import Myfone19csv_Data
 from VirtualBusiness.yahoo_csv import Yahoo22csv_Data
+from VirtualBusiness.shopline import Shopline
 
 logger = logging.getLogger(__name__)
 
@@ -85,6 +86,13 @@ class VirtualBusiness():
                 logger.debug('home-delivery')
                 FinalData = Gohappy22csv_Data()
                 return FinalData.Gohappy_22_Data('Gohappy', Firm, os.path.join(DataPath),userID)
+
+        elif Supplier == 'shopline':
+            logger.debug('shopline')
+            if supplierType == 'home-delivery':
+                logger.debug('home-delivery')
+                FinalData = Shopline()
+                return FinalData.Shopline_Data('shopline',Firm,os.path.join(DataPath),userID)
 
         # elif Supplier =='linemart':
         #     logger.debug('Line Mart')

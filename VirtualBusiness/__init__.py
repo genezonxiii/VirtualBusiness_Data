@@ -11,6 +11,7 @@ import ToMongodb
 import logging
 import time , chardet
 import mysql.connector
+import re
 
 logger = logging.getLogger(__name__)
 
@@ -682,6 +683,22 @@ class detectFile():
             File = open(filename).read()
             result = chardet.detect(File)
             return result.get('encoding')
+        except Exception as e:
+            logger.error(e.message)
+
+class checkNum():
+    def __init__(self):
+        pass
+
+    def getNumber(self, strWord):
+        try:
+            num = ""
+            for i in range(len(strWord)):
+                if strWord[i].isdigit():
+                    num += strWord[i]
+                else:
+                    break
+            return num
         except Exception as e:
             logger.error(e.message)
 
