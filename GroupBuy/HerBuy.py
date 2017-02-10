@@ -13,6 +13,7 @@ class HerBuy(buy123):
         print inputFile
         success = False
         try:
+            self.getRegularEx(GroupID)
             print 'test'
             file = open(inputFile).read()
             print 'stop'

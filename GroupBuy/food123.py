@@ -12,6 +12,7 @@ class food123(buy123):
         self.init_log('Food123_Data', GroupID, UserID, ProductCode, inputFile)
         success = False
         try:
+            self.getRegularEx(GroupID)
             data = xlrd.open_workbook(inputFile)
             table = data.sheets()[0]
             result = []
@@ -25,10 +26,11 @@ class food123(buy123):
                 tmp.append('0' + self.ReplaceField(str(table.cell(row_index, 3).value), '.'))  # 電話
                 tmp.append(table.cell(row_index, 5).value)  # 檔次名稱
                 # tmp.append(self.ReplaceField(table.cell(row_index, 6).value, u'盒'))  # 訂購方案
-                order = self.ReplaceField(table.cell(row_index, 6).value, u'盒')
-                if "." in order :
-                    order = order.split(".")[1].strip()
-                tmp.append(order)
+                tmp.append(self.getResultForDigit(self.parserRegularEx(table.cell(row_index, 6).value)))
+                # order = self.ReplaceField(table.cell(row_index, 6).value, u'盒')
+                # if "." in order :
+                #     order = order.split(".")[1].strip()
+                # tmp.append(order)
                 tmp.append(table.cell(row_index, 7).value)  # 訂單份數
                 tmp.append("")  # 訂購人
                 result.append(tmp)

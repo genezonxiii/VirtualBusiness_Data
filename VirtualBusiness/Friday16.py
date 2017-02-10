@@ -106,4 +106,4 @@ if __name__ == '__main__':
     friday = Friday16_Data()
     # groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
-    print friday.Friday_16_Data('friday',groupid,u'C:\\Users\\10509002\\Desktop\\for_Joe_test\\網購\\friday\\宅配\\訂單處理_20141215.xls','system')
+    print friday.Friday_16_Data('friday',groupid,u'C:\\Users\\10509002\\Desktop\\訂單處理_20141215 (3).xls','system')

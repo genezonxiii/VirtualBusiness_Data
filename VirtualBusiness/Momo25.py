@@ -170,4 +170,4 @@ if __name__ == '__main__':
     momo = Momo25_Data()
     # groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
-    print momo.Momo_25_Data('momo',groupid,u'C:\\Users\\10509002\\Documents\\電商檔案\\網購平台訂單資訊\\momo\\2016.03.16\\A1102_3_1_008992_20160316114348.xls','system')
+    print momo.Momo_25_Data('momo',groupid,u'C:\\Users\\10509002\\Desktop\\for_Joe_test\\網購\\momo\\宅配\\A1102_3_1_008992_20160316114348.xls','system')

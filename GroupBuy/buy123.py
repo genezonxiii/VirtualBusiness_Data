@@ -128,9 +128,12 @@ class buy123():
 
     #初始記錄解析 Log
     def init_log(self,dataName,GroupID,UserID ,ProductCode,inputFile):
-        logging.basicConfig(filename='pyupload.log', level=logging.DEBUG, format='%(asctime)s %(message)s',
+        logging.basicConfig(filename='/data/VirtualBusiness_Data/pyupload-group.log',
+                            level=logging.DEBUG,
+                            format='%(asctime)s - %(levelname)s - %(filename)s:%(name)s:%(module)s/%(funcName)s/%(lineno)d - %(message)s',
                             datefmt='%Y/%m/%d %I:%M:%S %p')
         logging.Formatter.converter = time.gmtime
+
         logging.info('===' + dataName + '===')
         logging.debug('GroupID:' + GroupID)
         logging.debug('path:' + inputFile)
@@ -266,34 +269,45 @@ class buy123():
 
     # 取得 Regular Express
     def getRegularEx(self,GroupID):
-        parameter = [GroupID]
-        self.mysqlconnect.cursor.callproc('sp_get_regularexpress',parameter)
-        # tmp = None
-        for result in self.mysqlconnect.cursor.stored_results():
-            tmp = result.fetchall()
-        for row in tmp:
-            value = {"compile": row[0],"search":row[1]}
-            self.RegularEX.append(value)
+        try:
+            logger.debug("getRegularEx")
+            parameter = [GroupID]
+            self.mysqlconnect.cursor.callproc('sp_get_regularexpress',parameter)
+            # tmp = None
+            for result in self.mysqlconnect.cursor.stored_results():
+                tmp = result.fetchall()
+            for row in tmp:
+                value = {"compile": row[0],"search":row[1]}
+                self.RegularEX.append(value)
+        except Exception as e:
+            logging.error(e.message)
 
     # 使用 RegularExpress 解析"方案名稱"中的數量
     def parserRegularEx(self,value):
+        logger.debug("parserRegularEx")
         matchWord = None
         try:
             for row in self.RegularEX:
-                print row.get("compile"),row.get("search")
+                logger.debug("for loop")
+                logger.debug(row.get("compile"))
+                logger.debug(row.get("search"))
+                # print row.get("compile"),row.get("search")
                 if re.compile(row.get("compile")).match(value):
                     matchWord = re.search(row.get("search"), value)
                 if matchWord <> None :
                     break
+            logger.debug(matchWord)
             if matchWord:
                 found = matchWord.group(1)
                 return found
+            logger.debug("parserRegularEx end")
         except Exception as e :
+            logging.error(e.message)
             print e.message
             raise e
 
 if __name__ == '__main__':
     buy = buy123()
     print buy.parserFile('cbcc3138-5603-11e6-a532-000d3a800878', 'test', 2, 'MS',
-                  inputFile='/Users/csi/Desktop/團購/姊妹購物網/general/396a2df8-472e-11e6-806e-000c29c1d067/2016-12-02_姊妹購物網_AY12390480F_悠活原力有限公司_欣敏立清益生菌-草莓多多_未出貨.xls', \
-                  outputFile='/Users/csi/Desktop/2016-12-02_姊妹購物網_AY12390480F_悠活原力有限公司_欣敏立清益生菌-草莓多多_未出貨.xls')
+                  inputFile=u'C:\\Users\\10509002\\Desktop\\test\\2017-01-19_生活市集_BY123402762F_悠活原力有限公司_欣敏立清益生菌-紅蘋果多多_未出貨.xls', \
+                  outputFile=u'C:\\Users\\10509002\\Desktop\\2017-01-19_生活市集_BY123402762F_悠活原力有限公司_欣敏立清益生菌-紅蘋果多多_未出貨.xls')

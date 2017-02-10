@@ -7,6 +7,7 @@ from ToMysql import ToMysql
 import uuid
 from VirtualBusiness import Sale,Customer,updateCustomer,detectFile
 import codecs
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -70,8 +71,10 @@ class Momo24csv_Data():
             logger.debug("header:")
             logger.debug(self.header)
             print len(self.content)
+            resultinfo = ""
 
             for row_index in range(0, len(self.content)):
+                totalRows = len(self.content)
                 self.sale = Sale()
                 self.customer = Customer()
                 #Parser Data from xls
@@ -84,11 +87,15 @@ class Momo24csv_Data():
                 self.customer = None
             self.mysqlconnect.db.commit()
             self.mysqlconnect.dbClose()
-            logger.info('===Momo24_Data SUCCESS===')
-            return 'success'
-        except Exception as e :
-            logger.error(e.message)
-            return 'failure'
+
+            success = True
+        except Exception as inst:
+            logger.error(inst.args)
+            resultinfo = inst.args
+
+        finally:
+            logger.debug('===Momo24csv_Data finally===')
+            return json.dumps({"success": success, "info": resultinfo, "total": totalRows}, sort_keys=False)
 
     def parserData(self,table,row_index,GroupID,UserID,supplier):
         try:

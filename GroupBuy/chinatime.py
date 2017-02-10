@@ -27,6 +27,7 @@ class chinatime(buy123):
         self.init_log('chinatime_Data', GroupID, UserID, ProductCode, inputFile)
         success = False
         try:
+            self.getRegularEx(GroupID)
             data = xlrd.open_workbook(inputFile)
             table = data.sheets()[0]
             result = []

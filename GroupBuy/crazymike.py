@@ -16,6 +16,7 @@ class Crazymike(buy123):
         self.init_log('Popular_Data', GroupID, UserID, ProductCode, inputFile)
         success = False
         try:
+            self.getRegularEx(GroupID)
             data = codecs.open(inputFile,'rb',encoding='big5')
             tmpdata,result = [],[]
             resultinfo = ""

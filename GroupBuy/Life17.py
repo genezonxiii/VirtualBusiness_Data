@@ -5,6 +5,8 @@ import logging
 import xlrd
 import json
 from GroupBuy.buy123 import buy123
+
+logger = logging.getLogger(__name__)
 #17P團購
 class Life17(buy123):
     #拆解字串中的包數
@@ -16,6 +18,7 @@ class Life17(buy123):
         self.init_log('17P_Data', GroupID, UserID, ProductCode, inputFile)
         success = False
         try:
+            self.getRegularEx(GroupID)
             data = xlrd.open_workbook(inputFile)
             table = data.sheets()[0]
             result = []
@@ -23,20 +26,44 @@ class Life17(buy123):
             # 讀 excel 檔
             for row_index in range(1, table.nrows):
                 tmp = []
+                logger.debug("1")
                 tmp.append(table.cell(row_index, 1).value) #訂單編號
+                logger.debug("2")
                 tmp.append(table.cell(row_index, 3).value)  # 收件人
+                logger.debug("3")
                 tmp.append(table.cell(row_index, 5).value)  # 收件地址
+                logger.debug("4")
                 # tmp.append('0' + self.ReplaceField(str(table.cell(row_index, 4).value), '.'))  # 電話
                 tmp.append(str(table.cell(row_index, 4).value))
+                logger.debug("5")
                 tmp.append(table.cell(row_index, 6).value)  # 方案名稱
                 #暫時以 "菌" 及"包" 來判斷,需要跟悠活原力確認
-                word = self.ReplaceField(table.cell(row_index, 6).value,u"包")
+                # 訂購方案
+                logger.debug("6")
+                word = table.cell(row_index, 6).value
+                logger.debug("7")
+                if u'盒' not in word:
+                    logger.debug("8")
+                    count = self.getResultForDigit(self.parserRegularEx(table.cell(row_index, 6).value))
+                    logger.debug("9")
+                    tmp.append(int(count)/30)
+                    logger.debug("10")
+                else:
+                    logger.debug("11")
+                    logger.debug(table.cell(row_index, 6).value)
+                    logger.debug(self.parserRegularEx(table.cell(row_index, 6).value))
+                    tmp.append(self.getResultForDigit(self.parserRegularEx(table.cell(row_index, 6).value)))
+                # word = self.ReplaceField(table.cell(row_index, 6).value,u"包")
                 # order = self.getResultForDigit(word)
-                tmp.append(int(word[word.find(u"菌")+1:])/30) # 訂購方案
+                # tmp.append(int(word[word.find(u"菌")+1:])/30) # 訂購方案
+                logger.debug("12")
                 tmp.append(table.cell(row_index, 9).value)  # 訂單份數
+                logger.debug("13")
                 tmp.append("")  # 訂購人
+                logger.debug("14")
                 result.append(tmp)
             success = self.writeXls(LogisticsID, result, outputFile)
+            logger.debug("15")
         except Exception as e:
             logging.error(e.message)
             resultinfo = e.message
@@ -52,5 +79,5 @@ if __name__ == '__main__':
     # word = buy.ReplaceField("[24H出貨]欣敏立清-草莓多多益生菌120包+贈德國Purafit-維他命C發泡錠Vitamin C","包")
     # print int(word[word.find("菌")+3:])/30
     print buy.parserFile('cbcc3138-5603-11e6-a532-000d3a800878', 'test',2, 'DS',
-                  inputFile=u'C:\\Users\\10509002\\Desktop\\for_Joe_test\\團購\\17P\\10397319_[24H出貨]欣敏立清-草莓多多益生菌_出貨清冊.xls', \
+                  inputFile=u'C:\\Users\\10509002\\Desktop\\for_Joe_test\\團購\\17P\\10461821_[24H出貨]欣敏立清-紅蘋果多多益生菌_出貨清冊.xls', \
                   outputFile=u'C:\\Users\\10509002\\Desktop\\10397319_[24H出貨]欣敏立清-草莓多多益生菌_出貨清冊.xls')

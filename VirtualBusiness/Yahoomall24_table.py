@@ -6,6 +6,7 @@ from ToMysql import ToMysql
 import uuid
 from VirtualBusiness import Sale,Customer,updateCustomer
 from VirtualBusiness.Myfone22_table import Myfone22table_Data
+import json
 
 logger = logging.getLogger(__name__)
 
@@ -45,8 +46,9 @@ class YahooS24table_Data(Myfone22table_Data):
 
             # for i in range(0, 2):
             #     print dict_list[i][u'訂單編號']
-
+            resultinfo = ''
             for row_index in range(0, len(dict_list)):
+                totalRows = len(d)
                 self.sale = Sale()
                 self.customer = Customer()
                 #Parser Data from xls
@@ -59,11 +61,16 @@ class YahooS24table_Data(Myfone22table_Data):
                 self.customer = None
             self.mysqlconnect.db.commit()
             self.mysqlconnect.dbClose()
-            logger.info('===YahooS24_Data SUCCESS===')
-            return 'success'
-        except Exception as e :
-            logger.error(e.message)
-            return 'failure'
+
+            success = True
+
+        except Exception as inst:
+            logger.error(inst.args)
+            resultinfo = inst.args
+
+        finally:
+            logger.debug('===YahooS24_Data finally===')
+            return json.dumps({"success": success, "info": resultinfo, "total": totalRows}, sort_keys=False)
 
     def parserData(self,dict_list,row_index,GroupID,UserID,supplier):
         try:
