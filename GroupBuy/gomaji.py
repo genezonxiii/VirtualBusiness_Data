@@ -24,12 +24,12 @@ class gomaji(buy123):
                 tmp.append(table.cell(row_index, 11).value)  # 收件地址
                 tmp.append(str(table.cell(row_index, 8).value).replace('-',''))  # 電話
                 tmp.append(table.cell(row_index, 10).value)  # 方案名稱
-                # tmp.append(self.getResultForDigit(self.ReplaceField(table.cell(row_index, 10).value.split('.')[1], u'盒'))) # 方案名稱盒數
-                order = self.ReplaceField(table.cell(row_index, 10).value, u'盒')
-                if "." in order :
-                    order = order.split(".")[1].strip()
+                order = self.getResultForDigit(self.parserRegularEx(table.cell(row_index, 10).value))   # 方案名稱盒數
+                # order = self.ReplaceField(table.cell(row_index, 10).value, u'盒')
+                # if "." in order :
+                #     order = order.split(".")[1].strip()
                 # tmp.append(order)
-                tmp.append(self.getResultForDigit(order))
+                tmp.append(order)
                 # tmp.append(self.getResultForDigit(self.ReplaceField(table.cell(row_index, 10).value, u'盒')))  # 方案名稱盒
                 tmp.append(table.cell(row_index, 9).value)  # 訂單份數
                 tmp.append(table.cell(row_index, 5).value)  # 訂購人
@@ -48,6 +48,6 @@ class gomaji(buy123):
 
 if __name__ == '__main__':
     buy = gomaji()
-    buy.parserFile('robintest', 'test', 2 , 'MS',
+    print buy.parserFile('cbcc3138-5603-11e6-a532-000d3a800878', 'test', 2 , 'MS',
                   inputFile=u'C:/Users/10509002/Desktop/test/GOMAJI/146917_209521_s.xls', \
-                  outputFile=u'C:/Users/10509002/Desktop/test/146917_209521_s.xls')
+                  outputFile=u'C:/Users/10509002/Desktop/146917_209521_s.xls')

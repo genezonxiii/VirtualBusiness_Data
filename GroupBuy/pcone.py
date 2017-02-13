@@ -26,10 +26,10 @@ class Pcone(buy123):
                 tmp.append(table.cell(row_index, 8).value)  # 收件地址
                 tmp.append('0' + self.ReplaceField(str(table.cell(row_index, 7).value), '.'))  # 電話
                 tmp.append(table.cell(row_index, 9).value)  # 商品
-                # tmp.append(self.ReplaceField(table.cell(row_index, 11).value.split('.')[1],u'入'))  # 方案
-                order = self.ReplaceField(table.cell(row_index, 11).value, u'入')
-                if order in ".":
-                    order = order.split(".")[1]
+                order = self.getResultForDigit(self.parserRegularEx(table.cell(row_index, 11).value))  # 方案
+                # order = self.ReplaceField(table.cell(row_index, 11).value, u'入')
+                # if order in ".":
+                #     order = order.split(".")[1]
                 tmp.append(order)
                 tmp.append(1)  # 訂單份數
                 tmp.append(self.ReplaceField(table.cell(row_index, 2).value,'/'))  # 訂購人
@@ -47,6 +47,6 @@ class Pcone(buy123):
 
 if __name__ == '__main__':
     buy = Pcone()
-    buy.parserFile('robintest', 'test', 2, 'OS',
+    print buy.parserFile('cbcc3138-5603-11e6-a532-000d3a800878', 'test', 2, 'OS',
                    inputFile=u'C:\\Users\\10509002\\Desktop\\test\\松果\\2017-01-16_松果購物_L1814016_出貨單.xls', \
-                   outputFile=u'C:\\Users\\10509002\\Desktop\\test\\2017-01-16_松果購物_L1814016_出貨單.xls')
+                   outputFile=u'C:\\Users\\10509002\\Desktop\\2017-01-16_松果購物_L1814016_出貨單.xls')

@@ -47,6 +47,6 @@ class food123(buy123):
 
 if __name__ == '__main__':
     buy = food123()
-    print buy.parserFile('robintest', 'test',2, 'MS',
-                  inputFile=u'C:/Users/10509002/Desktop/test/好吃/2017-01-16_好吃宅配網_FD12381462F_悠活原力有限公司_欣敏立清益生菌-紅蘋果多多_未出貨(找不到檔案).xls', \
-                  outputFile=u'C:/Users/10509002/Desktop/test/2017-01-16_好吃宅配網_FD12381462F_悠活原力有限公司_欣敏立清益生菌-紅蘋果多多_未出貨(找不到檔案).xls')
+    print buy.parserFile('cbcc3138-5603-11e6-a532-000d3a800878', 'test',2, 'MS',
+                  inputFile=u'C:/Users/10509002/Desktop/test/好吃/2016-12-05_好吃宅配網_FD12377160F_悠活原力有限公司_(0822食品高毛利)欣敏立清益生菌-蔓越莓多多(32點5%策略性商品)_未出貨.xls', \
+                  outputFile=u'C:/Users/10509002/Desktop/2016-12-15_好吃宅配網_FD12381462F_悠活原力有限公司_欣敏立清益生菌-紅蘋果多多_未出貨(找不到檔案).xls')

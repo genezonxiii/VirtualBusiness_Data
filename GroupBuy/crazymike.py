@@ -42,7 +42,8 @@ class Crazymike(buy123):
                 tmp.append(row[10])  # 收件地址
                 tmp.append(row[11])  # 電話
                 tmp.append(row[3])  # 商品名稱
-                word = self.ReplaceField(rowResult[5], u'x',-1)
+                #word = self.ReplaceField(rowResult[5], u'x',-1)
+                word = self.getResultForDigit(self.parserRegularEx(rowResult[5]))
                 tmp.append(int(word))   #盒數
                 tmp.append(1)  # 訂購份數
                 tmp.append('')  # 訂購人
@@ -61,6 +62,6 @@ class Crazymike(buy123):
 
 if __name__ == '__main__':
     buy = Crazymike()
-    buy.parserFile('robintest', 'test', 2 , 'MS',
-                  inputFile=u'C:/Users/10408001/Desktop/團購平台訂單資訊/瘋狂賣客/原始檔/2016.10.21/orders-1048-ex_2 (2).csv', \
-                  outputFile=u'C:/Users/10408001/Desktop/20170104-Crazymike出貨單.xls')
+    print buy.parserFile('cbcc3138-5603-11e6-a532-000d3a800878', 'test', 2 , 'MS',
+                  inputFile=u'C:/Users/10509002/Desktop/for_Joe_test/團購/瘋狂賣客/orders-1048-ex_2 (2).csv', \
+                  outputFile=u'C:/Users/10509002/Desktop/20170104-Crazymike出貨單.xls')

@@ -26,9 +26,10 @@ class Sale123(buy123):
                 tmp.append(table.cell(row_index, 2).value)  # 收件地址
                 tmp.append('0' + self.ReplaceField(str(table.cell(row_index, 3).value), '.'))  # 電話
                 tmp.append(table.cell(row_index, 5).value)  # 檔次名稱
-                order = self.ReplaceField(table.cell(row_index, 6).value, u'盒') # 訂購方案
-                if "." in order :
-                    order = order.split(".")[1].strip()
+                order = self.getResultForDigit((self.parserRegularEx(table.cell(row_index, 6).value))) # 訂購方案
+                # order = self.ReplaceField(table.cell(row_index, 6).value, u'盒')
+                # if "." in order :
+                #     order = order.split(".")[1].strip()
                 tmp.append(order)
                 tmp.append(table.cell(row_index, 7).value)  # 訂單份數
                 tmp.append('')  # 訂購人
@@ -45,8 +46,8 @@ class Sale123(buy123):
             return json.dumps({"success": success, "info": resultinfo,"download": outputFile}, sort_keys=False)
 
 
-# if __name__ == '__main__':
-#     buy = Sale123()
-#     buy.parserFile('robintest', 'test', 2, 'DS',
-#                    inputFile=u'C:/Users/10408001/Desktop/團購平台訂單資訊/姊妹購物網/原始檔/2016.12.02/2016-12-02_姊妹購物網_AY12390480F_悠活原力有限公司_欣敏立清益生菌-草莓多多_未出貨.xls', \
-#                    outputFile=u'C:/Users/10408001/Desktop/20170104-姊妹購物網出貨單.xls')
+if __name__ == '__main__':
+    buy = Sale123()
+    print buy.parserFile('cbcc3138-5603-11e6-a532-000d3a800878', 'test', 2, 'DS',
+                   inputFile=u'C:/Users/10509002/Desktop/for_Joe_test/團購/姊妹購物網/2016-12-02_姊妹購物網_AY12390480F_悠活原力有限公司_欣敏立清益生菌-草莓多多_未出貨.xls', \
+                   outputFile=u'C:/Users/10509002/Desktop/20170104-姊妹購物網出貨單.xls')
