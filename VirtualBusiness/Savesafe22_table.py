@@ -51,7 +51,7 @@ class Savesafe22table_Data(Myfone22table_Data):
             # for i in range(0, 2):
             #     print dict_list[i][u'訂單編號']
             resultinfo = ''
-            totalRows = len(d)
+            totalRows = len(dict_list)
             for row_index in range(0, len(dict_list)):
                 self.sale = Sale()
                 self.customer = Customer()
@@ -110,4 +110,4 @@ if __name__ == '__main__':
     savesafe = Savesafe22table_Data()
     # groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
-    print savesafe.Savesafe_22_Data('Savesafe',groupid, '/Users/csi/Documents/6f27e56d-019e-4fa4-8a56-f0585572fb14.html','system')
+    print savesafe.Savesafe_22_Data('Savesafe',groupid, '/Users/csi/Desktop/for_Joe_test/網購/大買家/宅配/20153101358368282.xls','system')
