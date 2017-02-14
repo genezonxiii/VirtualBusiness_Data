@@ -223,7 +223,7 @@ class convertType():
 
 class Sale():
     p_sale_id, p_seq_no, p_group_id, p_order_no = None, None, None, None
-    p_user_id, p_product_id, p_product_name, p_c_product_id = None, None, None, None
+    p_user_id, p_product_id, p_product_name, p_product_spec, p_c_product_id = None, None, None, None, None
     p_customer_id, p_name, p_invoice,o_name = None, None, None, None
     p_quantity, p_price = 0, 0.0
     p_invoice_date, p_trans_list_date, p_dis_date, p_sale_date, p_return_date = None, None, None, None, None
@@ -262,6 +262,9 @@ class Sale():
 
     def setProduct_name(self,value):
         self.p_product_name = self.convert.ToString(value.decode('utf-8').encode("utf-8"))
+
+    def setProduct_spec(self,value):
+        self.p_product_spec = self.convert.ToString(value.decode('utf-8').encode("utf-8"))
 
     def setProduct_name_NoEncode(self,value):
         self.p_product_name = self.convert.ToStringNoEncode(value)
@@ -411,6 +414,9 @@ class Sale():
 
     def getProduct_name(self):
         return self.p_product_name
+
+    def getProduct_spec(self):
+        return self.p_product_spec
 
     def getC_Product_id(self):
         return self.p_c_product_id

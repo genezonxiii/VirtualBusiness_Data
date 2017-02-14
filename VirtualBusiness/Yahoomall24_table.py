@@ -47,8 +47,8 @@ class YahooS24table_Data(Myfone22table_Data):
             # for i in range(0, 2):
             #     print dict_list[i][u'訂單編號']
             resultinfo = ''
+            totalRows = len(d)
             for row_index in range(0, len(dict_list)):
-                totalRows = len(d)
                 self.sale = Sale()
                 self.customer = Customer()
                 #Parser Data from xls
@@ -84,6 +84,7 @@ class YahooS24table_Data(Myfone22table_Data):
             self.sale.setC_Product_id(dict_list[row_index][u'商品編號'])
             # print dict_list[row_index][u'商品名稱']
             self.sale.setProduct_name_NoEncode(dict_list[row_index][u'商品名稱'])
+            self.sale.setProduct_spec(dict_list[row_index][u'商品規格'])
             self.sale.setQuantity(dict_list[row_index][u'數量'])
             self.sale.setPrice(dict_list[row_index][u'金額小計'])
             self.sale.setNameNoEncode(dict_list[row_index][u'收件人姓名'])

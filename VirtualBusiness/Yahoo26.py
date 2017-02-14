@@ -92,6 +92,7 @@ class Yahoo26_Data(Momo25_Data):
             self.sale.setSale_date(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
             self.sale.setC_Product_id(str(table.cell(row_index, self.TitleList.index(self.TitleTuple[4])).value).split('.')[0])
             self.sale.setProduct_name_NoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[12])).value)
+            self.sale.setProduct_spec('')
             self.sale.setQuantity(table.cell(row_index, self.TitleList.index(self.TitleTuple[13])).value)
             self.sale.setPrice(table.cell(row_index, self.TitleList.index(self.TitleTuple[8])).value)
             self.sale.setNameNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[3])).value)

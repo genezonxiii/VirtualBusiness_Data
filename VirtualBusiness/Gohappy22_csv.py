@@ -61,9 +61,9 @@ class Gohappy22csv_Data(Momo24csv_Data):
             logger.debug(self.header)
             print len(self.content)
             resultinfo = ""
+            totalRows = len(self.content)
 
             for row_index in range(0, len(self.content)):
-                totalRows = len(self.content)
                 self.sale = Sale()
                 self.customer = Customer()
                 #Parser Data from xls
@@ -97,6 +97,7 @@ class Gohappy22csv_Data(Momo24csv_Data):
             self.sale.setSale_date_YMDHMSF(row[0].lstrip("\\'"))
             self.sale.setC_Product_id(row[21].lstrip("\\'").split('\n')[0])
             self.sale.setProduct_name_NoEncode(row[5].lstrip("\\'"))
+            self.sale.setProduct_spec('')
             self.sale.setQuantity(row[6][row[6].find("("):].strip("()").lstrip("\\'"))
             self.sale.setPrice(row[6][:row[6].find("(")].strip("'").lstrip("\\'"))
             self.sale.setNameNoEncode(row[9].lstrip("\\'"))

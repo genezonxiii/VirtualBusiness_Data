@@ -69,8 +69,8 @@ class Myfone22table_Data():
             # for i in range(0, 2):
             #     print dict_list[i][u'訂單編號']
             resultinfo = ''
+            totalRows = len(d)
             for row_index in range(0, len(dict_list)-1):
-                totalRows = len(d)
                 self.sale = Sale()
                 self.customer = Customer()
                 #Parser Data from xls
@@ -108,6 +108,7 @@ class Myfone22table_Data():
             self.sale.setC_Product_id(dict_list[row_index][u'供應商料號'])
             # print dict_list[row_index][u'商品名稱']
             self.sale.setProduct_name_NoEncode(dict_list[row_index][u'商品名稱'])
+            self.sale.setProduct_spec('')
             self.sale.setQuantity(dict_list[row_index][u'數量'])
             self.sale.setPrice(dict_list[row_index][u'小計'])
             self.sale.setNameNoEncode(dict_list[row_index][u'收件人'])
@@ -156,12 +157,12 @@ class Myfone22table_Data():
 
     def updateDB_Sale(self):
         try:
-            SaleSQL = (self.sale.getGroup_id(), self.sale.getOrder_No(), self.sale.getUser_id(), self.sale.getProduct_name(), \
+            SaleSQL = (self.sale.getGroup_id(), self.sale.getOrder_No(), self.sale.getUser_id(), self.sale.getProduct_name(), self.sale.getProduct_spec(),\
                        self.sale.getC_Product_id(), self.customer.getCustomer_id(), self.sale.getName(), self.sale.getQuantity(), \
                        self.sale.getPrice(), self.sale.getInvoice(), self.sale.getInvoice_date(), self.sale.getTrans_list_date(), \
                        self.sale.getDis_date(), self.sale.getMemo(), self.sale.getSale_date(), self.sale.getOrder_source(), \
                        self.sale.getDeliveryway())
-            self.mysqlconnect.cursor.callproc('p_tb_sale', SaleSQL)
+            self.mysqlconnect.cursor.callproc('p_tb_sale_new', SaleSQL)
             return
         except Exception as e :
             print e.message

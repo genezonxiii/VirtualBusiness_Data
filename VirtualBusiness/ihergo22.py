@@ -87,6 +87,7 @@ class Ihergo22_Data(Momo25_Data):
             self.sale.setSale_date_YYYYMMDD_float(table.cell(row_index, self.TitleList.index(self.TitleTuple[11])).value)
             self.sale.setC_Product_id_float(table.cell(row_index, self.TitleList.index(self.TitleTuple[5])).value)
             self.sale.setProduct_name_NoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[6])).value)
+            self.sale.setProduct_spec('')
             self.sale.setQuantity(table.cell(row_index, self.TitleList.index(self.TitleTuple[8])).value)
             self.sale.setPrice(str(table.cell(row_index, self.TitleList.index(self.TitleTuple[10])).value).split('.')[0])
             self.sale.setNameNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)

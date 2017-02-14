@@ -72,9 +72,9 @@ class Momo24csv_Data():
             logger.debug(self.header)
             print len(self.content)
             resultinfo = ""
+            totalRows = len(self.content)
 
             for row_index in range(0, len(self.content)):
-                totalRows = len(self.content)
                 self.sale = Sale()
                 self.customer = Customer()
                 #Parser Data from xls
@@ -109,6 +109,7 @@ class Momo24csv_Data():
             self.sale.setSale_date(row[9])
             self.sale.setC_Product_id(row[12])
             self.sale.setProduct_name_NoEncode(row[13])
+            self.sale.setProduct_spec(row[15])
             self.sale.setQuantity(row[16])
             self.sale.setPrice(row[17])
             self.sale.setNameNoEncode(row[3])
@@ -157,12 +158,12 @@ class Momo24csv_Data():
 
     def updateDB_Sale(self):
         try:
-            SaleSQL = (self.sale.getGroup_id(), self.sale.getOrder_No(), self.sale.getUser_id(), self.sale.getProduct_name(), \
+            SaleSQL = (self.sale.getGroup_id(), self.sale.getOrder_No(), self.sale.getUser_id(), self.sale.getProduct_name(), self.sale.getProduct_spec(), \
                        self.sale.getC_Product_id(), self.customer.getCustomer_id(), self.sale.getName(), self.sale.getQuantity(), \
                        self.sale.getPrice(), self.sale.getInvoice(), self.sale.getInvoice_date(), self.sale.getTrans_list_date(), \
                        self.sale.getDis_date(), self.sale.getMemo(), self.sale.getSale_date(), self.sale.getOrder_source(),\
                        self.sale.getDeliveryway())
-            self.mysqlconnect.cursor.callproc('p_tb_sale', SaleSQL)
+            self.mysqlconnect.cursor.callproc('p_tb_sale_new', SaleSQL)
             return
         except Exception as e :
             print e.message

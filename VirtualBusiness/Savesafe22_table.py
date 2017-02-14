@@ -51,8 +51,8 @@ class Savesafe22table_Data(Myfone22table_Data):
             # for i in range(0, 2):
             #     print dict_list[i][u'訂單編號']
             resultinfo = ''
+            totalRows = len(d)
             for row_index in range(0, len(dict_list)):
-                totalRows = len(d)
                 self.sale = Sale()
                 self.customer = Customer()
                 #Parser Data from xls
@@ -89,6 +89,7 @@ class Savesafe22table_Data(Myfone22table_Data):
             self.sale.setSale_date_YMDHMS(dict_list[row_index][u'接單時間'])
             self.sale.setC_Product_id(dict_list[row_index][u'商品貨號'])
             self.sale.setProduct_name_NoEncode(dict_list[row_index][u'商品名稱'])
+            self.sale.setProduct_spec('')
             self.sale.setQuantity(dict_list[row_index][u'商品數量'])
             self.sale.setPrice(dict_list[row_index][u'供貨成本(未稅)'])
             self.sale.setNameNoEncode(dict_list[row_index][u'收貨人'])

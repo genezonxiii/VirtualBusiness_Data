@@ -31,9 +31,9 @@ class Umall30csv_Data(Momo24csv_Data):
             logger.debug(self.header)
             print len(self.content)
             resultinfo = ""
+            totalRows = len(self.content)
 
             for row_index in range(0, len(self.content)):
-                totalRows = len(self.content)
                 self.sale = Sale()
                 self.customer = Customer()
                 #Parser Data from xls
@@ -68,6 +68,7 @@ class Umall30csv_Data(Momo24csv_Data):
             self.sale.setSale_date_YYYYMMDD(row[20])
             self.sale.setC_Product_id(row[6])
             self.sale.setProduct_name_NoEncode(row[7])
+            self.sale.setProduct_spec('')
             self.sale.setQuantity(row[12])
             self.sale.setPrice(row[13])
             self.sale.setNameNoEncode(row[14])

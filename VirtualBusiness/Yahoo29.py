@@ -91,6 +91,7 @@ class Yahoo29_Data(Momo25_Data):
             self.sale.setSale_date(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
             self.sale.setC_Product_id(str(table.cell(row_index, self.TitleList.index(self.TitleTuple[10])).value))
             self.sale.setProduct_name_NoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[9])).value)
+            self.sale.setProduct_spec('')
             self.sale.setQuantity(table.cell(row_index, self.TitleList.index(self.TitleTuple[11])).value)
             self.sale.setPrice_str(table.cell(row_index, self.TitleList.index(self.TitleTuple[12])).value)
             self.sale.setNameNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[4])).value)
@@ -109,7 +110,7 @@ class Yahoo29_Data(Momo25_Data):
 
 
 if __name__ == '__main__':
-    yahoo = Yahoo_Data()
+    yahoo = Yahoo29_Data()
     groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
-    print yahoo.Yahood_Data('yahoo',groupid,u'C:\\Users\\10509002\\Desktop\\新增資料夾 (2)\\0407\\yahoo 購物中心\\spstorders.xlsx','system')
+    print yahoo.Yahoo_29_Data('yahoo',groupid,u'C:\\Users\\10509002\\Desktop\\新增資料夾 (2)\\0407\\yahoo 購物中心\\spstorders.xlsx','system')

@@ -91,6 +91,7 @@ class Asap16_Data(Momo25_Data):
             self.sale.setSale_date_MDHM(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
             self.sale.setC_Product_id(str(table.cell(row_index, self.TitleList.index(self.TitleTuple[2])).value))
             self.sale.setProduct_name_NoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[3])).value)
+            self.sale.setProduct_spec('')
             self.sale.setQuantity(table.cell(row_index, self.TitleList.index(self.TitleTuple[4])).value)
             self.sale.setPrice(table.cell(row_index, self.TitleList.index(self.TitleTuple[5])).value)
             self.sale.setNameNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[6])).value)

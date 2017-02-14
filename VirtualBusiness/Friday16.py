@@ -85,6 +85,7 @@ class Friday16_Data(Momo25_Data):
             self.sale.setTrans_list_date_YMD(table.cell(row_index, self.TitleList.index(self.TitleTuple[2])).value)
             self.sale.setSale_date_YMD(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
             self.sale.setC_Product_id(str(table.cell(row_index, self.TitleList.index(self.TitleTuple[7])).value[1:13]).split('.')[0])
+            self.sale.setProduct_spec('')
             self.sale.setProduct_name_NoEncode((table.cell(row_index, self.TitleList.index(self.TitleTuple[7])).value).split('\n')[1])
             self.sale.setQuantity(table.cell(row_index, self.TitleList.index(self.TitleTuple[9])).value)
             self.sale.setPrice(table.cell(row_index, self.TitleList.index(self.TitleTuple[8])).value)

@@ -30,7 +30,8 @@ class Momo25_Data():
     # 悠活原力
     # \momo\2016.03.16\A1102_3_1_008992_20160316114348.xls
     TitleTuple = (u'訂單編號', u'收件人姓名', u'收件人地址', u'轉單日', u'品號',
-                  u'商品原廠編號',u'品名', u'數量',u'進價(含稅)', u'發票號碼')
+                  u'商品原廠編號',u'品名', u'數量',u'進價(含稅)', u'發票號碼',
+                  u'單品詳細')
     # \momo\2016.10.05\A1106_008992_EXL.xls
     # TitleTuple = (u'訂單編號', u'收件人姓名', u'發票號碼', u'轉單日', u'品號',
     #               u'商品原廠編號', u'品名', u'數量', u'進價(含稅)')
@@ -105,6 +106,7 @@ class Momo25_Data():
             self.sale.setSale_date(table.cell(row_index, self.TitleList.index(self.TitleTuple[3])).value)
             self.sale.setC_Product_id(str(table.cell(row_index, self.TitleList.index(self.TitleTuple[5])).value).split('.')[0])
             self.sale.setProduct_name_NoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[6])).value)
+            self.sale.setProduct_spec(table.cell(row_index, self.TitleList.index(self.TitleTuple[10])).value) #規格
             self.sale.setQuantity(table.cell(row_index, self.TitleList.index(self.TitleTuple[7])).value)
             self.sale.setPrice(table.cell(row_index, self.TitleList.index(self.TitleTuple[8])).value)
             self.sale.setNameNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
@@ -154,12 +156,12 @@ class Momo25_Data():
 
     def updateDB_Sale(self):
         try:
-            SaleSQL = (self.sale.getGroup_id(), self.sale.getOrder_No(), self.sale.getUser_id(), self.sale.getProduct_name(), \
+            SaleSQL = (self.sale.getGroup_id(), self.sale.getOrder_No(), self.sale.getUser_id(), self.sale.getProduct_name(), self.sale.getProduct_spec(), \
                        self.sale.getC_Product_id(), self.customer.getCustomer_id(), self.sale.getName(), self.sale.getQuantity(), \
                        self.sale.getPrice(), self.sale.getInvoice(), self.sale.getInvoice_date(), self.sale.getTrans_list_date(), \
                        self.sale.getDis_date(), self.sale.getMemo(), self.sale.getSale_date(), self.sale.getOrder_source(),\
                        self.sale.getDeliveryway())
-            self.mysqlconnect.cursor.callproc('p_tb_sale', SaleSQL)
+            self.mysqlconnect.cursor.callproc('p_tb_sale_new', SaleSQL)
             return
         except Exception as e :
             print e.message
