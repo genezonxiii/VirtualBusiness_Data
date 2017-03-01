@@ -269,6 +269,9 @@ class Sale():
     def setProduct_name_NoEncode(self,value):
         self.p_product_name = self.convert.ToStringNoEncode(value)
 
+    def setProduct_spec_NoEncode(self,value):
+        self.p_product_spec = self.convert.ToStringNoEncode(value)
+
     def setC_Product_id(self,value):
         self.p_c_product_id = self.convert.ToString(value.encode('utf-8'))
 

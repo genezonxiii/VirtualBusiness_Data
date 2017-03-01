@@ -109,7 +109,7 @@ class Momo24csv_Data():
             self.sale.setSale_date(row[9])
             self.sale.setC_Product_id(row[12])
             self.sale.setProduct_name_NoEncode(row[13])
-            self.sale.setProduct_spec(row[15])
+            self.sale.setProduct_spec_NoEncode(row[15])
             self.sale.setQuantity(row[16])
             self.sale.setPrice(row[17])
             self.sale.setNameNoEncode(row[3])

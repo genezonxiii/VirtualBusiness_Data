@@ -47,7 +47,7 @@ class YahooS24table_Data(Myfone22table_Data):
             # for i in range(0, 2):
             #     print dict_list[i][u'訂單編號']
             resultinfo = ''
-            totalRows = len(d)
+            totalRows = len(dict_list)
             for row_index in range(0, len(dict_list)):
                 self.sale = Sale()
                 self.customer = Customer()

@@ -106,7 +106,7 @@ class Momo25_Data():
             self.sale.setSale_date(table.cell(row_index, self.TitleList.index(self.TitleTuple[3])).value)
             self.sale.setC_Product_id(str(table.cell(row_index, self.TitleList.index(self.TitleTuple[5])).value).split('.')[0])
             self.sale.setProduct_name_NoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[6])).value)
-            self.sale.setProduct_spec(table.cell(row_index, self.TitleList.index(self.TitleTuple[10])).value) #規格
+            self.sale.setProduct_spec_NoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[10])).value) #規格
             self.sale.setQuantity(table.cell(row_index, self.TitleList.index(self.TitleTuple[7])).value)
             self.sale.setPrice(table.cell(row_index, self.TitleList.index(self.TitleTuple[8])).value)
             self.sale.setNameNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
