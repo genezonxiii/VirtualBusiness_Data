@@ -24,53 +24,55 @@ class ShipperData():
             aes = aes_data()
             # print Data
             for results in Data:
-                if results[20]!=None and results[21]!=None and results[22]== None and results[23]!= None:
-                    r = {"sale_id": results[0], "seq_no": results[1],"group_id": results[2],"order_no" : results[3],"user_id" : results[4],
-                     "product_id" : results[5],"product_name" : results[6],"c_product_id": results[7], "customer_id": results[8],
-                     "quantity": results[9], "price": results[10],"invoice": results[11], "invoice_date": results[12],
-                     "trans_list_date": results[13], "dis_date": results[14],"memo": results[15], "sale_date": results[16],
-                     "order_source": results[17], "return_date": results[18],"isreturn": results[19],
-                     "name": aes.AESdecrypt("p@ssw0rd", results[20], True),"address": aes.AESdecrypt("p@ssw0rd", results[21], True),
-                     "mobile": aes.AESdecrypt("p@ssw0rd", results[23], True),
-                     "post": results[24], "class": results[25],
+                # print results
+
+                if results[20] != None:
+                    results20 = aes.AESdecrypt("p@ssw0rd", results[20], True)
+                else:
+                    results20 = ""
+
+                if results[21] != None:
+                    results21 = aes.AESdecrypt("p@ssw0rd", results[21], True)
+                else:
+                    results21 = ""
+
+                if results[22] != None:
+                    results22 = aes.AESdecrypt("p@ssw0rd", results[22], True)
+                else:
+                    results22 = ""
+
+                if results[23] != None:
+                    results23 = aes.AESdecrypt("p@ssw0rd", results[23], True)
+                else:
+                    results23 = ""
+
+                r = {"sale_id": results[0],
+                     "seq_no": results[1],
+                     "group_id": results[2],
+                     "order_no": results[3],
+                     "user_id": results[4],
+                     "product_id": results[5],
+                     "product_name": results[6],
+                     "c_product_id": results[7],
+                     "customer_id": results[8],
+                     "quantity": results[9],
+                     "price": results[10],
+                     "invoice": results[11],
+                     "invoice_date": results[12],
+                     "trans_list_date": results[13],
+                     "dis_date": results[14],
+                     "memo": results[15],
+                     "sale_date": results[16],
+                     "order_source": results[17],
+                     "return_date": results[18],
+                     "isreturn": results[19],
+                     "name": results20,
+                     "address": results21,
+                     "phone": results22,
+                     "mobile": results23,
+                     "post": results[24],
+                     "class": results[25],
                      }
-                elif results[20]!=None and results[21]==None and results[22]== None and results[23]!= None:
-                    r = {"sale_id": results[0], "seq_no": results[1],"group_id": results[2],"order_no" : results[3],"user_id" : results[4],
-                         "product_id" : results[5],"product_name" : results[6],"c_product_id": results[7], "customer_id": results[8],
-                         "quantity": results[9], "price": results[10],"invoice": results[11], "invoice_date": results[12],
-                         "trans_list_date": results[13], "dis_date": results[14],"memo": results[15], "sale_date": results[16],
-                         "order_source": results[17], "return_date": results[18],"isreturn": results[19],
-                         "name": aes.AESdecrypt("p@ssw0rd", results[20], True),"mobile": aes.AESdecrypt("p@ssw0rd", results[23], True),
-                         "post": results[24], "class": results[25],
-                         }
-                elif results[20]!=None and results[21]==None and results[22]==None and results[23]==None:
-                    r = {"sale_id": results[0], "seq_no": results[1],"group_id": results[2],"order_no" : results[3],"user_id" : results[4],
-                         "product_id" : results[5],"product_name" : results[6],"c_product_id": results[7], "customer_id": results[8],
-                         "quantity": results[9], "price": results[10],"invoice": results[11], "invoice_date": results[12],
-                         "trans_list_date": results[13], "dis_date": results[14],"memo": results[15], "sale_date": results[16],
-                         "order_source": results[17], "return_date": results[18],"isreturn": results[19],
-                         "name": aes.AESdecrypt("p@ssw0rd", results[20], True),"post": results[24], "class": results[25],
-                         }
-                elif results[20]!=None and results[21]==None and results[22]!=None and results[23]!=None:
-                    r = {"sale_id": results[0], "seq_no": results[1],"group_id": results[2],"order_no" : results[3],"user_id" : results[4],
-                         "product_id" : results[5],"product_name" : results[6],"c_product_id": results[7], "customer_id": results[8],
-                         "quantity": results[9], "price": results[10],"invoice": results[11], "invoice_date": results[12],
-                         "trans_list_date": results[13], "dis_date": results[14],"memo": results[15], "sale_date": results[16],
-                         "order_source": results[17], "return_date": results[18],"isreturn": results[19],
-                         "name": aes.AESdecrypt("p@ssw0rd", results[20], True),
-                         "phone": aes.AESdecrypt("p@ssw0rd", results[22], True),"mobile": aes.AESdecrypt("p@ssw0rd", results[23], True),
-                         "post": results[24], "class": results[25],
-                         }
-                elif results[20]!=None and results[21]!=None and results[22]!=None and results[23]!=None:
-                    r = {"sale_id": results[0], "seq_no": results[1],"group_id": results[2],"order_no" : results[3],"user_id" : results[4],
-                         "product_id" : results[5],"product_name" : results[6],"c_product_id": results[7], "customer_id": results[8],
-                         "quantity": results[9], "price": results[10],"invoice": results[11], "invoice_date": results[12],
-                         "trans_list_date": results[13], "dis_date": results[14],"memo": results[15], "sale_date": results[16],
-                         "order_source": results[17], "return_date": results[18],"isreturn": results[19],
-                         "name": aes.AESdecrypt("p@ssw0rd", results[20], True),"address": aes.AESdecrypt("p@ssw0rd", results[21], True),
-                         "phone": aes.AESdecrypt("p@ssw0rd", results[22], True),"mobile": aes.AESdecrypt("p@ssw0rd", results[23], True),
-                         "post": results[24], "class": results[25],
-                         }
                 ClientData.append(r)
             return ClientData
         except Exception as e :
@@ -138,4 +140,7 @@ class VBsale_Analytics():
                 print e.message
                 raise
 
+if __name__ == '__main__':
+    buy = ShipperData()
 
+    print buy.GetDataContent('cbcc3138-5603-11e6-a532-000d3a800878', '2016-03-14','2016-03-15')

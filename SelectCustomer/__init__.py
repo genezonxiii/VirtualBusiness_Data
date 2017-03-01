@@ -1,7 +1,7 @@
 # -*-  coding: utf-8  -*-
 __author__ = '10409003'
 import sys
-# import MySQLdb
+import MySQLdb
 from aes_data import aes_data
 from ToMysql import ToMysql
 class Query_customer():
@@ -21,38 +21,38 @@ class Query_customer():
                 Data=result.fetchall()
             aes=aes_data()
             for results in Data:
-                if results[2]!=None and results[4]==None and results[3]!=None and results[5]!=None:
-                    r={"customer_id" : results[0],"group_id" : results[1],"name" :aes.AESdecrypt("p@ssw0rd",results[2], True),
-                       "email" : results[6],"post" : results[7],
-                       "class" :results[8],"memo" : results[9],"address" :aes.AESdecrypt("p@ssw0rd",results[3], True),
-                       "mobile" :aes.AESdecrypt("p@ssw0rd",results[5], True)}
-                elif results[2]!=None and results[4]==None and results[3]==None and results[5]!=None:
-                    r={"customer_id" : results[0],"group_id" : results[1],"name" :aes.AESdecrypt("p@ssw0rd",results[2], True),
-                       "email" : results[6],"post" : results[7],
-                       "class" :results[8],"memo" : results[9],
-                       "mobile" :aes.AESdecrypt("p@ssw0rd",results[5], True)}
-                elif results[2]!=None and results[4]!=None and results[3]==None and results[5]!=None:
-                    r={"customer_id" : results[0],"group_id" : results[1],"name" :aes.AESdecrypt("p@ssw0rd",results[2], True),
-                       "email" : results[6],"post" : results[7],
-                       "class" :results[8],"memo" : results[9],
-                       "phone": aes.AESdecrypt("p@ssw0rd", results[4], True),"mobile" :aes.AESdecrypt("p@ssw0rd",results[5], True)}
-                elif results[2]!=None and results[4]!=None and results[3]!=None and results[5]!=None:
-                    r={"customer_id" : results[0],"group_id" : results[1],"name" :aes.AESdecrypt("p@ssw0rd",results[2], True),
-                       "address" :aes.AESdecrypt("p@ssw0rd",results[3], True),"email" : results[6],"post" : results[7],
-                       "class" :results[8],"memo" : results[9],
-                       "phone": aes.AESdecrypt("p@ssw0rd", results[4], True),"mobile" :aes.AESdecrypt("p@ssw0rd",results[5], True)}
-                elif results[2]==None and results[4]==None and results[3]==None and results[5]==None:
-                    r={"customer_id" : results[0],"group_id" : results[1],"email" : results[6],"post" : results[7],
-                       "class" :results[8],"memo" : results[9]}
-                elif results[2]!=None and results[4]==None and results[3]==None and results[5]==None:
-                    r={"customer_id" : results[0],"group_id" : results[1],"name" :aes.AESdecrypt("p@ssw0rd",results[2], True),
-                       "email" : results[6],"post" : results[7],"class" :results[8],"memo" : results[9]}
-                elif results[2]!=None and results[4]==None and results[3]!=None and results[5]==None:
-                    r={"customer_id" : results[0],"group_id" : results[1],"name" :aes.AESdecrypt("p@ssw0rd",results[2], True),
-                       "email" : results[6],"post" : results[7],
-                       "class" :results[8],"memo" : results[9],
-                       "address" :aes.AESdecrypt("p@ssw0rd",results[3], True)}
-                
+
+                if results[2] != None:
+                    results2 = aes.AESdecrypt("p@ssw0rd", results[2], True)
+                else:
+                    results2 = ""
+
+                if results[3] != None:
+                    results3 = aes.AESdecrypt("p@ssw0rd", results[3], True)
+                else:
+                    results3 = ""
+
+                if results[4] != None:
+                    results4 = aes.AESdecrypt("p@ssw0rd", results[4], True)
+                else:
+                    results4 = ""
+
+                if results[5] != None:
+                    results5 = aes.AESdecrypt("p@ssw0rd", results[5], True)
+                else:
+                    results5 = ""
+
+                r = {"customer_id": results[0],
+                     "group_id": results[1],
+                     "name": results2,
+                     "address": results3,
+                     "email": results[6],
+                     "post": results[7],
+                     "class": results[8],
+                     "memo": results[9],
+                     "phone": results4,
+                     "mobile": results5
+                     }
 
                 # print results[4]
                 ClientData.append(r)
