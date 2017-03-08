@@ -7,6 +7,8 @@ from AesData import Insert_Client
 from SelectCustomer import Query_customer
 from Shipper import ShipperData, VBsale_Analytics
 from GroupBuy import FileProcess
+from ImportFundationData import DataInsert
+from SFexpress import FileProcess_sf
 import datetime
 from time import mktime
 import logging
@@ -18,7 +20,10 @@ urls = ("/upload/(.*)", "Uploaddata", \
         "/query/(.*)", "GetClientData", \
         "/ship/(.*)", "Shipper", \
         "/analytics/(.*)", "Analytics", \
-        "/groupbuy/(.*)", "GroupBuy")
+        "/groupbuy/(.*)", "GroupBuy",\
+        "/import/(.*)", "Import", \
+        "/sfexpress/(.*)", "SFExpress")
+
 app = web.application(urls, globals())
 logger = logging.getLogger(__name__)
 
@@ -129,6 +134,46 @@ class Analytics():
         resule = json.dumps(result)
         return resule
 
+class Import():
+    def GET(self, name):
+        data = name.split('&')
+        for i in range(len(data)):
+            data[i] = data[i][5:len(data[i])].decode('base64')
+            print len(data[1])
+
+        logging.basicConfig(filename='/data/VirtualBusiness_Data/pyupload.log',
+                            level=logging.DEBUG,
+                            format='%(asctime)s - %(levelname)s - %(filename)s:%(name)s:%(module)s/%(funcName)s/%(lineno)d - %(message)s',
+                            datefmt='%Y/%m/%d %I:%M:%S %p')
+        logging.Formatter.converter = time.gmtime
+
+        logger.debug('===Importdata===')
+        logger.debug('data[0]:' + data[0])
+        logger.debug('data[1]:' + data[1])
+
+        Upload = DataInsert()
+        return Upload.virtualbusiness_import(data[0], data[1])
+
+class SFExpress():
+    def GET(self, name):
+        data = name.split('&')
+        for i in range(len(data)):
+            data[i] = data[i][5:len(data[i])].decode('base64')
+
+        logging.basicConfig(filename='/data/VirtualBusiness_Data/pyupload.log',
+                            level=logging.DEBUG,
+                            format='%(asctime)s - %(levelname)s - %(filename)s:%(name)s:%(module)s/%(funcName)s/%(lineno)d - %(message)s',
+                            datefmt='%Y/%m/%d %I:%M:%S %p')
+        logging.Formatter.converter = time.gmtime
+
+        logger.debug('===Uploaddata===')
+        logger.debug('data[0]:' + data[0])
+        logger.debug('data[1]:' + data[1])
+        logger.debug('data[2]:' + data[2])
+        logger.debug('data[3]:' + data[3])
+
+        Upload = FileProcess_sf()
+        return Upload.transferFile(data[0], data[1],int(data[2]),data[3])
 
 if __name__ == "__main__":
     app.run()
