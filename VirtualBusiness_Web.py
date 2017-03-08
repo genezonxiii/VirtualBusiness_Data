@@ -7,7 +7,7 @@ from AesData import Insert_Client
 from SelectCustomer import Query_customer
 from Shipper import ShipperData, VBsale_Analytics
 from GroupBuy import FileProcess
-from ImportFundationData import DataInsert
+# from ImportFundationData import DataInsert
 from SFexpress import FileProcess_sf
 import datetime
 from time import mktime

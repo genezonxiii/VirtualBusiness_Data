@@ -160,6 +160,10 @@ class sfexpressout():
             address = table.cell(8, 1).value
             phone = table.cell(5, 4).value
             client = table.cell(4, 1).value
+            mobile = None
+            if len(phone) == 10:
+                mobile = phone
+                phone = None
 
             row_index = 11
             page_idx = 1
@@ -171,6 +175,10 @@ class sfexpressout():
                 row_column1 = table.cell(row_index, 0).value
 
                 if row_column1 == u'付款條件':
+                    # pay = row_index + 1
+                    # column2 = table.cell(pay, 1).value
+                    # if column2.find(u'順豐') != -1:
+                    #     price = int(table.cell(pay, 10).value)
                     break
 
                 row_column2 = table.cell(row_index, 1).value
@@ -203,6 +211,17 @@ class sfexpressout():
                     row_shift = 0
 
                 if row_column1 == '9001':
+                    pay = 'N'
+                    for temp in result:
+                        temp.append(pay) # 付款
+                        temp.append("")  # 金額
+                    continue
+                elif row_column1 == '9002':
+                    pay = 'Y'
+                    price = table.cell(row_index+2, 10).value
+                    for temp in result:
+                        temp.append(pay) # 付款
+                        temp.append(price)  # 金額
                     continue
 
                 # 讀 excel 檔轉 出庫單
@@ -214,7 +233,10 @@ class sfexpressout():
                 tmp.append(row_column2) # 名稱
                 tmp.append(row_column3) # 數量
                 tmp.append(receiver)  # 收件人
-                tmp.append(phone)  #
+                tmp.append(phone)  #　電話
+                tmp.append(mobile) # 手機
+                # tmp.append(price) # 金額
+                # tmp.append(pay)
                 result.append(tmp)
 
             success = self.writeXls(LogisticsID,result,outputFile)
@@ -252,11 +274,14 @@ class sfexpressout():
                 table.write(i,6,row[0])         # 訂單編號
                 table.write(i, 9, row[1])       # 收件公司
                 table.write(i, 13, row[2])       # 地址
+                table.write(i, 14, row[9])      #是否貨到付款
+                table.write(i, 15, row[10])      # 代收貨款金額
                 table.write(i, 18, row[3])       # 商品編號
                 table.write(i, 19, row[4])       # 商品名稱
                 table.write(i, 20, row[5])  # 商品出庫數量
-                table.write(i, 23, row[6])      # 收件人
+                table.write(i, 23, row[1])      # 收件人
                 table.write(i, 24, row[7])      # 電話
+                table.write(i, 25, row[8])      # 手機
 
                 i += 1
             logger.debug(outputFile)
@@ -347,5 +372,5 @@ class sfexpressout():
 if __name__ == '__main__':
     buy = sfexpressout()
     print buy.parserFile('cbcc3138-5603-11e6-a532-000d3a800878', 'test', 26, 'MS',
-                  inputFile=u'C:/Users/10509002/Desktop/鮪魚肚/0301出庫/0301出庫/0301酷狗網銷貨單.xls', \
-                  outputFile=u'C:/Users/10509002/Desktop/0308酷狗網銷貨單.xls')
+                  inputFile=u'C:/Users/10509002/Desktop/鮪魚肚/0301出庫/0301出庫/0301HAPET好寵永康店銷貨單.xls', \
+                  outputFile=u'C:/Users/10509002/Desktop/0301單.xls')
