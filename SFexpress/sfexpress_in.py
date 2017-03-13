@@ -83,8 +83,8 @@ class sfexpressin(sfexpressout):
                     row_index = (page_idx - 1) * 43 + 11 + row_shift
                     row_shift = 0
 
-                # if row_column1 == '9001':
-                #     continue
+                if row_column1 == '9001' or row_column1 == '9002':
+                    continue
 
                 # 讀 excel 檔轉 入庫單
                 tmp = []
@@ -115,9 +115,11 @@ class sfexpressin(sfexpressout):
         try:
             Template = ExcelTemplate()
             fileTemplate = Template.T_SF_TemplateFile
-            rb = xlrd.open_workbook(fileTemplate)
+            rb = xlrd.open_workbook(fileTemplate, formatting_info=True)
             file = copy(rb)
             table = file.get_sheet(0)
+            table.insert_bitmap(u'/data/vbGroupbuy/順豐.bmp', 0, 0, x=0, y=0, scale_x=1, scale_y=0.5)
+            table.insert_bitmap(u'/data/vbGroupbuy/順豐name.bmp', 0, 10, x=0, y=0, scale_x=1, scale_y=0.5)
             i = 3
             j = 1
             success = False

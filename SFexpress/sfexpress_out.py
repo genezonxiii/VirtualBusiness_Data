@@ -161,7 +161,7 @@ class sfexpressout():
             phone = table.cell(5, 4).value
             client = table.cell(4, 1).value
             mobile = None
-            if len(phone) == 10:
+            if phone[0:2] == '09' :
                 mobile = phone
                 phone = None
 
@@ -274,8 +274,8 @@ class sfexpressout():
                 table.write(i,6,row[0])         # 訂單編號
                 table.write(i, 9, row[1])       # 收件公司
                 table.write(i, 13, row[2])       # 地址
-                table.write(i, 14, row[9])      #是否貨到付款
-                table.write(i, 15, row[10])      # 代收貨款金額
+                # table.write(i, 14, row[9])      #是否貨到付款
+                # table.write(i, 15, row[10])      # 代收貨款金額
                 table.write(i, 18, row[3])       # 商品編號
                 table.write(i, 19, row[4])       # 商品名稱
                 table.write(i, 20, row[5])  # 商品出庫數量
@@ -372,5 +372,5 @@ class sfexpressout():
 if __name__ == '__main__':
     buy = sfexpressout()
     print buy.parserFile('cbcc3138-5603-11e6-a532-000d3a800878', 'test', 26, 'MS',
-                  inputFile=u'C:/Users/10509002/Desktop/鮪魚肚/0301出庫/0301出庫/0301HAPET好寵永康店銷貨單.xls', \
-                  outputFile=u'C:/Users/10509002/Desktop/0301單.xls')
+                  inputFile=u'/Users/csi/Desktop/鮪魚肚/0301出庫/0301出庫/0301HAPET好寵永康店銷貨單.xls', \
+                  outputFile=u'/Users/csi/Desktop/0301HAPET好寵永康店銷貨單.xls')
