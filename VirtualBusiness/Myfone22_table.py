@@ -16,6 +16,7 @@ class Myfone22table_Data():
     sale , customer = None, None
     header = []
     content = []
+    dup_order_no = []
 
     def __init__(self):
         # mysql connector object
@@ -91,8 +92,10 @@ class Myfone22table_Data():
             resultinfo = inst.args
 
         finally:
+            dup_str = ','.join(self.dup_order_no)
+            self.dup_order_no = []
             logger.debug('===Myfone22table_Data finally===')
-            return json.dumps({"success": success, "info": resultinfo, "total": totalRows}, sort_keys=False)
+            return json.dumps({"success": success, "info": resultinfo, "dup_order": dup_str, "total": totalRows}, sort_keys=False)
 
     def parserData(self,dict_list,row_index,GroupID,UserID,supplier):
         try:
@@ -161,8 +164,10 @@ class Myfone22table_Data():
                        self.sale.getC_Product_id(), self.customer.getCustomer_id(), self.sale.getName(), self.sale.getQuantity(), \
                        self.sale.getPrice(), self.sale.getInvoice(), self.sale.getInvoice_date(), self.sale.getTrans_list_date(), \
                        self.sale.getDis_date(), self.sale.getMemo(), self.sale.getSale_date(), self.sale.getOrder_source(), \
-                       self.sale.getDeliveryway())
-            self.mysqlconnect.cursor.callproc('p_tb_sale_new', SaleSQL)
+                       self.sale.getDeliveryway(), "")
+            result = self.mysqlconnect.cursor.callproc('p_tb_sale_new', SaleSQL)
+            if result[18] != None:
+                self.dup_order_no.append(result[18])
             return
         except Exception as e :
             print e.message

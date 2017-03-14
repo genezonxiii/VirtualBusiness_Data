@@ -16,10 +16,12 @@ logger = logging.getLogger(__name__)
 #         self.T_Cat_TemplateFile = '/data/vbupload/Logistics_Tcat.xls'
 #         self.T_Cat_OutputFilePath = '/data/vbupload_output/'
 
+#Momo_xls檔(25欄)
 class Momo25_Data():
     Data = None
     mysqlconnect = None
     sale , customer = None, None
+    dup_order_no = []
 
     # 預期要找出欄位的索引位置的欄位名稱
     # \0407\momo摩天商城\1458525585016.xls
@@ -93,15 +95,17 @@ class Momo25_Data():
             logger.error(inst.args)
             resultinfo = inst.args
         finally:
+            dup_str = ','.join(self.dup_order_no)
+            self.dup_order_no = []
             logger.debug('===Momo25_Data finally===')
-            return json.dumps({"success": success, "info": resultinfo, "total": totalRows}, sort_keys=False)
+            return json.dumps({"success": success, "info": resultinfo, "dup_order": dup_str, "total": totalRows}, sort_keys=False)
 
     def parserData(self,table,row_index,GroupID,UserID,supplier):
         try:
             self.sale.setGroup_id(GroupID)
             self.sale.setUser_id(UserID)
             self.sale.setOrder_source(supplier)
-            self.sale.setOrder_No(table.cell(row_index, self.TitleList.index(self.TitleTuple[0])).value[0:14])
+            self.sale.setOrder_No(table.cell(row_index, self.TitleList.index(self.TitleTuple[0])).value[0:18])
             self.sale.setTrans_list_date(table.cell(row_index, self.TitleList.index(self.TitleTuple[3])).value)
             self.sale.setSale_date(table.cell(row_index, self.TitleList.index(self.TitleTuple[3])).value)
             self.sale.setC_Product_id(str(table.cell(row_index, self.TitleList.index(self.TitleTuple[5])).value).split('.')[0])
@@ -160,8 +164,11 @@ class Momo25_Data():
                        self.sale.getC_Product_id(), self.customer.getCustomer_id(), self.sale.getName(), self.sale.getQuantity(), \
                        self.sale.getPrice(), self.sale.getInvoice(), self.sale.getInvoice_date(), self.sale.getTrans_list_date(), \
                        self.sale.getDis_date(), self.sale.getMemo(), self.sale.getSale_date(), self.sale.getOrder_source(),\
-                       self.sale.getDeliveryway())
-            self.mysqlconnect.cursor.callproc('p_tb_sale_new', SaleSQL)
+                       self.sale.getDeliveryway(), "")
+            result = self.mysqlconnect.cursor.callproc('p_tb_sale_new', SaleSQL)
+            if result[18] != None:
+                self.dup_order_no.append(result[18])
+
             return
         except Exception as e :
             print e.message
