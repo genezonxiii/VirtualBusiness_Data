@@ -13,21 +13,10 @@ class FileProcess_sf():
         pass
 
     def transferFile(self, DataPath, UserID , LogisticsID=26, ProductCode=None ):
-
-        logger.debug(DataPath.split('/')[0])
-        logger.debug(DataPath.split('/')[1])
-        logger.debug(DataPath.split('/')[2])
-        logger.debug(DataPath.split('/')[3])
-        logger.debug(DataPath.split('/')[4])
-        logger.debug("1")
         GroupID = DataPath.split('/')[4]                        #group id
-        logger.debug("1")
         Platform = DataPath.split("/")[3]                      #出庫或入庫
-        logger.debug("1")
         OutputFile = os.path.basename(DataPath).split(".")[0]  #輸出檔案名稱
-        logger.debug("1")
         outPutPath = ExcelTemplate()
-        logger.debug("1")
         OutputFile = outPutPath.T_SF_OutputFilePath + OutputFile +".xls" #輸出檔案路徑及名稱
         GB = None
         if Platform == 'inbound' :
