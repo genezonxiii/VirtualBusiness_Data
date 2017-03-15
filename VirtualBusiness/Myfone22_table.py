@@ -95,7 +95,7 @@ class Myfone22table_Data():
             dup_str = ','.join(self.dup_order_no)
             self.dup_order_no = []
             logger.debug('===Myfone22table_Data finally===')
-            return json.dumps({"success": success, "info": resultinfo, "dup_order": dup_str, "total": totalRows}, sort_keys=False)
+            return json.dumps({"success": success, "info": resultinfo, "duplicate": dup_str, "total": totalRows}, sort_keys=False)
 
     def parserData(self,dict_list,row_index,GroupID,UserID,supplier):
         try:

@@ -98,7 +98,7 @@ class Momo25_Data():
             dup_str = ','.join(self.dup_order_no)
             self.dup_order_no = []
             logger.debug('===Momo25_Data finally===')
-            return json.dumps({"success": success, "info": resultinfo, "dup_order": dup_str, "total": totalRows}, sort_keys=False)
+            return json.dumps({"success": success, "info": resultinfo, "duplicate": dup_str, "total": totalRows}, sort_keys=False)
 
     def parserData(self,table,row_index,GroupID,UserID,supplier):
         try:

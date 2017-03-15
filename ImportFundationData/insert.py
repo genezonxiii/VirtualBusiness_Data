@@ -19,6 +19,7 @@ class SupplyData():
     Data = None
     mysqlconnect = None
     supply = None
+    dup_order_no = []
 
     TitleTuple = (u'供應商名稱', u'統一編號', u'地址', u'聯絡人1', u'電話',
                   u'分機', u'行動電話', 'email', u'聯絡人2', u'電話2',
@@ -81,8 +82,10 @@ class SupplyData():
             logger.error(inst.args)
             resultinfo = inst.args
         finally:
+            dup_str = ','.join(self.dup_order_no)
+            self.dup_order_no = []
             logger.debug('===SupplyData finally===')
-            return json.dumps({"success": success, "info": resultinfo, "total": totalRows}, sort_keys=False)
+            return json.dumps({"success": success, "info": resultinfo,"duplicate": dup_str, "total": totalRows}, sort_keys=False)
 
     def parserData_Supply(self,table,row_index,GroupID,UserID):
         try:
@@ -111,8 +114,10 @@ class SupplyData():
             SupplySQL = (self.supply.getGroup_id(), self.supply.getSupply_name(), self.supply.getSupply_unicode(), self.supply.getAddress(), self.supply.getContact(), \
                          self.supply.getPhone(), self.supply.getExt(), self.supply.getMobile(),self.supply.getContact1(), \
                          self.supply.getPhone1(), self.supply.getExt1(), self.supply.getMobile1(), self.supply.getEmail(), \
-                         self.supply.getEmail1(),self.supply.getMemo(), self.supply.getUser_id())
-            self.mysqlconnect.cursor.callproc('sp_insert_supply', SupplySQL)
+                         self.supply.getEmail1(),self.supply.getMemo(), self.supply.getUser_id(),"")
+            result = self.mysqlconnect.cursor.callproc('sp_insert_supply', SupplySQL)
+            if result[16] != None:
+                self.dup_order_no.append(result[16])
             return
         except Exception as e :
             print e.message
@@ -124,6 +129,7 @@ class ProductData():
     Data = None
     mysqlconnect = None
     product = None
+    dup_order_no = []
 
     TitleTuple = (u'自訂產品ID', u'產品名稱', u'供應商名稱', u'產品類型', u'產品單位',
                   u'成本', u'售價', u'產品說明', u'條碼', u'安全庫存',
@@ -184,8 +190,10 @@ class ProductData():
             logger.error(inst.args)
             resultinfo = inst.args
         finally:
+            dup_str = ','.join(self.dup_order_no)
+            self.dup_order_no = []
             logger.debug('===ProductData finally===')
-            return json.dumps({"success": success, "info": resultinfo, "total": totalRows}, sort_keys=False)
+            return json.dumps({"success": success, "info": resultinfo,"duplicate": dup_str, "total": totalRows}, sort_keys=False)
 
     def parserData_Product(self,table,row_index, GroupID, UserID):
         try:
@@ -211,8 +219,10 @@ class ProductData():
         try:
             ProductSQL = (self.product.getGroup_id(), self.product.getC_Product_id(), self.product.getP_Product_name(), self.product.getSupply_name(), self.product.getType_name(), \
                          self.product.getUnit_name(), self.product.getCost(), self.product.getPrice(),self.product.getDescription(), \
-                         self.product.getBarcode(), self.product.getKeep_stock(), self.product.getBegging_stock(), self.product.getUser_id())
-            self.mysqlconnect.cursor.callproc('sp_insert_product_xls', ProductSQL)
+                         self.product.getBarcode(), self.product.getKeep_stock(), self.product.getBegging_stock(), self.product.getUser_id(),"")
+            result = self.mysqlconnect.cursor.callproc('sp_insert_product_xls', ProductSQL)
+            if result[13] != None:
+                self.dup_order_no.append(result[13])
             return
         except Exception as e :
             print e.message
@@ -227,6 +237,7 @@ class PackageData():
     package_D = None
     packageMList = []
     packageDList = []
+    dup_order_no = []
 
     TitleTupleM = (u'自訂組合包ID', u'組合包名稱', u'組合包規格', u'售價', u'條碼',
                   u'說明')
@@ -310,24 +321,28 @@ class PackageData():
 
             # master 跟 detail 要 match
             for master in self.packageMList:
-                print "===master_list get detail_list same sale_id==="
-                print "master_id:" + master.getC_Package_id()
+                logger.debug("===master_list get detail_list same sale_id===")
+                logger.debug("master_id:" + master.getC_Package_id())
                 g = master.getGroup_id()
                 package_id = master.getPackage_id()
                 master_detail_list = [detail for detail in self.packageDList if detail.getC_Package_id() == master.getC_Package_id()]
 
-                for detail in master_detail_list:
-                    detail.setParent_id(package_id)
-                    self.package_D = detail
-                    self.updateDB_Package_detail()
-
                 self.package_M = master
-                self.updateDB_Package()
+                result8 = self.updateDB_Package()
+
+                if result8 == None:
+                    for detail in master_detail_list:
+                        detail.setParent_id(package_id)
+                        self.package_D = detail
+                        self.updateDB_Package_detail()
+
 
             self.package_M = None
             self.package_D = None
 
             self.mysqlconnect.db.commit()
+            self.packageMList = []
+            self.packageDList = []
             self.mysqlconnect.dbClose()
 
             success = True
@@ -336,8 +351,10 @@ class PackageData():
             logger.error(inst.args)
             resultinfo = inst.args
         finally:
+            dup_str = ','.join(self.dup_order_no)
+            self.dup_order_no = []
             logger.debug('===PackageData finally===')
-            return json.dumps({"success": success, "info": resultinfo, "totalM": totalRows, "totalD": detailRows}, sort_keys=False)
+            return json.dumps({"success": success, "info": resultinfo, "duplicate": dup_str, "totalM": totalRows, "totalD": detailRows}, sort_keys=False)
 
     def parserData_Package(self,table,row_index, GroupID, UserID):
         try:
@@ -375,9 +392,13 @@ class PackageData():
     def updateDB_Package(self):
         try:
             PackageSQL = (self.package_M.getPackage_id(), self.package_M.getGroup_id(), self.package_M.getC_Package_id(), self.package_M.getPackage_name(), self.package_M.getPackage_spec(), \
-                         self.package_M.getAmout(), self.package_M.getBarcode(), self.package_M.getDescription())
-            self.mysqlconnect.cursor.callproc('sp_insert_package_master_xls', PackageSQL)
-            return
+                         self.package_M.getAmout(), self.package_M.getBarcode(), self.package_M.getDescription(),"")
+            result = self.mysqlconnect.cursor.callproc('sp_insert_package_master_xls', PackageSQL)
+            if result[8] != None:
+                self.dup_order_no.append(result[8])
+                return result[8]
+            else:
+                return
 
         except Exception as e :
             print e.message
@@ -400,6 +421,7 @@ class ContrastData():
     Data = None
     mysqlconnect = None
     contrast = None
+    dup_order_no = []
 
     TitleTuple = (u'對照類別', u'產品名稱/組合包名稱', u'產品說明/組合包規格', u'平台', u'平台用產品名稱',
                   u'平台用產品規格', u'應收金額')
@@ -457,8 +479,10 @@ class ContrastData():
             logger.error(inst.args)
             resultinfo = inst.args
         finally:
+            dup_str = ','.join(self.dup_order_no)
+            self.dup_order_no = []
             logger.debug('===ContrastData finally===')
-            return json.dumps({"success": success, "info": resultinfo, "total": totalRows}, sort_keys=False)
+            return json.dumps({"success": success, "info": resultinfo,"duplicate": dup_str, "total": totalRows}, sort_keys=False)
 
     def parserData_contrast(self,table,row_index, GroupID, UserID):
         try:
@@ -478,8 +502,10 @@ class ContrastData():
     def updateDB_Contrast(self):
         try:
             ContrastSQL = (self.contrast.getGroup_id(), self.contrast.getContrast_type(), self.contrast.getProduct_name(), self.contrast.getDescription(), self.contrast.getPlatform_name(), \
-                         self.contrast.getProduct_name_platform(), self.contrast.getProduct_spec_platform(), self.contrast.getAmount())
-            self.mysqlconnect.cursor.callproc('sp_insert_product_contrast_xls', ContrastSQL)
+                         self.contrast.getProduct_name_platform(), self.contrast.getProduct_spec_platform(), self.contrast.getAmount(), "")
+            result = self.mysqlconnect.cursor.callproc('sp_insert_product_contrast_xls', ContrastSQL)
+            if result[8] != None:
+                self.dup_order_no.append(result[8])
             return
 
         except Exception as e :
@@ -491,7 +517,7 @@ class ContrastData():
 
 
 if __name__ == '__main__':
-    data = ContrastData()
+    data =ContrastData()
     # groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
     print data.Contrast(groupid, u'C:\\Users\\10509002\\Desktop\\產品對照匯入範本.xls','system')

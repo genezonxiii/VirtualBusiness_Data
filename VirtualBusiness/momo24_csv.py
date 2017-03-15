@@ -98,7 +98,7 @@ class Momo24csv_Data():
             dup_str = ','.join(self.dup_order_no)
             self.dup_order_no = []
             logger.debug('===Momo24csv_Data finally===')
-            return json.dumps({"success": success, "info": resultinfo, "dup_order": dup_str, "total": totalRows}, sort_keys=False)
+            return json.dumps({"success": success, "info": resultinfo, "duplicate": dup_str, "total": totalRows}, sort_keys=False)
 
     def parserData(self,table,row_index,GroupID,UserID,supplier):
         try:
@@ -179,4 +179,4 @@ if __name__ == '__main__':
     momo = Momo24csv_Data()
     # groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
-    print momo.Momo_24_Data('yahoo',groupid, '/Users/csi/Desktop/35ee0b33-ade9-4bce-8b9c-67b4a1807689.csv','system')
+    print momo.Momo_24_Data('momo',groupid, u'C:/Users/10509002/Desktop/for_Joe_test/網購/momo/宅配/A1102_3_2_008992_20160513102705.csv','system')
