@@ -13,6 +13,8 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from os.path import basename
 import re
+from os import listdir
+from os.path import isfile, join
 
 logger = logging.getLogger(__name__)
 # from GroupBuy import ExcelTemplate
@@ -148,96 +150,98 @@ class sfexpressout():
         self.init_log('SFexpressOut_Data',GroupID, UserID , ProductCode , inputFile)
         success = False
         try:
-            self.getRegularEx(GroupID)
-            data = xlrd.open_workbook(inputFile)
-            table = data.sheets()[0]
-            rows = table.nrows
+            onlyfiles = [f for f in listdir(inputFile) if isfile(join(inputFile, f))]
             result = []
-            resultinfo = ""
+            for filename in onlyfiles:
+                fullpath = inputFile + "/" + filename
+                data = xlrd.open_workbook(fullpath)
+                table = data.sheets()[0]
+                rows = table.nrows
+                resultinfo = ""
 
-            order_no = table.cell(4, 10).value
-            receiver = table.cell(4, 4).value
-            address = table.cell(8, 1).value
-            phone = table.cell(5, 4).value
-            client = table.cell(4, 1).value
-            mobile = None
-            if phone[0:2] == '09' :
-                mobile = phone
-                phone = None
+                order_no = table.cell(4, 10).value
+                receiver = table.cell(4, 4).value
+                address = table.cell(8, 1).value
+                phone = table.cell(5, 4).value
+                client = table.cell(4, 1).value
+                mobile = None
+                if phone[0:2] == '09' :
+                    mobile = phone
+                    phone = None
 
-            row_index = 11
-            page_idx = 1
-            while row_index < rows:
-                page_row_start = (page_idx - 1) * 43 + 11
-                page_row_end = (page_idx - 1) * 43 + 35
+                row_index = 11
+                page_idx = 1
+                while row_index < rows:
+                    page_row_start = (page_idx - 1) * 43 + 11
+                    page_row_end = (page_idx - 1) * 43 + 35
 
-                # 取資料ROW 1
-                row_column1 = table.cell(row_index, 0).value
+                    # 取資料ROW 1
+                    row_column1 = table.cell(row_index, 0).value
 
-                if row_column1 == u'付款條件':
-                    # pay = row_index + 1
-                    # column2 = table.cell(pay, 1).value
-                    # if column2.find(u'順豐') != -1:
-                    #     price = int(table.cell(pay, 10).value)
-                    break
+                    if row_column1 == u'付款條件':
+                        # pay = row_index + 1
+                        # column2 = table.cell(pay, 1).value
+                        # if column2.find(u'順豐') != -1:
+                        #     price = int(table.cell(pay, 10).value)
+                        break
 
-                row_column2 = table.cell(row_index, 1).value
-                row_column3 = int(table.cell(row_index, 4).value)
-                row_column4 = table.cell(row_index, 6).value
-                row_column5 = table.cell(row_index, 10).value
+                    row_column2 = table.cell(row_index, 1).value
+                    row_column3 = int(table.cell(row_index, 4).value)
+                    row_column4 = table.cell(row_index, 6).value
+                    row_column5 = table.cell(row_index, 10).value
 
 
-                # 取資料ROW 2
-                row2_idx = row_index + 1
-                if (row2_idx < page_row_start or row2_idx > page_row_end):
-                    row2_idx = page_idx * 43 + 11
-                    row_shift = 1
-                row2_column1 = table.cell(row2_idx, 0).value
-                if row2_column1 == '':
-                    row2_column2 = table.cell(row2_idx, 1).value
-                else:
-                    row2_column2 = ''
-                    print 'DONT GET ROW2 DATA'
+                    # 取資料ROW 2
+                    row2_idx = row_index + 1
+                    if (row2_idx < page_row_start or row2_idx > page_row_end):
+                        row2_idx = page_idx * 43 + 11
+                        row_shift = 1
+                    row2_column1 = table.cell(row2_idx, 0).value
+                    if row2_column1 == '':
+                        row2_column2 = table.cell(row2_idx, 1).value
+                    else:
+                        row2_column2 = ''
+                        print 'DONT GET ROW2 DATA'
 
-                if row2_column1 == '':
-                    row_index = row_index + 2
-                else:
-                    row_index = row_index + 1
+                    if row2_column1 == '':
+                        row_index = row_index + 2
+                    else:
+                        row_index = row_index + 1
 
-                # 超出範圍時，CHANGE PAGE_INDEX, ROW_INDEX
-                if (row_index < page_row_start or row_index > page_row_end):
-                    page_idx = page_idx + 1
-                    row_index = (page_idx - 1) * 43 + 11 + row_shift
-                    row_shift = 0
+                    # 超出範圍時，CHANGE PAGE_INDEX, ROW_INDEX
+                    if (row_index < page_row_start or row_index > page_row_end):
+                        page_idx = page_idx + 1
+                        row_index = (page_idx - 1) * 43 + 11 + row_shift
+                        row_shift = 0
 
-                if row_column1 == '9001':
-                    pay = 'N'
-                    for temp in result:
-                        temp.append(pay) # 付款
-                        temp.append("")  # 金額
-                    continue
-                elif row_column1 == '9002':
-                    pay = 'Y'
-                    price = table.cell(row_index+2, 10).value
-                    for temp in result:
-                        temp.append(pay) # 付款
-                        temp.append(price)  # 金額
-                    continue
+                    if row_column1 == '9001':
+                        pay = 'N'
+                        for temp in result:
+                            temp.append(pay) # 付款
+                            temp.append("")  # 金額
+                        continue
+                    elif row_column1 == '9002':
+                        pay = 'Y'
+                        price = table.cell(row_index+2, 10).value
+                        for temp in result:
+                            temp.append(pay) # 付款
+                            temp.append(price)  # 金額
+                        continue
 
-                # 讀 excel 檔轉 出庫單
-                tmp=[]
-                tmp.append(order_no)           #訂單編號
-                tmp.append(client)  # 客戶
-                tmp.append(address)  # 送貨地址
-                tmp.append(row_column1) # 商品編號
-                tmp.append(row_column2) # 名稱
-                tmp.append(row_column3) # 數量
-                tmp.append(receiver)  # 收件人
-                tmp.append(phone)  #　電話
-                tmp.append(mobile) # 手機
-                # tmp.append(price) # 金額
-                # tmp.append(pay)
-                result.append(tmp)
+                    # 讀 excel 檔轉 出庫單
+                    tmp=[]
+                    tmp.append(order_no)           #訂單編號
+                    tmp.append(client)  # 客戶
+                    tmp.append(address)  # 送貨地址
+                    tmp.append(row_column1) # 商品編號
+                    tmp.append(row_column2) # 名稱
+                    tmp.append(row_column3) # 數量
+                    tmp.append(receiver)  # 收件人
+                    tmp.append(phone)  #　電話
+                    tmp.append(mobile) # 手機
+                    # tmp.append(price) # 金額
+                    # tmp.append(pay)
+                    result.append(tmp)
 
             success = self.writeXls(LogisticsID,result,outputFile)
         except Exception as e :
@@ -260,8 +264,10 @@ class sfexpressout():
         try:
             Template = ExcelTemplate()
             fileTemplate = Template.T_SF_TemplateFile
-            rb = xlrd.open_workbook(fileTemplate)
+            rb = xlrd.open_workbook(fileTemplate,formatting_info=True)
+            logger.debug("copy start")
             file = copy(rb)
+            logger.debug("copy end")
             table = file.get_sheet(0)
             i = 1
             success = False
@@ -372,5 +378,5 @@ class sfexpressout():
 if __name__ == '__main__':
     buy = sfexpressout()
     print buy.parserFile('cbcc3138-5603-11e6-a532-000d3a800878', 'test', 26, 'MS',
-                  inputFile=u'/Users/csi/Desktop/鮪魚肚/0301出庫/0301出庫/0301HAPET好寵永康店銷貨單.xls', \
-                  outputFile=u'/Users/csi/Desktop/0301HAPET好寵永康店銷貨單.xls')
+                  inputFile=u'C:/Users/10509002/Desktop/鮪魚肚/0301出庫/0301出庫', \
+                  outputFile=u'C:/Users/10509002/Desktop/test0315.xls')

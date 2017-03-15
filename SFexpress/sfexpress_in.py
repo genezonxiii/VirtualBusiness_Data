@@ -5,6 +5,8 @@ import xlrd
 import json
 from xlutils.copy import copy
 from SFexpress.sfexpress_out import sfexpressout
+from os import listdir
+from os.path import isfile, join
 
 logger = logging.getLogger(__name__)
 
@@ -30,69 +32,71 @@ class sfexpressin(sfexpressout):
         self.init_log('SFexpressIn_Data', GroupID, UserID, ProductCode, inputFile)
         success = False
         try:
-            self.getRegularEx(GroupID)
-            data = xlrd.open_workbook(inputFile)
-            table = data.sheets()[0]
-            rows = table.nrows
+            onlyfiles = [f for f in listdir(inputFile) if isfile(join(inputFile, f))]
             result = []
-            resultinfo = ""
+            for filename in onlyfiles:
+                fullpath = inputFile + "/" + filename
+                data = xlrd.open_workbook(fullpath)
+                table = data.sheets()[0]
+                rows = table.nrows
+                resultinfo = ""
 
-            order_no = table.cell(4, 10).value
-            receiver = table.cell(4, 4).value
-            address = table.cell(8, 1).value
-            phone = table.cell(5, 4).value
-            client = table.cell(4, 1).value
+                order_no = table.cell(4, 10).value
+                receiver = table.cell(4, 4).value
+                address = table.cell(8, 1).value
+                phone = table.cell(5, 4).value
+                client = table.cell(4, 1).value
 
-            row_index = 11
-            page_idx = 1
-            while row_index < rows:
-                page_row_start = (page_idx - 1) * 43 + 11
-                page_row_end = (page_idx - 1) * 43 + 35
+                row_index = 11
+                page_idx = 1
+                while row_index < rows:
+                    page_row_start = (page_idx - 1) * 43 + 11
+                    page_row_end = (page_idx - 1) * 43 + 35
 
-                # 取資料ROW 1
-                row_column1 = table.cell(row_index, 0).value
+                    # 取資料ROW 1
+                    row_column1 = table.cell(row_index, 0).value
 
-                if row_column1 == u'付款條件':
-                    break
+                    if row_column1 == u'付款條件':
+                        break
 
-                row_column2 = table.cell(row_index, 1).value
-                row_column3 = int(table.cell(row_index, 4).value)
-                row_column4 = table.cell(row_index, 6).value
-                row_column5 = table.cell(row_index, 10).value
+                    row_column2 = table.cell(row_index, 1).value
+                    row_column3 = int(table.cell(row_index, 4).value)
+                    row_column4 = table.cell(row_index, 6).value
+                    row_column5 = table.cell(row_index, 10).value
 
-                # 取資料ROW 2
-                row2_idx = row_index + 1
-                if (row2_idx < page_row_start or row2_idx > page_row_end):
-                    row2_idx = page_idx * 43 + 11
-                    row_shift = 1
-                row2_column1 = table.cell(row2_idx, 0).value
-                if row2_column1 == '':
-                    row2_column2 = table.cell(row2_idx, 1).value
-                else:
-                    row2_column2 = ''
-                    print 'DONT GET ROW2 DATA'
+                    # 取資料ROW 2
+                    row2_idx = row_index + 1
+                    if (row2_idx < page_row_start or row2_idx > page_row_end):
+                        row2_idx = page_idx * 43 + 11
+                        row_shift = 1
+                    row2_column1 = table.cell(row2_idx, 0).value
+                    if row2_column1 == '':
+                        row2_column2 = table.cell(row2_idx, 1).value
+                    else:
+                        row2_column2 = ''
+                        print 'DONT GET ROW2 DATA'
 
-                if row2_column1 == '':
-                    row_index = row_index + 2
-                else:
-                    row_index = row_index + 1
+                    if row2_column1 == '':
+                        row_index = row_index + 2
+                    else:
+                        row_index = row_index + 1
 
-                # 超出範圍時，CHANGE PAGE_INDEX, ROW_INDEX
-                if (row_index < page_row_start or row_index > page_row_end):
-                    page_idx = page_idx + 1
-                    row_index = (page_idx - 1) * 43 + 11 + row_shift
-                    row_shift = 0
+                    # 超出範圍時，CHANGE PAGE_INDEX, ROW_INDEX
+                    if (row_index < page_row_start or row_index > page_row_end):
+                        page_idx = page_idx + 1
+                        row_index = (page_idx - 1) * 43 + 11 + row_shift
+                        row_shift = 0
 
-                if row_column1 == '9001' or row_column1 == '9002':
-                    continue
+                    if row_column1 == '9001' or row_column1 == '9002':
+                        continue
 
-                # 讀 excel 檔轉 入庫單
-                tmp = []
-                tmp.append(row_column1)  # 商品編號
-                tmp.append(row2_column2)  # 參考號
-                tmp.append(row_column2)  # 商品名稱
-                tmp.append(row_column3)  # 數量
-                result.append(tmp)
+                    # 讀 excel 檔轉 入庫單
+                    tmp = []
+                    tmp.append(row_column1)  # 商品編號
+                    tmp.append(row2_column2)  # 參考號
+                    tmp.append(row_column2)  # 商品名稱
+                    tmp.append(row_column3)  # 數量
+                    result.append(tmp)
 
             success = self.writeXls(LogisticsID, result, outputFile)
         except Exception as e:
@@ -118,8 +122,8 @@ class sfexpressin(sfexpressout):
             rb = xlrd.open_workbook(fileTemplate, formatting_info=True)
             file = copy(rb)
             table = file.get_sheet(0)
-            table.insert_bitmap(u'/data/vbGroupbuy/順豐.bmp', 0, 0, x=0, y=0, scale_x=1, scale_y=0.5)
-            table.insert_bitmap(u'/data/vbGroupbuy/順豐name.bmp', 0, 10, x=0, y=0, scale_x=1, scale_y=0.5)
+            table.insert_bitmap(u'/data/vbGroupbuy/順豐.bmp', 0, 0, x=0, y=0, scale_x=1, scale_y=0.51)
+            table.insert_bitmap(u'/data/vbGroupbuy/順豐name.bmp', 0, 10, x=0, y=0, scale_x=1, scale_y=0.51)
             i = 3
             j = 1
             success = False
@@ -145,5 +149,5 @@ class sfexpressin(sfexpressout):
 if __name__ == '__main__':
     buy = sfexpressin()
     print buy.parserFile('cbcc3138-5603-11e6-a532-000d3a800878', 'test', 26, 'MS',
-                  inputFile=u'C:/Users/10509002/Desktop/鮪魚肚/0120-入庫（PLAY)/0120-入庫（PLAY)/0120進貨單-PLAY.xls', \
+                  inputFile=u'C:/Users/10509002/Desktop/鮪魚肚/0120-入庫（PLAY)/0120-入庫（PLAY)', \
                   outputFile=u'C:/Users/10509002/Desktop/0120進貨單-PLAY.xls')
