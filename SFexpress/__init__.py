@@ -13,11 +13,16 @@ class FileProcess_sf():
         pass
 
     def transferFile(self, DataPath, UserID , LogisticsID=26, ProductCode=None ):
+        logger.debug(DataPath)
         GroupID = DataPath.split('/')[4]                        #group id
         Platform = DataPath.split("/")[3]                      #出庫或入庫
-        OutputFile = os.path.basename(DataPath).split(".")[0]  #輸出檔案名稱
+        logger.debug("Outputfile")
+        OutputFile = DataPath.split("/")[5]  #輸出檔案名稱
+        logger.debug(OutputFile)
         outPutPath = ExcelTemplate()
+        logger.debug("again")
         OutputFile = outPutPath.T_SF_OutputFilePath + OutputFile +".xls" #輸出檔案路徑及名稱
+        logger.debug(OutputFile)
         GB = None
         if Platform == 'inbound' :
             logger.debug("入庫")
@@ -86,6 +91,6 @@ class FileProcess_sf():
 
 
 if __name__ == '__main__':
-    test = FileProcess()
-    print test.transferFile(u'/data/vbGroupbuy/delicious/general/396a2df8-472e-11e6-806e-000c29c1d067/20170123_好吃1.xls','robintest', 2, 'DS')
+    test = FileProcess_sf()
+    print test.transferFile(u'C:/data/vbSF/inbound/cbcc3138-5603-11e6-a532-000d3a800878/6412fe6b-8e5b-474d-8898-c4c553e11d03.xls','robintest', 2, 'DS')
     # print 'finish'
