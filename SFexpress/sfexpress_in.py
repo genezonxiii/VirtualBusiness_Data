@@ -32,6 +32,7 @@ class sfexpressin(sfexpressout):
         self.init_log('SFexpressIn_Data', GroupID, UserID, ProductCode, inputFile)
         success = False
         try:
+            self.getRegularEx(GroupID)
             onlyfiles = [f for f in listdir(inputFile) if isfile(join(inputFile, f))]
             result = []
             for filename in onlyfiles:
