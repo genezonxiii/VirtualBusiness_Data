@@ -50,34 +50,16 @@ class SendMail():
             msg["To"] = ', '.join(receivers)
             msg.preamble = 'This is test mail'
             body = Message + filename
+            msg.attach(MIMEText(body, _charset='utf-8'))
 
             filenames = [f for f in listdir(filename) if isfile(join(filename, f))]
             for files in filenames:
                 fullpath = filename + "/" + files
                 print fullpath
                 with open(fullpath, "rb") as fil:
-                    part = MIMEApplication(
-                        fil.read(),
-                        Name=basename(fullpath)
-                    )
+                    part = MIMEApplication(fil.read(), Name=basename(fullpath))
                     part['Content-Disposition'] = 'attachment; filename="%s"' % basename(fullpath)
                     msg.attach(part)
-                # part = MIMEBase('application', 'octet-stream')
-                # part.set_payload(open(fullpath, 'rb').read())
-                # Encoders.encode_base64(part)
-                # part.add_header('Content-Disposition', 'attachment; filename="%s"' % fullpath)
-                # msg.attach(part)
-            # # body = "Python test mail"
-            msg.attach(MIMEText(body, _charset='utf-8'))
-            # # msg.attach(MIMEText(Message, 'plain'))
-            # with open(filename, "rb") as fil:
-            #     part = MIMEApplication(
-            #         fil.read(),
-            #         Name=basename(filename)
-            #     )
-            #     part['Content-Disposition'] = 'attachment; filename="%s"' % basename(filename)
-            #     msg.attach(part)
-
             smtpObj = smtplib.SMTP(server)
             smtpObj.sendmail(sender, receivers, msg.as_string())
             logger.info("Successfully sent email")
@@ -189,8 +171,8 @@ class sfexpressout():
 
                 #footer
                 botrows = rows-6
-                payOrNot = table.cell(botrows,1).value
-                paymoney = table.cell(botrows+1,10).value
+                payOrNot = table.cell(botrows, 1).value
+                paymoney = table.cell(botrows+1, 10).value
 
                 mobile = None
                 if phone[0:2] == '09':
@@ -272,7 +254,8 @@ class sfexpressout():
                     tmp.append(mobile) # 手機
                     tmp.append(pay) # Y or N
                     tmp.append(price)   # 金額
-                    result.append(tmp)
+                    if row_column1 != '9001' and row_column1 != '9002':
+                        result.append(tmp)
 
             success = self.writeXls(LogisticsID,result,outputFile)
         except Exception as e :
@@ -409,5 +392,5 @@ class sfexpressout():
 if __name__ == '__main__':
     buy = sfexpressout()
     print buy.parserFile('cbcc3138-5603-11e6-a532-000d3a800878', 'test', 26, 'MS',
-                  inputFile=u'C:/Users/10509002/Desktop/出貨test', \
+                  inputFile=u'C:/Users/10509002/Desktop/鮪魚肚/0301出庫/0301出庫/明細表', \
                   outputFile=u'C:/Users/10509002/Desktop/test0321.xls')

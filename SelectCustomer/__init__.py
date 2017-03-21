@@ -1,7 +1,7 @@
 # -*-  coding: utf-8  -*-
 __author__ = '10409003'
 import sys
-import MySQLdb
+# import MySQLdb
 from aes_data import aes_data
 from ToMysql import ToMysql
 class Query_customer():
@@ -13,7 +13,7 @@ class Query_customer():
         try:
             mysqlconnect = ToMysql()
             mysqlconnect.connect()
-            #mysql = MySQLdb.connect(host=setting.host,user=setting.user, passwd=setting.passwd, db=setting.db)
+            # mysql = MySQLdb.connect(host=setting.host,user=setting.user, passwd=setting.passwd, db=setting.db)
             mysql_cursor = mysqlconnect.cursor
             GroupId=GroupID
             mysql_cursor.callproc("sp_selectall_customer", [GroupId,])
@@ -57,5 +57,5 @@ class Query_customer():
                 # print results[4]
                 ClientData.append(r)
             return ClientData
-        except MySQLdb.Error, e:
+        except Exception as e:
             return "MySQL Error %d:  %s" % (e.args[0], e.args[1])

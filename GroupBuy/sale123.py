@@ -49,5 +49,5 @@ class Sale123(buy123):
 if __name__ == '__main__':
     buy = Sale123()
     print buy.parserFile('cbcc3138-5603-11e6-a532-000d3a800878', 'test', 2, 'DS',
-                   inputFile=u'C:/Users/10509002/Desktop/for_Joe_test/團購/姊妹購物網/2016-12-02_姊妹購物網_AY12390480F_悠活原力有限公司_欣敏立清益生菌-草莓多多_未出貨.xls', \
-                   outputFile=u'C:/Users/10509002/Desktop/20170104-姊妹購物網出貨單.xls')
+                   inputFile=u'C:/Users/10509002/Desktop/2017-02-20_姊妹購物網_AY123106391F_悠活原力有限公司_欣敏立清益生菌-蔓越莓多多_未出貨.xls', \
+                   outputFile=u'C:/Users/10509002/Desktop/20170220-姊妹購物網出貨單.xls')

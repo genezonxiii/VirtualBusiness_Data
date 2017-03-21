@@ -229,7 +229,7 @@ class Sale():
     p_invoice_date, p_trans_list_date, p_dis_date, p_sale_date, p_return_date = None, None, None, None, None
     p_memo, p_order_source, p_deliveryway = None, None, None
     p_isreturn = False
-    aes,convert = None ,None
+    aes,convert = None, None
 
     def __init__(self):
         self.convert = convertType()

@@ -15,7 +15,7 @@ class ToMysql():
     #host = '192.168.112.175'
     #database = 'db_virutalbusiness'
     #user = 'root'
-    #password = 'password'
+    # password = 'mysql'
 
     def __init__(self):
         pass

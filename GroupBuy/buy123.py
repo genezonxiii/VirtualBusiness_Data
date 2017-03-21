@@ -40,7 +40,7 @@ class SendMail():
     def sendmail(self, server, sender, receivers, Message, filename):
         try:
             msg = MIMEMultipart()
-            msg['Subject'] = u'悠活錯誤檔案'
+            msg['Subject'] = u'錯誤檔案'
             msg["From"] = sender
             msg["To"] = ', '.join(receivers)
             msg.preamble = 'This is test mail'
