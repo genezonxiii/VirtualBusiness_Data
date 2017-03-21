@@ -11,10 +11,13 @@ import smtplib
 from email.mime.application import MIMEApplication
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.base import MIMEBase
+from email import Encoders
 from os.path import basename
 import re
 from os import listdir
 from os.path import isfile, join
+import os
 
 logger = logging.getLogger(__name__)
 # from GroupBuy import ExcelTemplate
@@ -26,13 +29,13 @@ class ExcelTemplate():
         self.T_SF_TemplateFile = '/data/vbGroupbuy/Logistics_SF_Out.xls'
         self.T_SF_OutputFilePath = '/data/vbSF_output/'
         # Aber 正式用
-        self.MailSender = 'pscaber@cloud.pershing.com.tw'
-        self.MailReceiver =['joeyang@pershing.com.tw','hsuanmeng@pershing.com.tw','christinewei@pershing.com.tw']
-        self.SMTPServer = 'cloud-pershing-com-tw.mail.protection.outlook.com'
+        # self.MailSender = 'pscaber@cloud.pershing.com.tw'
+        # self.MailReceiver =['joeyang@pershing.com.tw','hsuanmeng@pershing.com.tw','christinewei@pershing.com.tw']
+        # self.SMTPServer = 'cloud-pershing-com-tw.mail.protection.outlook.com'
         # Local 測試用
-        # self.MailSender = 'hsuanmeng@pershing.com.tw'
-        # self.MailReceiver = ['joeyang@pershing.com.tw', 'hsuanmeng@pershing.com.tw', 'christinewei@pershing.com.tw']
-        # self.SMTPServer = 'ms1.pershing.com.tw'
+        self.MailSender = 'hsuanmeng@pershing.com.tw'
+        self.MailReceiver = ['hsuanmeng@pershing.com.tw']
+        self.SMTPServer = 'ms1.pershing.com.tw'
 
 #Send Mail
 class SendMail():
@@ -47,16 +50,33 @@ class SendMail():
             msg["To"] = ', '.join(receivers)
             msg.preamble = 'This is test mail'
             body = Message + filename
-            # body = "Python test mail"
+
+            filenames = [f for f in listdir(filename) if isfile(join(filename, f))]
+            for files in filenames:
+                fullpath = filename + "/" + files
+                print fullpath
+                with open(fullpath, "rb") as fil:
+                    part = MIMEApplication(
+                        fil.read(),
+                        Name=basename(fullpath)
+                    )
+                    part['Content-Disposition'] = 'attachment; filename="%s"' % basename(fullpath)
+                    msg.attach(part)
+                # part = MIMEBase('application', 'octet-stream')
+                # part.set_payload(open(fullpath, 'rb').read())
+                # Encoders.encode_base64(part)
+                # part.add_header('Content-Disposition', 'attachment; filename="%s"' % fullpath)
+                # msg.attach(part)
+            # # body = "Python test mail"
             msg.attach(MIMEText(body, _charset='utf-8'))
-            # msg.attach(MIMEText(Message, 'plain'))
-            with open(filename, "rb") as fil:
-                part = MIMEApplication(
-                    fil.read(),
-                    Name=basename(filename)
-                )
-                part['Content-Disposition'] = 'attachment; filename="%s"' % basename(filename)
-                msg.attach(part)
+            # # msg.attach(MIMEText(Message, 'plain'))
+            # with open(filename, "rb") as fil:
+            #     part = MIMEApplication(
+            #         fil.read(),
+            #         Name=basename(filename)
+            #     )
+            #     part['Content-Disposition'] = 'attachment; filename="%s"' % basename(filename)
+            #     msg.attach(part)
 
             smtpObj = smtplib.SMTP(server)
             smtpObj.sendmail(sender, receivers, msg.as_string())
@@ -160,15 +180,29 @@ class sfexpressout():
                 rows = table.nrows
                 resultinfo = ""
 
+                # Header
                 order_no = table.cell(4, 10).value
                 receiver = table.cell(4, 4).value
                 address = table.cell(8, 1).value
                 phone = table.cell(5, 4).value
                 client = table.cell(4, 1).value
+
+                #footer
+                botrows = rows-6
+                payOrNot = table.cell(botrows,1).value
+                paymoney = table.cell(botrows+1,10).value
+
                 mobile = None
-                if phone[0:2] == '09' :
+                if phone[0:2] == '09':
                     mobile = phone
                     phone = None
+
+                if payOrNot == u'順豐貨到付款' :
+                    pay = 'Y'
+                    price = int(paymoney)
+                else:
+                    pay = 'N'
+                    price = ''
 
                 row_index = 11
                 page_idx = 1
@@ -180,10 +214,6 @@ class sfexpressout():
                     row_column1 = table.cell(row_index, 0).value
 
                     if row_column1 == u'付款條件':
-                        # pay = row_index + 1
-                        # column2 = table.cell(pay, 1).value
-                        # if column2.find(u'順豐') != -1:
-                        #     price = int(table.cell(pay, 10).value)
                         break
 
                     row_column2 = table.cell(row_index, 1).value
@@ -215,19 +245,19 @@ class sfexpressout():
                         row_index = (page_idx - 1) * 43 + 11 + row_shift
                         row_shift = 0
 
-                    if row_column1 == '9001':
-                        pay = 'N'
-                        for temp in result:
-                            temp.append(pay) # 付款
-                            temp.append("")  # 金額
-                        continue
-                    elif row_column1 == '9002':
-                        pay = 'Y'
-                        price = table.cell(row_index+2, 10).value
-                        for temp in result:
-                            temp.append(pay) # 付款
-                            temp.append(price)  # 金額
-                        continue
+                    # if row_column1 == '9001':
+                    #     pay = 'N'
+                    #     for temp in result:
+                    #         temp.append(pay) # 付款
+                    #         temp.append("")  # 金額
+                    #     continue
+                    # elif row_column1 == '9002':
+                    #     pay = 'Y'
+                    #     price = table.cell(row_index+2, 10).value
+                    #     for temp in result:
+                    #         temp.append(pay) # 付款
+                    #         temp.append(price)  # 金額
+                    #     continue
 
                     # 讀 excel 檔轉 出庫單
                     tmp=[]
@@ -240,8 +270,8 @@ class sfexpressout():
                     tmp.append(receiver)  # 收件人
                     tmp.append(phone)  #　電話
                     tmp.append(mobile) # 手機
-                    # tmp.append(price) # 金額
-                    # tmp.append(pay)
+                    tmp.append(pay) # Y or N
+                    tmp.append(price)   # 金額
                     result.append(tmp)
 
             success = self.writeXls(LogisticsID,result,outputFile)
@@ -281,8 +311,8 @@ class sfexpressout():
                 table.write(i,6,row[0])         # 訂單編號
                 table.write(i, 9, row[1])       # 收件公司
                 table.write(i, 13, row[2])       # 地址
-                # table.write(i, 14, row[9])      #是否貨到付款
-                # table.write(i, 15, row[10])      # 代收貨款金額
+                table.write(i, 14, row[9])      #是否貨到付款
+                table.write(i, 15, row[10])      # 代收貨款金額
                 table.write(i, 18, row[3])       # 商品編號
                 table.write(i, 19, row[4])       # 商品名稱
                 table.write(i, 20, row[5])  # 商品出庫數量
@@ -379,5 +409,5 @@ class sfexpressout():
 if __name__ == '__main__':
     buy = sfexpressout()
     print buy.parserFile('cbcc3138-5603-11e6-a532-000d3a800878', 'test', 26, 'MS',
-                  inputFile=u'C:/Users/10509002/Desktop/鮪魚肚/0301出庫/0301出庫', \
-                  outputFile=u'C:/Users/10509002/Desktop/test0315.xls')
+                  inputFile=u'C:/Users/10509002/Desktop/出貨test', \
+                  outputFile=u'C:/Users/10509002/Desktop/test0321.xls')
