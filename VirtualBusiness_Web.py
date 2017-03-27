@@ -9,6 +9,7 @@ from Shipper import ShipperData, VBsale_Analytics
 from GroupBuy import FileProcess
 from ImportFundationData import DataInsert
 from SFexpress import FileProcess_sf
+from SFexpress.sfexpress_api import sendDataSFexpress
 import datetime
 from time import mktime
 import logging
@@ -22,7 +23,8 @@ urls = ("/upload/(.*)", "Uploaddata", \
         "/analytics/(.*)", "Analytics", \
         "/groupbuy/(.*)", "GroupBuy",\
         "/import/(.*)", "Import", \
-        "/sfexpress/(.*)", "SFExpress")
+        "/sfexpress/(.*)", "SFExpress", \
+        "/sfexpressapi/(.*)", "SendSFExpress")
 
 app = web.application(urls, globals())
 logger = logging.getLogger(__name__)
@@ -174,6 +176,23 @@ class SFExpress():
 
         Upload = FileProcess_sf()
         return Upload.transferFile(data[0], data[1],int(data[2]),data[3])
+
+class SendSFExpress():
+    def GET(self,name):
+        data = name.split('&')
+        for i in range(len(data)):
+            data[i] = data[i][5:len(data[i])].decode('base64')
+        logging.basicConfig(filename='/data/VirtualBusiness_Data/pyupload.log',
+                            level=logging.DEBUG,
+                            format='%(asctime)s - %(levelname)s - %(filename)s:%(name)s:%(module)s/%(funcName)s/%(lineno)d - %(message)s',
+                            datefmt='%Y/%m/%d %I:%M:%S %p')
+        logging.Formatter.converter = time.gmtime
+
+        logger.debug('===Senddata To SFExpress===')
+        logger.debug('data[0]:' + data[0])
+        SF = sendDataSFexpress()
+        return SF.sendToSFexpress(data[0])
+        # http: // localhost:8080 / sfexpressapi / data = PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI / Pg0KPFJlcXVlc3Qgc2VydmljZT0iSVRFTV9RVUVSWV9TRVJWSUNFIiBsYW5nPSJ6aC1UVyI + DQogICAgPEhlYWQ + DQogICAgICAgIDxBY2Nlc3NDb2RlPklUQ05DMWh0WFY5eHVPS3JodTI0b3c9PTwvQWNjZXNzQ29kZT4NCiAgICAgICAgPENoZWNrd29yZD5BTlUyVkh2VjVlcXNyMlBKSHUyem5XbVd0ejJDZEl2ajwvQ2hlY2t3b3JkPg0KICAgIDwvSGVhZD4NCiAgICA8Qm9keT4NCiAgICAgICAgPEl0ZW1RdWVyeVJlcXVlc3Q + DQogICAgICAgICAgICA8Q29tcGFueUNvZGU + V1lER0o8L0NvbXBhbnlDb2RlPg0KICAgICAgICAgICAgPFNrdU5vTGlzdD4NCiAgICAgICAgICAgICAgICA8U2t1Tm8 + UFkzMDAxQVNGPC9Ta3VObz4NCiAgICAgICAgICAgIDwvU2t1Tm9MaXN0Pg0KICAgICAgICA8L0l0ZW1RdWVyeVJlcXVlc3Q + DQogICAgPC9Cb2R5Pg0KPC9SZXF1ZXN0Pg ==
 
 if __name__ == "__main__":
     app.run()
