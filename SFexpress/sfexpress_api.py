@@ -11,9 +11,10 @@ class sendDataSFexpress():
 
     def sendToSFexpress(self,sendData):
         try:
-            if chardet.detect(sendData) == "utf-8":
+            sendData = sendData.replace("\r\n","").replace("\r","").replace("\n","")
+            if chardet.detect(sendData)['encoding'] == "utf-8":
                 sendData = sendData.decode("utf-8").encode("utf-8")
-            elif chardet.detect(sendData) == "ascii":
+            elif chardet.detect(sendData)['encoding'] == "ascii":
                 sendData = sendData.encode("utf-8")
             Certification = sendData + '123456'
             m = hashlib.md5()
