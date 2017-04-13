@@ -12,6 +12,7 @@ from email.mime.application import MIMEApplication
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from os.path import basename
+from xlrd.formatting import XFAlignment
 import re
 
 logger = logging.getLogger(__name__)
@@ -25,7 +26,7 @@ class ExcelTemplate():
         self.T_Cat_OutputFilePath = '/data/vbGroupbuy_output/'
         # Aber 正式用
         self.MailSender = 'pscaber@cloud.pershing.com.tw'
-        self.MailReceiver =['joeyang@pershing.com.tw','hsuanmeng@pershing.com.tw','christinewei@pershing.com.tw']
+        self.MailReceiver =['joeyang@pershing.com.tw','hsuanmeng@pershing.com.tw']
         self.SMTPServer = 'cloud-pershing-com-tw.mail.protection.outlook.com'
         # Local 測試用
         # self.MailSender = 'hsuanmeng@pershing.com.tw'
@@ -161,12 +162,16 @@ class buy123():
                 tmp.append(table.cell(row_index, 2).value)                                      #收件地址
                 tmp.append('0' + self.ReplaceField(str(table.cell(row_index, 3).value),'.'))      #電話
                 tmp.append(table.cell(row_index, 5).value)  #檔次名稱
-                tmp.append(self.getResultForDigit(self.parserRegularEx(table.cell(row_index, 6).value))) #訂購方案
-                # order = self.ReplaceField(table.cell(row_index, 6).value,u'盒')
-                # if "." in order :
-                #     order = order.split(".")[1].strip()
-                # tmp.append(order)              #訂購方案
-                # tmp.append(self.ReplaceField(table.cell(row_index, 6).value,u'盒'))              #訂購方案
+                # tmp.append(self.getResultForDigit(self.parserRegularEx(table.cell(row_index, 6).value)))
+                #訂購方案
+                word = table.cell(row_index, 6).value
+                if u'隨身包' in word:
+                    count = self.getResultForDigit(self.parserRegularEx(table.cell(row_index, 6).value))
+                    tmp.append(round(count/30.0,1))
+                else:
+                    logger.debug(table.cell(row_index, 6).value)
+                    logger.debug(self.parserRegularEx(table.cell(row_index, 6).value))
+                    tmp.append(self.getResultForDigit(self.parserRegularEx(table.cell(row_index, 6).value)))
                 tmp.append(table.cell(row_index, 7).value)                                      #組數
                 tmp.append(self.ReplaceField(table.cell(row_index, 8).value,'/'))                #訂購人                                                   #訂購人
                 result.append(tmp)
@@ -191,7 +196,7 @@ class buy123():
         try:
             Template = ExcelTemplate()
             fileTemplate =  Template.T_Cat_TemplateFile
-            rb = xlrd.open_workbook(fileTemplate)
+            rb = xlrd.open_workbook(fileTemplate, formatting_info= True)
             file = copy(rb)
             table = file.get_sheet(0)
             i = 1
@@ -199,6 +204,12 @@ class buy123():
             for row in data:
                 d1 = datetime.datetime.strftime(datetime.date.today(),'%Y/%m/%d')
                 d2 = datetime.datetime.strftime(datetime.date.today()+ datetime.timedelta(days=1), '%Y/%m/%d')
+
+                style = xlwt.XFStyle()
+                align = xlwt.Alignment()
+                align.horz = xlwt.Alignment.HORZ_RIGHT
+                style.alignment = align
+
                 table.write(i,0,d1)             # 收件日
                 table.write(i, 1,d2)            # 配達日
                 # table.write(i,3,row[0])         # 訂單編號
@@ -206,12 +217,16 @@ class buy123():
                 table.write(i, 6, row[1])       # 收件人
                 table.write(i, 7, row[2])       # 收件地址
                 table.write(i, 8, row[3])       # 收件人手機1
-                table.write(i, 10, str(int(row[5])*int(row[6])) + str(self.ProductCode) )  #交易備註
+                table.write(i, 10, str((row[5])*int(row[6])) + str(self.ProductCode) )  #交易備註
                 table.write(i, 11,'1')           # 送貨時段
                 table.write(i, 12, row[4])      # 訂購品項
                 table.write(i, 13, row[6])      # 訂購份數
-                table.write(i, 14, int(row[5]))      # 盒數
-                table.write(i, 15, int(row[5])*int(row[6]))  # 總數量
+                print type(row[5])
+                if isinstance(row[5],float) == True:
+                    table.write(i, 14, str(row[5]), style)     # 盒數
+                else:
+                    table.write(i, 14, row[5])
+                table.write(i, 15, str(row[5]*int(row[6])), style)  # 總數量
                 self.customer.setGroup_id(self.GroupID)
                 self.customer.setNameNoEncode(row[1])
                 self.customer.setMobile(row[3])
@@ -309,5 +324,5 @@ class buy123():
 if __name__ == '__main__':
     buy = buy123()
     print buy.parserFile('cbcc3138-5603-11e6-a532-000d3a800878', 'test', 2, 'MS',
-                  inputFile=u'C:\\Users\\10509002\\Desktop\\test\\2017-01-19_生活市集_BY123402762F_悠活原力有限公司_欣敏立清益生菌-紅蘋果多多_未出貨.xls', \
-                  outputFile=u'C:\\Users\\10509002\\Desktop\\2017-01-19_生活市集_BY123402762F_悠活原力有限公司_欣敏立清益生菌-紅蘋果多多_未出貨.xls')
+                  inputFile=u'/Users/csi/Desktop/2017-04-13_生活市集_BY123444059F_悠活原力有限公司_欣敏立清益生菌-青蘋果多多_未出貨.xls', \
+                  outputFile=u'/Users/csi/Desktop/2017-04-13_生活市集.xls')
