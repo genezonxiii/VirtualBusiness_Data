@@ -12,34 +12,36 @@ class Mybenefit(buy123):
     def parserFile(self, GroupID, UserID, LogisticsID=2, ProductCode=None, inputFile=None, outputFile=None):
         self.init_log('Mybenefit_Data', GroupID, UserID, ProductCode, inputFile)
         success = False
-        try:
-            self.getRegularEx(GroupID)
-            data = xlrd.open_workbook(inputFile)
-            table = data.sheets()[0]
-            result = []
-            resultinfo = ""
-            # 讀 excel 檔
-            for row_index in range(1, table.nrows):
-                tmp = []
-                tmp.append(table.cell(row_index, 2).value)  # 訂單編號
-                tmp.append(table.cell(row_index, 3).value)  # 收件人
-                tmp.append(table.cell(row_index, 5).value)  # 收件地址
-                tmp.append('0' + self.ReplaceField(str(table.cell(row_index, 13).value), '.'))  # 電話
-                tmp.append(table.cell(row_index, 9).value)  # 方案名稱
-                tmp.append(1)  # 訂購方案
-                tmp.append(table.cell(row_index, 11).value)  # 訂單份數
-                tmp.append(table.cell(row_index, 1).value)  # 訂購人
-                result.append(tmp)
-            success = self.writeXls(LogisticsID, result, outputFile)
-        except Exception as e:
-            logging.error(e.message)
-            resultinfo = e.message
-            success = False
-        finally:
-            if success == False :
-                Message = UserID + u' 轉檔錯誤，檔案路徑為 ：'
-                self.sendMailToPSC(Message,inputFile)
-            return json.dumps({"success": success, "info": resultinfo,"download": outputFile}, sort_keys=False)
+        if self.getRegularEx(GroupID) == False:
+            return json.dumps({"success": success}, sort_keys=False)
+        else:
+            try:
+                data = xlrd.open_workbook(inputFile)
+                table = data.sheets()[0]
+                result = []
+                resultinfo = ""
+                # 讀 excel 檔
+                for row_index in range(1, table.nrows):
+                    tmp = []
+                    tmp.append(table.cell(row_index, 2).value)  # 訂單編號
+                    tmp.append(table.cell(row_index, 3).value)  # 收件人
+                    tmp.append(table.cell(row_index, 5).value)  # 收件地址
+                    tmp.append('0' + self.ReplaceField(str(table.cell(row_index, 13).value), '.'))  # 電話
+                    tmp.append(table.cell(row_index, 9).value)  # 方案名稱
+                    tmp.append(1)  # 訂購方案
+                    tmp.append(table.cell(row_index, 11).value)  # 訂單份數
+                    tmp.append(table.cell(row_index, 1).value)  # 訂購人
+                    result.append(tmp)
+                success = self.writeXls(LogisticsID, result, outputFile)
+            except Exception as e:
+                logging.error(e.message)
+                resultinfo = e.message
+                success = False
+            finally:
+                if success == False :
+                    Message = UserID + u' 轉檔錯誤，檔案路徑為 ：'
+                    self.sendMailToPSC(Message,inputFile)
+                return json.dumps({"success": success, "info": resultinfo,"download": outputFile}, sort_keys=False)
 
 
 if __name__ == '__main__':

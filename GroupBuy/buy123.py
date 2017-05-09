@@ -26,7 +26,7 @@ class ExcelTemplate():
         self.T_Cat_OutputFilePath = '/data/vbGroupbuy_output/'
         # Aber 正式用
         self.MailSender = 'pscaber@cloud.pershing.com.tw'
-        self.MailReceiver =['joeyang@pershing.com.tw','hsuanmeng@pershing.com.tw']
+        self.MailReceiver =['joeyang@pershing.com.tw','hsuanmeng@pershing.com.tw','christinewei@pershing.com.tw']
         self.SMTPServer = 'cloud-pershing-com-tw.mail.protection.outlook.com'
         # Local 測試用
         # self.MailSender = 'hsuanmeng@pershing.com.tw'
@@ -148,43 +148,45 @@ class buy123():
     def parserFile(self, GroupID, UserID, LogisticsID=2, ProductCode=None, inputFile=None, outputFile=None):
         self.init_log('Buy123_Data',GroupID, UserID , ProductCode , inputFile)
         success = False
-        try:
-            self.getRegularEx(GroupID)
-            data = xlrd.open_workbook(inputFile)
-            table = data.sheets()[0]
-            result = []
-            resultinfo = ""
-            # 讀 excel 檔
-            for row_index in range(1, table.nrows):
-                tmp=[]
-                tmp.append(self.ReplaceField(str(table.cell(row_index, 0).value),'.'))           #訂單編號
-                tmp.append(self.ReplaceField(table.cell(row_index, 1).value,'(',1))              # 收件人
-                tmp.append(table.cell(row_index, 2).value)                                      #收件地址
-                tmp.append('0' + self.ReplaceField(str(table.cell(row_index, 3).value),'.'))      #電話
-                tmp.append(table.cell(row_index, 5).value)  #檔次名稱
-                # tmp.append(self.getResultForDigit(self.parserRegularEx(table.cell(row_index, 6).value)))
-                #訂購方案
-                word = table.cell(row_index, 6).value
-                if u'隨身包' in word:
-                    count = self.getResultForDigit(self.parserRegularEx(table.cell(row_index, 6).value))
-                    tmp.append(round(count/30.0,1))
-                else:
-                    logger.debug(table.cell(row_index, 6).value)
-                    logger.debug(self.parserRegularEx(table.cell(row_index, 6).value))
-                    tmp.append(self.getResultForDigit(self.parserRegularEx(table.cell(row_index, 6).value)))
-                tmp.append(table.cell(row_index, 7).value)                                      #組數
-                tmp.append(self.ReplaceField(table.cell(row_index, 8).value,'/'))                #訂購人                                                   #訂購人
-                result.append(tmp)
-            success = self.writeXls(LogisticsID,result,outputFile)
-        except Exception as e :
-            logging.error(e.message)
-            resultinfo = e.message
-            success = False
-        finally:
-            if success == False :
-                Message = UserID + ' Transfer File Failure , File Path is :'
-                self.sendMailToPSC(Message,inputFile)
-            return json.dumps({"success": success, "info": resultinfo,"download": outputFile}, sort_keys=False)
+        if self.getRegularEx(GroupID) == False:
+            return json.dumps({"success": success}, sort_keys=False)
+        else:
+            try:
+                data = xlrd.open_workbook(inputFile)
+                table = data.sheets()[0]
+                result = []
+                resultinfo = ""
+                # 讀 excel 檔
+                for row_index in range(1, table.nrows):
+                    tmp=[]
+                    tmp.append(self.ReplaceField(str(table.cell(row_index, 0).value),'.'))           #訂單編號
+                    tmp.append(self.ReplaceField(table.cell(row_index, 1).value,'(',1))              # 收件人
+                    tmp.append(table.cell(row_index, 2).value)                                      #收件地址
+                    tmp.append('0' + self.ReplaceField(str(table.cell(row_index, 3).value),'.'))      #電話
+                    tmp.append(table.cell(row_index, 5).value)  #檔次名稱
+                    # tmp.append(self.getResultForDigit(self.parserRegularEx(table.cell(row_index, 6).value)))
+                    #訂購方案
+                    word = table.cell(row_index, 6).value
+                    if u'隨身包' in word:
+                        count = self.getResultForDigit(self.parserRegularEx(table.cell(row_index, 6).value))
+                        tmp.append(round(count/30.0,1))
+                    else:
+                        logger.debug(table.cell(row_index, 6).value)
+                        logger.debug(self.parserRegularEx(table.cell(row_index, 6).value))
+                        tmp.append(self.getResultForDigit(self.parserRegularEx(table.cell(row_index, 6).value)))
+                    tmp.append(table.cell(row_index, 7).value)                                      #組數
+                    tmp.append(self.ReplaceField(table.cell(row_index, 8).value,'/'))                #訂購人                                                   #訂購人
+                    result.append(tmp)
+                success = self.writeXls(LogisticsID,result,outputFile)
+            except Exception as e :
+                logging.error(e.message)
+                resultinfo = e.message
+                success = False
+            finally:
+                if success == False :
+                    Message = UserID + ' Transfer File Failure , File Path is :'
+                    self.sendMailToPSC(Message,inputFile)
+                return json.dumps({"success": success, "info": resultinfo,"download": outputFile}, sort_keys=False)
 
     # 判斷轉出出貨格式
     def writeXls(self,LogisticsID,data,outputFile):
@@ -285,6 +287,7 @@ class buy123():
     # 取得 Regular Express
     def getRegularEx(self,GroupID):
         try:
+            sucess = False
             logger.debug("getRegularEx")
             parameter = [GroupID]
             self.mysqlconnect.cursor.callproc('sp_get_regularexpress',parameter)
@@ -294,8 +297,12 @@ class buy123():
             for row in tmp:
                 value = {"compile": row[0],"search":row[1]}
                 self.RegularEX.append(value)
+                sucess = True
+            print sucess
         except Exception as e:
             logging.error(e.message)
+        finally:
+            return sucess
 
     # 使用 RegularExpress 解析"方案名稱"中的數量
     def parserRegularEx(self,value):
@@ -324,5 +331,5 @@ class buy123():
 if __name__ == '__main__':
     buy = buy123()
     print buy.parserFile('cbcc3138-5603-11e6-a532-000d3a800878', 'test', 2, 'MS',
-                  inputFile=u'/Users/csi/Desktop/2017-04-13_生活市集_BY123444059F_悠活原力有限公司_欣敏立清益生菌-青蘋果多多_未出貨.xls', \
-                  outputFile=u'/Users/csi/Desktop/2017-04-13_生活市集.xls')
+                  inputFile=u'C:/Users/10509002/Documents/for_Joe_test/團購/生活市集/1234dadsf.xls', \
+                  outputFile=u'C:/Users/10509002/2017-04-13_生活市集.xls')
