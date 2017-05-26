@@ -185,8 +185,10 @@ class convertType():
                 return 0.0
             elif value=='':
                 return 0.0
-            else:
+            elif type(value) == str:
                 return float(value.replace(",",""))
+            elif type(value) == float:
+                return value
         except Exception as e:
             logger.ERROR(e.message)
 
@@ -228,6 +230,8 @@ class Sale():
     p_quantity, p_price = 0, 0.0
     p_invoice_date, p_trans_list_date, p_dis_date, p_sale_date, p_return_date = None, None, None, None, None
     p_memo, p_order_source, p_deliveryway = None, None, None
+    p_total_amt, p_order_status, p_deliver_name, p_deliver_to, p_deliver_store = 0, None, None, None, None
+    p_deliver_phone, p_deliver_mobile, p_pay_kind, p_pay_status = None, None, None, None
     p_isreturn = False
     aes,convert = None, None
 
@@ -397,6 +401,33 @@ class Sale():
     def setIsreturn(self,value):
         self.p_isreturn = self.convert.ToBoolean(value)
 
+    def setTotal_amt(self,value):
+        self.p_total_amt = self.convert.ToFloat(value)
+
+    def setOrder_status(self,value):
+        self.p_order_status = self.convert.ToString(value.encode('utf-8'))
+
+    def setDeliver_name(self,value):
+        self.p_deliver_name = self.convert.ToString(value.encode('utf-8'))
+
+    def setDeliver_to(self,value):
+        self.p_deliver_to = self.convert.ToString(value.encode('utf-8'))
+
+    def setDeliver_store(self,value):
+        self.p_deliver_store = self.convert.ToString(value.encode('utf-8'))
+
+    def setDeliver_phone(self,value):
+        self.p_deliver_phone = self.convert.ToString(value.encode('utf-8'))
+
+    def setDeliver_mobile(self,value):
+        self.p_deliver_mobile = self.convert.ToString(value.encode('utf-8'))
+
+    def setPay_kind(self,value):
+        self.p_pay_kind = self.convert.ToString(value.encode('utf-8'))
+
+    def setPay_status(self,value):
+        self.p_pay_status = self.convert.ToString(value.encode('utf-8'))
+
     def getSale_id(self):
         return self.p_sale_id
 
@@ -469,12 +500,39 @@ class Sale():
     def getIsreturn(self):
         return self.p_isreturn
 
+    def getTotal_amt(self):
+        return self.p_total_amt
+
+    def getOrder_status(self):
+        return self.p_order_status
+
+    def getDeliver_name(self):
+        return self.p_deliver_name
+
+    def getDeliver_to(self):
+        return self.p_deliver_to
+
+    def getDeliver_store(self):
+        return self.p_deliver_store
+
+    def getDeliver_phone(self):
+        return self.p_deliver_phone
+
+    def getDeliver_mobile(self):
+        return self.p_deliver_mobile
+
+    def getPay_kind(self):
+        return self.p_pay_kind
+
+    def getPay_status(self):
+        return self.p_pay_status
+
 class Customer():
     p_customer_id,p_group_id,p_name=None,None,None
     p_address, p_phone, p_mobile=None,None,None
     p_email, p_post, p_class, p_memo = None,None,None,None
     o_name,o_address, o_phone, o_mobile,o_email = None,None,None,None,None
-    aes, convert = None,None
+    aes, convert , p_user_id = None,None,None
 
     def __init__(self):
         self.aes = aes_data()
@@ -489,6 +547,9 @@ class Customer():
 
     def setGroup_id(self,value):
         self.p_group_id = self.convert.ToString(value)
+
+    def setUser_id(self,value):
+        self.p_user_id = self.convert.ToString(value)
 
     def setName(self,value):
         if value == None or value == '' or value == 'NULL':
@@ -571,6 +632,9 @@ class Customer():
     def getGroup_id(self):
         return self.p_group_id
 
+    def getUser_id(self):
+        return self.p_user_id
+
     def getName(self):
         return self.p_name
 
@@ -624,6 +688,7 @@ class updateCustomer():
                 self.getConnection()
             cursor = self.conn.cursor()
             result = cursor.callproc('sp_find_customer',paremeter)
+            # self.conn.close()
             if result==None:
                 return None
             else:

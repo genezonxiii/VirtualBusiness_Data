@@ -35,7 +35,7 @@ from VirtualBusiness.ihergo22 import Ihergo22_Data
 from VirtualBusiness.Gohappy22_csv import Gohappy22csv_Data
 from VirtualBusiness.Myfone19_csv import Myfone19csv_Data
 from VirtualBusiness.yahoo_csv import Yahoo22csv_Data
-from VirtualBusiness.shopline import Shopline
+from VirtualBusiness.shopline_WM import Shopline
 
 logger = logging.getLogger(__name__)
 
