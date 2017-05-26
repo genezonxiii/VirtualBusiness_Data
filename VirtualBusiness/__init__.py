@@ -11,6 +11,7 @@ import ToMongodb
 import logging
 import time , chardet
 import mysql.connector
+from setting import DBSetting
 import re
 
 logger = logging.getLogger(__name__)
@@ -736,17 +737,17 @@ class updateCustomer():
             self.conn.close()
             self.conn = None
 
-class DBSetting():
-    dbHost ,dbName , dbUser , dbPassword = None , None ,None ,None
-    def __init__(self):
-        self.dbHost = '192.168.112.164'
-        self.dbName = 'tmp'
-        self.dbUser = 'root'
-        self.dbPassword = 'admin123'
-        # self.dbHost = 'localhost'
-        # self.dbName = 'tmp'
-        # self.dbUser = 'root'
-        # self.dbPassword = 'mysql'
+# class DBSetting():
+#     dbHost ,dbName , dbUser , dbPassword = None , None ,None ,None
+#     def __init__(self):
+#         self.dbHost = '192.168.112.164'
+#         self.dbName = 'tmp'
+#         self.dbUser = 'root'
+#         self.dbPassword = 'admin123'
+#         # self.dbHost = 'localhost'
+#         # self.dbName = 'tmp'
+#         # self.dbUser = 'root'
+#         # self.dbPassword = 'mysql'
 
 class detectFile():
     def __init__(self):
