@@ -97,7 +97,9 @@ class Shopline(Momo25_Data):
             self.sale.setOrder_No(table.cell(row_index, self.TitleList.index(self.TitleTuple[0])).value)
             self.sale.setTrans_list_date_YMDHMS_float(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
             self.sale.setSale_date_YMDHMS_float(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
-            self.sale.setC_Product_id(str(table.cell(row_index, self.TitleList.index(self.TitleTuple[11])).value))
+            if table.cell(row_index, self.TitleList.index(self.TitleTuple[11])).value != None and table.cell(row_index, self.TitleList.index(self.TitleTuple[11])).value != u'':
+                print 'notequal'
+                self.sale.setC_Product_id(str(table.cell(row_index, self.TitleList.index(self.TitleTuple[11])).value))
             self.sale.setProduct_name_NoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[12])).value)
             self.sale.setQuantity(table.cell(row_index, self.TitleList.index(self.TitleTuple[13])).value)
             self.sale.setPrice_str(0)
@@ -169,4 +171,4 @@ class Shopline(Momo25_Data):
 if __name__ == '__main__':
     buy = Shopline()
     groupid = 'cbcc3138-5603-11e6-a532-000d3a800878'
-    print buy.Shopline_Data('udn',groupid, u'C:\\Users\\10509002\\Desktop\\watermagic_orders_20170518_20170519.xls','system')
+    print buy.Shopline_Data('shopline',groupid, u'C:\\Users\\10509002\\Desktop\\8ceb0f3b-4b34-479a-8743-87e1652b7abf.xls','system')
