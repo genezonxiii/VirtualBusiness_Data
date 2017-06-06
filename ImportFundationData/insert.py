@@ -517,7 +517,7 @@ class ContrastData():
 
 
 if __name__ == '__main__':
-    data =ContrastData()
+    data =PackageData()
     # groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
-    print data.Contrast(groupid, u'C:\\Users\\10509002\\Desktop\\產品對照匯入範本.xls','system')
+    print data.Package(groupid, u'C:\\Users\\10509002\\Desktop\\packageTemplate.xls','system')

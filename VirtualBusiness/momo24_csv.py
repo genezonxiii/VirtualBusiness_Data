@@ -68,6 +68,7 @@ class Momo24csv_Data():
         logger.debug('path:' + path)
         logger.debug('UserID:' + UserID)
         try:
+            self.dup_order_no = []
             self.readFile(path)
             logger.debug("header:")
             logger.debug(self.header)
@@ -117,6 +118,7 @@ class Momo24csv_Data():
             self.sale.setPrice(row[17])
             self.sale.setNameNoEncode(row[3])
             self.sale.setDeliveryway('1') #宅配: 1, 超取711: 2, 超取全家: 3
+            self.sale.setOrder_status('A0')
 
             self.customer.setGroup_id(GroupID)
             self.customer.setNameNoEncode(row[3])
@@ -165,10 +167,12 @@ class Momo24csv_Data():
                        self.sale.getC_Product_id(), self.customer.getCustomer_id(), self.sale.getName(), self.sale.getQuantity(), \
                        self.sale.getPrice(), self.sale.getInvoice(), self.sale.getInvoice_date(), self.sale.getTrans_list_date(), \
                        self.sale.getDis_date(), self.sale.getMemo(), self.sale.getSale_date(), self.sale.getOrder_source(),\
-                       self.sale.getDeliveryway(), "")
+                       self.sale.getDeliveryway(), self.sale.getTotal_amt(), self.sale.getOrder_status(), self.sale.getDeliver_name(), \
+                       self.sale.getDeliver_to(), self.sale.getDeliver_store(), self.sale.getDeliver_phone(), self.sale.getDeliver_mobile(), \
+                       self.sale.getPay_kind(), self.sale.getPay_status(), "")
             result = self.mysqlconnect.cursor.callproc('p_tb_sale_new', SaleSQL)
-            if result[18] != None:
-                self.dup_order_no.append(result[18])
+            if result[27] != None:
+                self.dup_order_no.append(result[27])
             return
         except Exception as e :
             print e.message
@@ -179,4 +183,4 @@ if __name__ == '__main__':
     momo = Momo24csv_Data()
     # groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
-    print momo.Momo_24_Data('momo',groupid, u'C:/Users/10509002/Desktop/for_Joe_test/網購/momo/宅配/A1102_3_2_008992_20160513102705.csv','system')
+    print momo.Momo_24_Data('momo',groupid, u'C:/Users/10509002/Desktop/A1102_3_2_008992_20160513102705.csv','system')
