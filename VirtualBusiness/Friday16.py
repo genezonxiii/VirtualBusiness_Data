@@ -91,6 +91,7 @@ class Friday16_Data(Momo25_Data):
             self.sale.setPrice(table.cell(row_index, self.TitleList.index(self.TitleTuple[8])).value)
             self.sale.setNameNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[4])).value)
             self.sale.setDeliveryway('1') #宅配: 1, 超取711: 2, 超取全家: 3
+            self.sale.setOrder_status('A0')
 
             self.customer.setGroup_id(GroupID)
             self.customer.setNameNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[4])).value)
@@ -107,4 +108,4 @@ if __name__ == '__main__':
     friday = Friday16_Data()
     # groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
-    print friday.Friday_16_Data('friday',groupid,u'C:\\Users\\10509002\\Desktop\\訂單處理_20141215 (3).xls','system')
+    print friday.Friday_16_Data('friday',groupid,u'C:\\Users\\10509002\\Desktop\\訂單處理_20141215.xls','system')

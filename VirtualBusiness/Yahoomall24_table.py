@@ -25,6 +25,7 @@ class YahooS24table_Data(Myfone22table_Data):
         logger.debug('path:' + path)
         logger.debug('UserID:' + UserID)
         try:
+            self.dup_order_no = []
             content = ""
             with open(path, 'rb') as f:
                 for line in f:
@@ -69,8 +70,10 @@ class YahooS24table_Data(Myfone22table_Data):
             resultinfo = inst.args
 
         finally:
+            dup_str = ','.join(self.dup_order_no)
+            self.dup_order_no = []
             logger.debug('===YahooS24_Data finally===')
-            return json.dumps({"success": success, "info": resultinfo, "total": totalRows}, sort_keys=False)
+            return json.dumps({"success": success, "info": resultinfo, "duplicate": dup_str, "total": totalRows}, sort_keys=False)
 
     def parserData(self,dict_list,row_index,GroupID,UserID,supplier):
         try:
@@ -86,9 +89,10 @@ class YahooS24table_Data(Myfone22table_Data):
             self.sale.setProduct_name_NoEncode(dict_list[row_index][u'商品名稱'])
             self.sale.setProduct_spec(dict_list[row_index][u'商品規格'])
             self.sale.setQuantity(dict_list[row_index][u'數量'])
-            self.sale.setPrice(dict_list[row_index][u'金額小計'])
+            self.sale.setPrice_str(dict_list[row_index][u'金額小計'])
             self.sale.setNameNoEncode(dict_list[row_index][u'收件人姓名'])
             self.sale.setDeliveryway('3') #宅配: 1, 超取711: 2, 超取全家: 3
+            self.sale.setOrder_status('A0')
 
             self.customer.setGroup_id(GroupID)
             self.customer.setNameNoEncode(dict_list[row_index][u'收件人姓名'])
@@ -105,4 +109,4 @@ if __name__ == '__main__':
     yahooS = YahooS24table_Data()
     # groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
-    print yahooS.YahooS_24_Data('Yahoomall',groupid, '/Users/csi/Desktop/for_Joe_test/網購/Yahoo商城/超取/storders.xls','system')
+    print yahooS.YahooS_24_Data('yahoomall',groupid, 'C:/Users/10509002/Desktop/storders.xls','system')

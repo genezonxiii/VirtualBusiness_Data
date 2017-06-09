@@ -186,8 +186,12 @@ class convertType():
                 return 0.0
             elif value=='':
                 return 0.0
-            elif type(value) == str:
-                return float(value.replace(",",""))
+            elif type(value) == unicode:
+                value = str(value)
+                if value.find(',') >= 0:
+                    return float(value.replace(",",""))
+                else:
+                    return float(value)
             elif type(value) == float:
                 return value
         except Exception as e:

@@ -56,6 +56,7 @@ class Gohappy22csv_Data(Momo24csv_Data):
         logger.debug('path:' + path)
         logger.debug('UserID:' + UserID)
         try:
+            self.dup_order_no = []
             self.readFile(path)
             logger.debug("header:")
             logger.debug(self.header)
@@ -82,8 +83,10 @@ class Gohappy22csv_Data(Momo24csv_Data):
             resultinfo = inst.args
 
         finally:
+            dup_str = ','.join(self.dup_order_no)
+            self.dup_order_no = []
             logger.debug('===Gohappy22_Data SUCCESS===')
-            return json.dumps({"success": success, "info": resultinfo, "total": totalRows}, sort_keys=False)
+            return json.dumps({"success": success, "info": resultinfo, "duplicate": dup_str, "total": totalRows}, sort_keys=False)
 
     def parserData(self,table,row_index,GroupID,UserID,supplier):
         try:
@@ -102,6 +105,7 @@ class Gohappy22csv_Data(Momo24csv_Data):
             self.sale.setPrice(row[6][:row[6].find("(")].strip("'").lstrip("\\'"))
             self.sale.setNameNoEncode(row[9].lstrip("\\'"))
             self.sale.setDeliveryway('1')   #宅配: 1, 超取711: 2, 超取全家: 3
+            self.sale.setOrder_status('A0')
 
             self.customer.setGroup_id(GroupID)
             self.customer.setNameNoEncode(row[9].lstrip("\\'"))
@@ -118,4 +122,4 @@ if __name__ == '__main__':
     gohappy = Gohappy22csv_Data()
     groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
-    print gohappy.Gohappy_22_Data('gohappy',groupid, '/Users/csi/Desktop/for_Joe_test/網購/gohappy/宅配/OrderData_42242.csv','system')
+    print gohappy.Gohappy_22_Data('gohappy',groupid, u'C:/Users/10509002/Desktop/OrderData_42242.csv','system')

@@ -26,6 +26,7 @@ class Savesafe22table_Data(Myfone22table_Data):
         logger.debug('path:' + path)
         logger.debug('UserID:' + UserID)
         try:
+            self.dup_order_no = []
             content = ""
             detect = detectFile()
 
@@ -73,8 +74,10 @@ class Savesafe22table_Data(Myfone22table_Data):
             resultinfo = inst.args
 
         finally:
+            dup_str = ','.join(self.dup_order_no)
+            self.dup_order_no = []
             logger.debug('===Savesafe22_Data finally===')
-            return json.dumps({"success": success, "info": resultinfo, "total": totalRows}, sort_keys=False)
+            return json.dumps({"success": success, "info": resultinfo, "duplicate": dup_str, "total": totalRows}, sort_keys=False)
 
     def parserData(self,dict_list,row_index,GroupID,UserID,supplier):
         try:
@@ -94,6 +97,7 @@ class Savesafe22table_Data(Myfone22table_Data):
             self.sale.setPrice(dict_list[row_index][u'供貨成本(未稅)'])
             self.sale.setNameNoEncode(dict_list[row_index][u'收貨人'])
             self.sale.setDeliveryway('1')   #宅配: 1, 超取711: 2, 超取全家: 3
+            self.sale.setOrder_status('A0')
 
             self.customer.setGroup_id(GroupID)
             self.customer.setNameNoEncode(dict_list[row_index][u'收貨人'])
@@ -110,4 +114,4 @@ if __name__ == '__main__':
     savesafe = Savesafe22table_Data()
     # groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
-    print savesafe.Savesafe_22_Data('Savesafe',groupid, '/Users/csi/Desktop/for_Joe_test/網購/大買家/宅配/20153101358368282.xls','system')
+    print savesafe.Savesafe_22_Data('bigbuy',groupid, 'C:/Users/10509002/Desktop/20153101358368282.xls','system')

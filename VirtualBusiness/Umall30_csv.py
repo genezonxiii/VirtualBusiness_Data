@@ -26,6 +26,7 @@ class Umall30csv_Data(Momo24csv_Data):
         logger.debug('path:' + path)
         logger.debug('UserID:' + UserID)
         try:
+            self.dup_order_no = []
             self.readFile(path)
             logger.debug("header:")
             logger.debug(self.header)
@@ -53,8 +54,10 @@ class Umall30csv_Data(Momo24csv_Data):
             resultinfo = inst.args
 
         finally:
+            dup_str = ','.join(self.dup_order_no)
+            self.dup_order_no = []
             logger.debug('===Umall30_Data finally===')
-            return json.dumps({"success": success, "info": resultinfo, "total": totalRows}, sort_keys=False)
+            return json.dumps({"success": success, "info": resultinfo, "duplicate": dup_str, "total": totalRows}, sort_keys=False)
 
     def parserData(self,table,row_index,GroupID,UserID,supplier):
         try:
@@ -70,9 +73,10 @@ class Umall30csv_Data(Momo24csv_Data):
             self.sale.setProduct_name_NoEncode(row[7])
             self.sale.setProduct_spec('')
             self.sale.setQuantity(row[12])
-            self.sale.setPrice(row[13])
+            self.sale.setPrice_str(row[13])
             self.sale.setNameNoEncode(row[14])
             self.sale.setDeliveryway('1')   #宅配: 1, 超取711: 2, 超取全家: 3
+            self.sale.setOrder_status('A0')
 
             self.customer.setGroup_id(GroupID)
             self.customer.setNameNoEncode(row[14])
@@ -89,4 +93,4 @@ if __name__ == '__main__':
     umall = Umall30csv_Data()
     groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
-    print umall.Umall_30_Data('umall',groupid, '/Users/csi/Desktop/for_Joe_test/網購/東森/宅配/cso_export_1409122226554.csv','system')
+    print umall.Umall_30_Data('umall',groupid, 'C:/Users/10509002/Desktop/cso_export_1405320008748.csv','system')

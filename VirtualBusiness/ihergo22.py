@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #__author__ = '10409003'
 
-import logging
+import logging,time
 import json
 import xlrd
 from ToMysql import ToMysql
@@ -15,6 +15,7 @@ class Ihergo22_Data(Momo25_Data):
     Data = None
     mysqlconnect = None
     sale , customer = None, None
+    dup_order_no = []
 
     # 預期要找出欄位的索引位置的欄位名稱
     TitleTuple = (u'訂單編號', u'收件人', u'收件人電話', u'收件人手機',u'郵遞區號',
@@ -24,11 +25,23 @@ class Ihergo22_Data(Momo25_Data):
 
 
     def Ihergo_22_Data(self, supplier, GroupID, path, UserID):
+        logging.basicConfig(filename='/data/VirtualBusiness_Data/pyupload.log',
+                            level=logging.DEBUG,
+                            format='%(asctime)s - %(levelname)s - %(filename)s:%(name)s:%(module)s/%(funcName)s/%(lineno)d - %(message)s',
+                            datefmt='%Y/%m/%d %I:%M:%S %p')
+        logging.Formatter.converter = time.gmtime
+
+        logger.info('===Momo25_Data===')
+        logger.debug('supplier:' + supplier)
+        logger.debug('GroupID:' + GroupID)
+        logger.debug('path:' + path)
+        logger.debug('UserID:' + UserID)
 
         try:
 
             logger.debug("===Ihergo22_Data===")
 
+            self.dup_order_no = []
             success = False
             resultinfo = ""
             totalRows = 0
@@ -74,8 +87,10 @@ class Ihergo22_Data(Momo25_Data):
             logger.error(inst.args)
             resultinfo = inst.args
         finally:
+            dup_str = ','.join(self.dup_order_no)
+            self.dup_order_no = []
             logger.debug('===Ihergo22_Data finally===')
-            return json.dumps({"success": success, "info": resultinfo, "total": totalRows}, sort_keys=False)
+            return json.dumps({"success": success, "info": resultinfo, "duplicate": dup_str, "total": totalRows}, sort_keys=False)
 
     def parserData(self,table,row_index,GroupID,UserID,supplier):
         try:
@@ -92,6 +107,7 @@ class Ihergo22_Data(Momo25_Data):
             self.sale.setPrice(str(table.cell(row_index, self.TitleList.index(self.TitleTuple[10])).value).split('.')[0])
             self.sale.setNameNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
             self.sale.setDeliveryway('1')   #宅配: 1, 超取711: 2, 超取全家: 3
+            self.sale.setOrder_status('A0')
 
             self.customer.setGroup_id(GroupID)
             self.customer.setNameNoEncode(table.cell(row_index, self.TitleList.index(self.TitleTuple[1])).value)
@@ -106,6 +122,6 @@ class Ihergo22_Data(Momo25_Data):
 
 if __name__ == '__main__':
     ihergo =Ihergo22_Data()
-    groupid = ""
+    # groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
-    print ihergo.Ihergo_22_Data('ihergo',groupid,u'C:\\Users\\10509002\\Documents\\電商檔案\\網購平台訂單資訊\\愛合購\\原始檔\\2014\\2014.07.11\\ihergo_861683_1405058433202.xls','system')
+    print ihergo.Ihergo_22_Data('ihergo',groupid,u'C:\\Users\\10509002\\Desktop\\ihergo_861683_1405058433202.xls','system')
