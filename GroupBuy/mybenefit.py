@@ -9,13 +9,14 @@ from GroupBuy.buy123 import buy123
 #中華優購
 class Mybenefit(buy123):
     # 解析原始檔
-    def parserFile(self, GroupID, UserID, LogisticsID=2, ProductCode=None, inputFile=None, outputFile=None):
-        self.init_log('Mybenefit_Data', GroupID, UserID, ProductCode, inputFile)
+    def parserFile(self, GroupID, UserID, Platform = None, LogisticsID=2, ProductCode=None, inputFile=None, outputFile=None):
+        self.init_log('Mybenefit_Data', GroupID, UserID, Platform, ProductCode, inputFile)
         success = False
         if self.getRegularEx(GroupID) == False:
             return json.dumps({"success": success}, sort_keys=False)
         else:
             try:
+                self.dup_order_no = []
                 data = xlrd.open_workbook(inputFile)
                 table = data.sheets()[0]
                 result = []
@@ -31,6 +32,7 @@ class Mybenefit(buy123):
                     tmp.append(1)  # 訂購方案
                     tmp.append(table.cell(row_index, 11).value)  # 訂單份數
                     tmp.append(table.cell(row_index, 1).value)  # 訂購人
+                    tmp.append(table.cell(row_index, 17).value) # 商品料號
                     result.append(tmp)
                 success = self.writeXls(LogisticsID, result, outputFile)
             except Exception as e:
@@ -38,14 +40,16 @@ class Mybenefit(buy123):
                 resultinfo = e.message
                 success = False
             finally:
+                dup_str = ','.join(self.dup_order_no)
+                self.dup_order_no = []
                 if success == False :
                     Message = UserID + u' 轉檔錯誤，檔案路徑為 ：'
                     self.sendMailToPSC(Message,inputFile)
-                return json.dumps({"success": success, "info": resultinfo,"download": outputFile}, sort_keys=False)
+                return json.dumps({"success": success, "info": resultinfo,"download": outputFile, "duplicate": dup_str}, sort_keys=False)
 
 
 if __name__ == '__main__':
     buy = Mybenefit()
-    buy.parserFile('robintest', 'test', 2, 'DS',
-                   inputFile=u'C:/Users/10408001/Desktop/團購平台訂單資訊/中華優購/2016.03.07/2016.03.07 by Jack.xlsx', \
-                   outputFile=u'C:/Users/10408001/Desktop/20161229-Mybenefit出貨單.xls')
+    buy.parserFile('cbcc3138-5603-11e6-a532-000d3a800878', 'test', 'chinaugo',2, 'DS',
+                   inputFile=u'C:/Users/10509002/Desktop/report.xls', \
+                   outputFile=u'C:/Users/10509002/Desktop/20161229-Mybenefit出貨單.xls')

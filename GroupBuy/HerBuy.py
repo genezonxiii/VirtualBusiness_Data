@@ -8,17 +8,16 @@ from bs4 import BeautifulSoup
 # HerBuy
 class HerBuy(buy123):
     # 解析原始檔
-    def parserFile(self, GroupID, UserID, LogisticsID=2, ProductCode=None, inputFile=None, outputFile=None):
-        self.init_log('HerBuy_Data', GroupID, UserID, ProductCode, inputFile)
+    def parserFile(self, GroupID, UserID, Platform = None, LogisticsID=2, ProductCode=None, inputFile=None, outputFile=None):
+        self.init_log('HerBuy_Data', GroupID, UserID, Platform, ProductCode, inputFile)
         print inputFile
         success = False
         if self.getRegularEx(GroupID) == False:
             return json.dumps({"success": success}, sort_keys=False)
         else:
             try:
-                print 'test'
+                self.dup_order_no = []
                 file = open(inputFile).read()
-                print 'stop'
                 soup = BeautifulSoup(file, 'xml')
                 workbook = []
                 resultinfo = ""
@@ -41,7 +40,7 @@ class HerBuy(buy123):
                             print row[i]
                             if row[i]<> [] and row[i][0] <> u'物流商列表':
                                 tmp = []
-                                tmp.append('')  # 訂單編號
+                                tmp.append(row[i][1])  # 訂單編號
                                 tmp.append(row[i][14])  # 收件人
                                 tmp.append(row[i][16])  # 收件地址
                                 tmp.append(row[i][15])  # 電話
@@ -49,6 +48,7 @@ class HerBuy(buy123):
                                 tmp.append(1)  # 盒數
                                 tmp.append(row[i][10])  # 數量
                                 tmp.append("")  # 訂購人
+                                tmp.append(row[i][22])  # 商品料號
                                 result.append(tmp)
                             else:
                                 break
@@ -58,13 +58,15 @@ class HerBuy(buy123):
                 resultinfo = e.message
                 success = False
             finally:
+                dup_str = ','.join(self.dup_order_no)
+                self.dup_order_no = []
                 if success == False :
                     Message = UserID + u' 轉檔錯誤，檔案路徑為 ：'
                     self.sendMailToPSC(Message,inputFile)
-                return json.dumps({"success": success, "info": resultinfo,"download": outputFile}, sort_keys=False)
+                return json.dumps({"success": success, "info": resultinfo,"download": outputFile, "duplicate": dup_str}, sort_keys=False)
 
 if __name__ == '__main__':
     buy = HerBuy()
-    buy.parserFile('robintest', 'test',2, 'MS',
-                  inputFile=u'C:/Users/10408001/Desktop/團購平台訂單資訊/HerBuy/2016.08.12/all_20160812_0_229_orders_20160812113116.xml', \
-                  outputFile=u'C:/Users/10408001/Desktop/20170103-HerBuy出貨單-2.xls')
+    buy.parserFile('cbcc3138-5603-11e6-a532-000d3a800878', 'test', 'herbuy',2, 'MS',
+                  inputFile=u'C:/Users/10509002/Desktop/all_20161213__229_orders_20161213142038.xml', \
+                  outputFile=u'C:/Users/10509002/Desktop/20170103-HerBuy出貨單.xls')

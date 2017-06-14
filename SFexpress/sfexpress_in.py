@@ -2,6 +2,7 @@
 
 import logging
 import xlrd
+import uuid
 import json
 from xlutils.copy import copy
 from SFexpress.sfexpress_out import sfexpressout
@@ -98,6 +99,17 @@ class sfexpressin(sfexpressout):
                     tmp.append(row_column2)  # 商品名稱
                     tmp.append(row_column3)  # 數量
                     result.append(tmp)
+
+                    self.customer.setCustomer_id(uuid.uuid4())
+                    self.customer.setGroup_id(GroupID)
+                    self.customer.setNameNoEncode(receiver)
+                    self.customer.setAddressNoEncode(address)
+                    self.customer.setPhone(phone)
+                    self.customer.setMobile(phone)
+                    self.customer.setEmail('')
+                    self.customer.setPost('')
+
+                    self.updateDB_Customer()
 
             success = self.writeXls(LogisticsID, result, outputFile)
         except Exception as e:

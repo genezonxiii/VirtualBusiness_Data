@@ -23,13 +23,14 @@ class chinatime(buy123):
             return int(box)
 
     # 解析原始檔
-    def parserFile(self, GroupID, UserID, LogisticsID=2, ProductCode=None, inputFile=None, outputFile=None):
-        self.init_log('chinatime_Data', GroupID, UserID, ProductCode, inputFile)
+    def parserFile(self, GroupID, UserID, Platform = None, LogisticsID=2, ProductCode=None, inputFile=None, outputFile=None):
+        self.init_log('chinatime_Data', GroupID, UserID, Platform, ProductCode, inputFile)
         success = False
         if self.getRegularEx(GroupID) == False:
             return json.dumps({"success": success}, sort_keys=False)
         else:
             try:
+                self.dup_order_no = []
                 data = xlrd.open_workbook(inputFile)
                 table = data.sheets()[0]
                 result = []
@@ -55,6 +56,7 @@ class chinatime(buy123):
                     tmp.append(1) # 訂購方案
                     tmp.append(table.cell(row_index, 6).value)  # 訂單份數
                     tmp.append("")  # 訂購人
+                    tmp.append(table.cell(row_index, 18).value) # 商品料號
                     result.append(tmp)
                 success = self.writeXls(LogisticsID, result, outputFile)
             except Exception as e:
@@ -62,13 +64,15 @@ class chinatime(buy123):
                 resultinfo = e.message
                 success = False
             finally:
+                dup_str = ','.join(self.dup_order_no)
+                self.dup_order_no = []
                 if success == False :
                     Message = UserID + u' 轉檔錯誤，檔案路徑為 ：'
                     self.sendMailToPSC(Message,inputFile)
-                return json.dumps({"success": success, "info": resultinfo,"download": outputFile}, sort_keys=False)
+                return json.dumps({"success": success, "info": resultinfo,"download": outputFile, "duplicate": dup_str}, sort_keys=False)
 
 if __name__ == '__main__':
     buy = chinatime()
-    buy.parserFile('robintest', 'test',2, 'MS',
-                  inputFile=u'/Users/csi/Desktop/團購/中時團購/general/396a2df8-472e-11e6-806e-000c29c1d067/20161020待出貨訂單列表.xlsx', \
-                  outputFile=u'/Users/csi/Desktop/20161229-chinatime出貨單.xls')
+    print buy.parserFile('cbcc3138-5603-11e6-a532-000d3a800878', 'test', 'chinatime',2, 'MS',
+                  inputFile = u'C:/Users/10509002/Desktop/20161020待出貨訂單列表.xlsx', \
+                  outputFile = u'C:/Users/10509002/Desktop/20161229-chinatime.xls')

@@ -14,13 +14,14 @@ class Life17(buy123):
         return SourceString.find(keyWord)
 
     # 解析原始檔
-    def parserFile(self, GroupID, UserID, LogisticsID=2, ProductCode=None, inputFile=None, outputFile=None):
-        self.init_log('17P_Data', GroupID, UserID, ProductCode, inputFile)
+    def parserFile(self, GroupID, UserID, Platform = None, LogisticsID=2, ProductCode=None, inputFile=None, outputFile=None):
+        self.init_log('17P_Data', GroupID, UserID, Platform, ProductCode, inputFile)
         success = False
         if self.getRegularEx(GroupID) == False:
             return json.dumps({"success": success}, sort_keys=False)
         else:
             try:
+                self.dup_order_no = []
                 data = xlrd.open_workbook(inputFile)
                 table = data.sheets()[0]
                 result = []
@@ -49,6 +50,7 @@ class Life17(buy123):
                     # tmp.append(int(word[word.find(u"菌")+1:])/30) # 訂購方案
                     tmp.append(table.cell(row_index, 9).value)  # 訂單份數
                     tmp.append("")  # 訂購人
+                    tmp.append(table.cell(row_index, 21).value) # 商品料號
                     result.append(tmp)
                 success = self.writeXls(LogisticsID, result, outputFile)
             except Exception as e:
@@ -56,15 +58,17 @@ class Life17(buy123):
                 resultinfo = e.message
                 success = False
             finally:
-                # if success == False :
-                    # Message = UserID + u' 轉檔錯誤，檔案路徑為 ：'
-                    # self.sendMailToPSC(Message,inputFile)
-                return json.dumps({"success": success, "info": resultinfo,"download": outputFile}, sort_keys=False)
+                dup_str = ','.join(self.dup_order_no)
+                self.dup_order_no = []
+                if success == False :
+                    Message = UserID + u' 轉檔錯誤，檔案路徑為 ：'
+                    self.sendMailToPSC(Message,inputFile)
+                return json.dumps({"success": success, "info": resultinfo,"download": outputFile, "duplicate": dup_str}, sort_keys=False)
 
 if __name__ == '__main__':
     buy = Life17()
     # word = buy.ReplaceField("[24H出貨]欣敏立清-草莓多多益生菌120包+贈德國Purafit-維他命C發泡錠Vitamin C","包")
     # print int(word[word.find("菌")+3:])/30
-    print buy.parserFile('cbcc3138-5603-11e6-a532-000d3a800878', 'test',2, 'DS',
-                  inputFile=u'C:\\Users\\10509002\\Desktop\\for_Joe_test\\團購\\17P\\10461821_[24H出貨]欣敏立清-紅蘋果多多益生菌_出貨清冊.xls', \
-                  outputFile=u'C:\\Users\\10509002\\Desktop\\10397319_[24H出貨]欣敏立清-草莓多多益生菌_出貨清冊.xls')
+    print buy.parserFile('cbcc3138-5603-11e6-a532-000d3a800878', 'test','17life', 2, 'DS',
+                  inputFile=u'C:/Users/10509002/Desktop/10461821_[24H出貨]欣敏立清-紅蘋果多多益生菌_出貨清冊.xls', \
+                  outputFile=u'C:\\Users\\10509002\\Desktop\\20170612_17Life.xls')

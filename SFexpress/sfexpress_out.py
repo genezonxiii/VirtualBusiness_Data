@@ -70,12 +70,32 @@ class SendMail():
 #順豐
 class sfexpressout():
     mysqlconnect = None
+    mysqlconnectTemp = None
     customer = None
-    GroupID , UserID , ProductCode = None , None , None
+    GroupID , UserID , ProductCode = None, None, None
     RegularEX = None
     def __init__(self):
         self.mysqlconnect = ToMysql()
         self.mysqlconnect.connect()
+
+        self.mysqlconnectTemp = ToMysql()
+        self.mysqlconnectTemp.setDatabase("tmp")
+        self.mysqlconnectTemp.connect()
+        # self.customer.setCustomer_id(uuid.uuid4())
+
+        # self.customer.setCustomer_id("test")
+        # CustomereSQL = (
+        #     self.customer.getCustomer_id(), self.customer.getGroup_id(), self.customer.getName(), \
+        #     self.customer.getAddress(), self.customer.getphone(), self.customer.getMobile(), \
+        #     self.customer.getEmail(), self.customer.getPost(), self.customer.getClass(), self.customer.getMemo(),
+        #     self.UserID)
+        # CustomerTempSQL = (
+        #     self.customer.getCustomer_id(), self.customer.getGroup_id(), self.customer.getName(), \
+        #     self.customer.getAddress(), self.customer.getphone(), self.customer.getMobile(), \
+        #     self.customer.getEmail())
+        # self.mysqlconnect.cursor.callproc('sp_insert_customer_bysys', CustomereSQL)
+        # self.mysqlconnectTemp.cursor.callproc('sp_insert_customer', CustomerTempSQL)
+
         self.RegularEX = []
     # 把 Excel 欄位中的 text:u 等字元 replace
     def ConvertText(self, SourceString):
@@ -257,6 +277,20 @@ class sfexpressout():
                     if row_column1 != '9001' and row_column1 != '9002':
                         result.append(tmp)
 
+                    self.customer.setCustomer_id(uuid.uuid4())
+                    self.customer.setGroup_id(GroupID)
+                    self.customer.setNameNoEncode(receiver)
+                    self.customer.setAddressNoEncode(address)
+                    self.customer.setPhone(phone)
+                    self.customer.setMobile(mobile)
+                    self.customer.setEmail('')
+                    self.customer.setPost('')
+                    if receiver != None and receiver != '':
+                        self.updateDB_Customer()
+
+
+            self.mysqlconnect.dbClose()
+            self.mysqlconnectTemp.dbClose()
             success = self.writeXls(LogisticsID,result,outputFile)
         except Exception as e :
             logging.error(e.message)
@@ -314,6 +348,7 @@ class sfexpressout():
             return success
 
     #將訂購人資料寫入 DB
+
     def updateDB_Customer(self):
         try:
             # insert or update table tb_customer
@@ -327,13 +362,29 @@ class sfexpressout():
                     self.customer.getCustomer_id(), self.customer.getGroup_id(), self.customer.getName(), \
                     self.customer.getAddress(), self.customer.getphone(), self.customer.getMobile(), \
                     self.customer.getEmail(), self.customer.getPost(), self.customer.getClass(), self.customer.getMemo(), self.UserID)
+                # CustomereTempSQL = (
+                #     self.customer.getCustomer_id(), self.customer.getGroup_id(), self.customer.get_Name(), \
+                #     self.customer.get_Address(), self.customer.get_phone(), self.customer.get_Mobile(), \
+                #     self.customer.get_Email())
                 self.mysqlconnect.cursor.callproc('sp_insert_customer_bysys', CustomereSQL)
+                self.mysqlconnect.db.commit()
+                # self.mysqlconnectTemp.cursor.callproc('sp_insert_customer_test', CustomereTempSQL)
+                # self.mysqlconnectTemp.db.commit()
             else:
                 CustomereSQL = (self.customer.getCustomer_id(), self.customer.getGroup_id(), self.customer.getName(), \
                                 self.customer.getAddress(), self.customer.getphone(), self.customer.getMobile(), \
                                 self.customer.getEmail(), self.customer.getPost(), self.customer.getClass(), \
                                 self.customer.getMemo(),self.UserID)
+                # CustomereTempSQL = (
+                #     self.customer.getCustomer_id(), self.customer.getGroup_id(), self.customer.get_Name(), \
+                #     self.customer.get_Address(), self.customer.get_phone(), self.customer.get_Mobile(), \
+                #     self.customer.get_Email())
                 self.mysqlconnect.cursor.callproc('sp_update_customer', CustomereSQL)
+                self.mysqlconnect.db.commit()
+                # self.mysqlconnectTemp.cursor.callproc('sp_update_customer', CustomereTempSQL)
+                # self.mysqlconnectTemp.db.commit()
+
+
 
             CustomereSQL = (self.customer.getCustomer_id(), self.customer.getGroup_id(), self.customer.get_Name(), \
                             self.customer.get_Address(), self.customer.get_phone(), self.customer.get_Mobile(), \
@@ -392,5 +443,5 @@ class sfexpressout():
 if __name__ == '__main__':
     buy = sfexpressout()
     print buy.parserFile('cbcc3138-5603-11e6-a532-000d3a800878', 'test', 26, 'MS',
-                  inputFile=u'C:/Users/10509002/Desktop/鮪魚肚/0301出庫/0301出庫/明細表', \
-                  outputFile=u'C:/Users/10509002/Desktop/test0321.xls')
+                  inputFile=u'C:/Users/10509002/Desktop/call', \
+                  outputFile=u'C:/Users/10509002/Desktop/測試一下.xls')

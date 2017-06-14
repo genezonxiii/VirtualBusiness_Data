@@ -5,7 +5,7 @@ import logging
 import xlrd,xlwt
 from ToMysql import ToMysql
 import uuid
-from VirtualBusiness import Customer,updateCustomer
+from VirtualBusiness import Sale, Customer,updateCustomer
 from xlutils.copy import copy
 import smtplib
 from email.mime.application import MIMEApplication
@@ -68,8 +68,10 @@ class SendMail():
 class buy123():
     mysqlconnect = None
     customer = None
+    sale = None
     GroupID , UserID , ProductCode = None , None , None
     RegularEX = None
+    dup_order_no = []
     def __init__(self):
         self.mysqlconnect = ToMysql()
         self.mysqlconnect.connect()
@@ -128,7 +130,7 @@ class buy123():
         return SourceString[:location-intLen]
 
     #初始記錄解析 Log
-    def init_log(self,dataName,GroupID,UserID ,ProductCode,inputFile):
+    def init_log(self,dataName,GroupID,UserID, Platform,ProductCode,inputFile):
         logging.basicConfig(filename='/data/VirtualBusiness_Data/pyupload-group.log',
                             level=logging.DEBUG,
                             format='%(asctime)s - %(levelname)s - %(filename)s:%(name)s:%(module)s/%(funcName)s/%(lineno)d - %(message)s',
@@ -141,17 +143,20 @@ class buy123():
         logging.debug('UserID:' + UserID)
         self.GroupID = GroupID
         self.customer = Customer()
+        self.sale = Sale()
         self.UserID = UserID
+        self.Platform = Platform
         self.ProductCode = ProductCode
 
     #解析原始檔
-    def parserFile(self, GroupID, UserID, LogisticsID=2, ProductCode=None, inputFile=None, outputFile=None):
-        self.init_log('Buy123_Data',GroupID, UserID , ProductCode , inputFile)
+    def parserFile(self, GroupID, UserID, Platform = None, LogisticsID=2, ProductCode=None, inputFile=None, outputFile=None):
+        self.init_log('Buy123_Data',GroupID, UserID , Platform, ProductCode , inputFile)
         success = False
         if self.getRegularEx(GroupID) == False:
             return json.dumps({"success": success}, sort_keys=False)
         else:
             try:
+                self.dup_order_no = []
                 data = xlrd.open_workbook(inputFile)
                 table = data.sheets()[0]
                 result = []
@@ -175,7 +180,8 @@ class buy123():
                         logger.debug(self.parserRegularEx(table.cell(row_index, 6).value))
                         tmp.append(self.getResultForDigit(self.parserRegularEx(table.cell(row_index, 6).value)))
                     tmp.append(table.cell(row_index, 7).value)                                      #組數
-                    tmp.append(self.ReplaceField(table.cell(row_index, 8).value,'/'))                #訂購人                                                   #訂購人
+                    tmp.append(self.ReplaceField(table.cell(row_index, 8).value,'/'))                #訂購人
+                    tmp.append(table.cell(row_index,11).value)      #商品料號
                     result.append(tmp)
                 success = self.writeXls(LogisticsID,result,outputFile)
             except Exception as e :
@@ -183,10 +189,12 @@ class buy123():
                 resultinfo = e.message
                 success = False
             finally:
+                dup_str = ','.join(self.dup_order_no)
+                self.dup_order_no = []
                 if success == False :
                     Message = UserID + ' Transfer File Failure , File Path is :'
                     self.sendMailToPSC(Message,inputFile)
-                return json.dumps({"success": success, "info": resultinfo,"download": outputFile}, sort_keys=False)
+                return json.dumps({"success": success, "info": resultinfo,"download": outputFile, "duplicate": dup_str}, sort_keys=False)
 
     # 判斷轉出出貨格式
     def writeXls(self,LogisticsID,data,outputFile):
@@ -229,12 +237,32 @@ class buy123():
                 else:
                     table.write(i, 14, row[5])
                 table.write(i, 15, str(row[5]*int(row[6])), style)  # 總數量
+
+                self.sale.setGroup_id(self.GroupID)
+                self.sale.setUser_id(self.UserID)
+                self.sale.setOrder_source(self.Platform)
+                if type(row[0]) == float:
+                    self.sale.setOrder_No_float(row[0])
+                else:
+                    self.sale.setOrder_No(row[0])
+                self.sale.setTrans_list_date_YYYYMMDD(d1)
+                self.sale.setSale_date_YYYYMMDD(d1)
+                self.sale.setC_Product_id(row[8])
+                self.sale.setProduct_name_NoEncode(row[4])
+                self.sale.setProduct_spec('')
+                self.sale.setQuantity(row[6])
+                self.sale.setPrice(0)
+                self.sale.setNameNoEncode(row[7])
+                self.sale.setDeliveryway("1")  # 宅配: 1, 超取711: 2, 超取全家: 3
+                self.sale.setOrder_status('A0')
+
                 self.customer.setGroup_id(self.GroupID)
                 self.customer.setNameNoEncode(row[1])
                 self.customer.setMobile(row[3])
                 self.customer.setAddressNoEncode(row[2])
-                # insert or update table tb_customer
+                # insert or update table tb_customer and tb_sale
                 self.updateDB_Customer()
+                self.updateDB_Sale()
                 i += 1
             self.mysqlconnect.db.commit()
             self.mysqlconnect.dbClose()
@@ -257,6 +285,9 @@ class buy123():
                                                self.customer.get_phone(), self.customer.get_Mobile(), self.customer.get_Email()))
             if self.customer.getCustomer_id() == None:
                 self.customer.setCustomer_id(uuid.uuid4())
+                print self.customer.getCustomer_id()
+                print self.customer.getName()
+                print self.customer.get_Name()
                 CustomereSQL = (
                     self.customer.getCustomer_id(), self.customer.getGroup_id(), self.customer.getName(), \
                     self.customer.getAddress(), self.customer.getphone(), self.customer.getMobile(), \
@@ -277,6 +308,31 @@ class buy123():
             print e.message
             logging.error(e.message)
             raise
+
+    def updateDB_Sale(self):
+            try:
+                SaleSQL = (
+                self.sale.getGroup_id(), self.sale.getOrder_No(), self.sale.getUser_id(), self.sale.getProduct_name(),
+                self.sale.getProduct_spec(), \
+                self.sale.getC_Product_id(), self.customer.getCustomer_id(), self.sale.getName(),
+                self.sale.getQuantity(), \
+                self.sale.getPrice(), self.sale.getInvoice(), self.sale.getInvoice_date(),
+                self.sale.getTrans_list_date(), \
+                self.sale.getDis_date(), self.sale.getMemo(), self.sale.getSale_date(), self.sale.getOrder_source(), \
+                self.sale.getDeliveryway(), self.sale.getTotal_amt(), self.sale.getOrder_status(),
+                self.sale.getDeliver_name(), \
+                self.sale.getDeliver_to(), self.sale.getDeliver_store(), self.sale.getDeliver_phone(),
+                self.sale.getDeliver_mobile(), \
+                self.sale.getPay_kind(), self.sale.getPay_status(), "")
+                result = self.mysqlconnect.cursor.callproc('p_tb_sale_groupbuy', SaleSQL)
+                if result[27] != None:
+                    self.dup_order_no.append(result[27])
+
+                return
+            except Exception as e:
+                print e.message
+                logging.error(e.message)
+                raise
 
     #將錯誤檔案寄給 Joe，Avery,Christine
     def sendMailToPSC(self, MailContent , inputFile):
@@ -330,6 +386,6 @@ class buy123():
 
 if __name__ == '__main__':
     buy = buy123()
-    print buy.parserFile('cbcc3138-5603-11e6-a532-000d3a800878', 'test', 2, 'MS',
-                  inputFile=u'C:/Users/10509002/Documents/for_Joe_test/團購/生活市集/1234dadsf.xls', \
-                  outputFile=u'C:/Users/10509002/2017-04-13_生活市集.xls')
+    print buy.parserFile('cbcc3138-5603-11e6-a532-000d3a800878', 'test', 'buy123', 2, 'MS',
+                  inputFile=u'C:/Users/10509002/Desktop/1234aaa.xls', \
+                  outputFile=u'C:/Users/10509002/Desktop/2017-06-09_生活市集.xls')

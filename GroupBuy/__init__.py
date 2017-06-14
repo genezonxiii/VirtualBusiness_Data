@@ -29,7 +29,7 @@ class FileProcess():
         outPutPath = ExcelTemplate()
         OutputFile = outPutPath.T_Cat_OutputFilePath + OutputFile +".xls" #輸出檔案路徑及名稱
         GB = None
-        if Platform == 'lifemarket' :
+        if Platform == 'buy123' :
             logger.debug("生活市集")
             GB = buy123()
         elif Platform == 'chinatime' :
@@ -41,7 +41,7 @@ class FileProcess():
         elif Platform == 'popular' :
             logger.debug("小P大團購")
             GB = popular()
-        elif Platform == 'sister' :
+        elif Platform == 'sale123' :
             logger.debug("姊妹購物網")
             GB = Sale123()
         elif Platform == 'healthmike' :
@@ -75,7 +75,7 @@ class FileProcess():
         #     logger.debug("清新好日")
         #     GB =
 
-        return GB.parserFile(GroupID,UserID,LogisticsID,ProductCode,DataPath,OutputFile)
+        return GB.parserFile(GroupID,UserID,Platform,LogisticsID,ProductCode,DataPath,OutputFile)
 
 
         # LogisticsID  :  1	中華郵政

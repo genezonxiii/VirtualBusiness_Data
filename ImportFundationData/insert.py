@@ -233,10 +233,8 @@ class ProductData():
 class PackageData():
     Data = None
     mysqlconnect = None
-    package_M = None
-    package_D = None
-    packageMList = []
-    packageDList = []
+    package_M, package_D = None, None
+    packageMList, packageDList = None, None
     dup_order_no = []
 
     TitleTupleM = (u'自訂組合包ID', u'組合包名稱', u'組合包規格', u'售價', u'條碼',
@@ -251,6 +249,8 @@ class PackageData():
         # mysql connector object
         self.mysqlconnect = ToMysql()
         self.mysqlconnect.connect()
+        self.packageMList = []
+        self.packageDList = []
 
     def Package(self, GroupID, path, UserID):
         try:
@@ -295,9 +295,7 @@ class PackageData():
                     logger.debug(str(index2) + self.TitleTupleD[index2])
                     logger.debug(u'index in file - ' + str(self.TitleListD.index(self.TitleTupleD[index2])))
 
-            self.packageMList = []
-            self.packageDList = []
-            
+
             # 讀Master的資料
             for row_index in range(2, table.nrows):
                 self.package_M = Package_master()
@@ -345,8 +343,6 @@ class PackageData():
             self.package_D = None
 
             self.mysqlconnect.db.commit()
-            self.packageMList = []
-            self.packageDList = []
             self.mysqlconnect.dbClose()
 
             success = True
