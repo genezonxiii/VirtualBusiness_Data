@@ -294,6 +294,10 @@ class PackageData():
                 if self.TitleTupleD[index2] in self.TitleList:
                     logger.debug(str(index2) + self.TitleTupleD[index2])
                     logger.debug(u'index in file - ' + str(self.TitleListD.index(self.TitleTupleD[index2])))
+
+            self.packageMList = []
+            self.packageDList = []
+            
             # 讀Master的資料
             for row_index in range(2, table.nrows):
                 self.package_M = Package_master()
