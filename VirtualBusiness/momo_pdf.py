@@ -41,22 +41,22 @@ class Momo_Pdf():
                 # receiver block: address
                 # 左半邊
                 if (lt_obj.x0 >= 45 and lt_obj.x0 <= 70) \
-                        and ((lt_obj.y0 >= 630 and lt_obj.y0 <= 650) or (lt_obj.y0 >= 210 and lt_obj.y0 <= 220)):
-                    # print(lt_obj.get_text())
+                        and ((lt_obj.y0 >= 630 and lt_obj.y0 <= 650) or (lt_obj.y0 >= 200 and lt_obj.y0 <= 220)):
+                    print(lt_obj.get_text())
                     list.append(lt_obj.get_text().replace("\n", ""))
                     logger.debug("receiver block: address")
 
                 # receiver block: phone, mobile, customer name,
                 if (lt_obj.x0 >= 60 and lt_obj.x0 <= 70) \
-                        and ((lt_obj.y0 >= 600 and lt_obj.y0 <= 620) or (lt_obj.y0 >= 180 and lt_obj.y0 <= 190)):
-                    # print(lt_obj.get_text())
+                        and ((lt_obj.y0 >= 600 and lt_obj.y0 <= 620) or (lt_obj.y0 >= 170 and lt_obj.y0 <= 190)):
+                    print(lt_obj.get_text())
                     list.append(lt_obj.get_text())
                     logger.debug("receiver block: phone, mobile, customer name,")
 
                 # invoice_no, invoice_date, unique_number, order_no,
                 if (lt_obj.x0 >= 35 and lt_obj.x0 <= 40) \
                         and ((lt_obj.y0 >= 30 and lt_obj.y0 <= 50) or (lt_obj.y0 >= 460 and lt_obj.y0 <= 480)):
-                    # print(lt_obj.get_text())
+                    print(lt_obj.get_text())
                     list.append(lt_obj.get_text())
                     logger.debug("invoice_no, invoice_date, unique_number, order_no,")
 
@@ -77,15 +77,34 @@ class Momo_Pdf():
         getCustomerFromSale = """
                 select customer_id, name
                 from tb_sale
-                where order_no = '%s'
+                where order_no like '%s'
                 and group_id = '%s'
-            """ % (order_List[0], self.__groupId)
+            """ % (order_List[0] + "%", self.__groupId)
 
+        mysqlconnecttmp = ToMysql()
+        mysqlconnecttmp.setDatabase('tmp')
+        mysqlconnecttmp.connect()
 
         # 將撈出資料轉為dict, 可以欄位名稱撈取
         # mysqlconnect.cursor.execute(getCustomerFromSale)
         # row = dict(zip(mysqlconnect.cursor.column_names, mysqlconnect.cursor.fetchone()))
         # print (row['customer_id'], row['name'])
+        order_List_notEncode = order_List
+
+        mysqlconnect.cursor.execute(getCustomerFromSale)
+        customerResult = mysqlconnect.cursor.fetchall()
+        if customerResult != []:
+            # update tmp.tb_customer
+            logger.debug("update tmp.tb_customer")
+            updatetmpCustomer = """update tb_customer set
+                                            name = %s, phone = %s, mobile = %s, address = %s
+                                            where customer_id = %s; """
+            updatetmpCustomerParam = (order_List_notEncode[1], order_List_notEncode[2], order_List_notEncode[3], order_List_notEncode[4],
+            customerResult[0][0])
+            mysqlconnecttmp.cursor.execute(updatetmpCustomer, updatetmpCustomerParam)
+
+            mysqlconnecttmp.db.commit()
+
 
         if encode:
             aes = aes_data()

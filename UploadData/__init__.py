@@ -36,6 +36,7 @@ from VirtualBusiness.Gohappy22_csv import Gohappy22csv_Data
 from VirtualBusiness.Myfone19_csv import Myfone19csv_Data
 from VirtualBusiness.yahoo_csv import Yahoo22csv_Data
 from VirtualBusiness.shopline_WM import Shopline
+from VirtualBusiness.momo_pdf import Momo_Pdf
 
 logger = logging.getLogger(__name__)
 
@@ -116,6 +117,9 @@ class VirtualBusiness():
                 if DataPath.endswith(".csv"):
                     momo = Momo24csv_Data()
                     return  momo.Momo_24_Data('momo', Firm,os.path.join(DataPath),userID)
+                if DataPath.endswith(".pdf"):
+                    FinalData = Momo_Pdf()
+                    return FinalData.getOrder(Firm,os.path.join(DataPath))
 
         elif Supplier =='myfone':
             logger.debug('myfone')
@@ -327,6 +331,6 @@ class VirtualBusiness():
 if __name__ == '__main__':
     Business = VirtualBusiness()
     # Business.virtualbusiness("/data/vbupload/test/", "19647356")
-    Business.virtualbusiness("C:/data/vbupload/asap/home-delivery/cbcc3138-5603-11e6-a532-000d3a800878/AJ8192_delivery_20160824084251.xls", "test")
+    Business.virtualbusiness("C:/data/vbupload/momo/home-delivery/cbcc3138-5603-11e6-a532-000d3a800878/djsakdl2132.pdf", "test")
 #     Business=VirtualBusiness()
 #     Business.virtualbusiness("C:/vbdata/vbupload/17life/7dcc2045-472e-11e6-806e-000c29c1d000/Data2.xls")
