@@ -37,6 +37,8 @@ from VirtualBusiness.Myfone19_csv import Myfone19csv_Data
 from VirtualBusiness.yahoo_csv import Yahoo22csv_Data
 from VirtualBusiness.shopline_WM import Shopline
 from VirtualBusiness.momo_pdf import Momo_Pdf
+from VirtualBusiness.shopee import Shopee_Data
+from VirtualBusiness.CTI import CTI_Data
 
 logger = logging.getLogger(__name__)
 
@@ -327,6 +329,19 @@ class VirtualBusiness():
             #     print 'instore-pickup'
             #     FinalData = Friday17_Data()
             #     return FinalData.Friday_17_Data('friday', Firm, os.path.join(DataPath),userID)
+
+        elif Supplier == 'shopee':
+            logger.debug('蝦皮')
+            if supplierType == 'general':
+                FinalData = Shopee_Data()
+                return FinalData.Shopee_26_Data('Shopee', Firm, os.path.join(DataPath), userID)
+
+        elif Supplier == 'CTI':
+            logger.debug('CTI')
+            if supplierType == 'general':
+                FinalData = CTI_Data()
+                return FinalData.CTI_yoho_Data('CTI', Firm, os.path.join(DataPath), userID)
+
 
 if __name__ == '__main__':
     Business = VirtualBusiness()

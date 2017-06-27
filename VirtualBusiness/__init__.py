@@ -237,6 +237,8 @@ class Sale():
     p_memo, p_order_source, p_deliveryway = None, None, None
     p_total_amt, p_order_status, p_deliver_name, p_deliver_to, p_deliver_store = 0, None, None, None, None
     p_deliver_phone, p_deliver_mobile, p_pay_kind, p_pay_status = None, None, None, None
+    p_user_def1, p_user_def2, p_user_def3, p_user_def4, p_user_def5 = None, None, None, None, None
+    p_user_def6, p_user_def7, p_user_def8, p_user_def9, p_user_def10 = None, None, None, None, None
     p_isreturn = False
     aes,convert = None, None
 
@@ -433,6 +435,36 @@ class Sale():
     def setPay_status(self,value):
         self.p_pay_status = self.convert.ToString(value.encode('utf-8'))
 
+    def setUser_def1(self,value):
+        self.p_user_def1 = self.convert.ToString(value.encode('utf-8'))
+
+    def setUser_def2(self,value):
+        self.p_user_def2 = self.convert.ToString(value.encode('utf-8'))
+
+    def setUser_def3(self,value):
+        self.p_user_def3 = self.convert.ToString(value.encode('utf-8'))
+
+    def setUser_def4(self,value):
+        self.p_user_def4 = self.convert.ToString(value.encode('utf-8'))
+
+    def setUser_def5(self,value):
+        self.p_user_def5 = self.convert.ToString(value.encode('utf-8'))
+
+    def setUser_def6(self,value):
+        self.p_user_def6 = self.convert.ToString(value.encode('utf-8'))
+
+    def setUser_def7(self,value):
+        self.p_user_def7 = self.convert.ToString(value.encode('utf-8'))
+
+    def setUser_def8(self,value):
+        self.p_user_def8 = self.convert.ToString(value.encode('utf-8'))
+
+    def setUser_def9(self,value):
+        self.p_user_def9 = self.convert.ToString(value.encode('utf-8'))
+
+    def setUser_def10(self,value):
+        self.p_user_def10 = self.convert.ToString(value.encode('utf-8'))
+
     def getSale_id(self):
         return self.p_sale_id
 
@@ -531,6 +563,36 @@ class Sale():
 
     def getPay_status(self):
         return self.p_pay_status
+
+    def getUser_def1(self):
+        return self.p_user_def1
+
+    def getUser_def2(self):
+        return self.p_user_def2
+
+    def getUser_def3(self):
+        return self.p_user_def3
+
+    def getUser_def4(self):
+        return self.p_user_def4
+
+    def getUser_def5(self):
+        return self.p_user_def5
+
+    def getUser_def6(self):
+        return self.p_user_def6
+
+    def getUser_def7(self):
+        return self.p_user_def7
+
+    def getUser_def8(self):
+        return self.p_user_def8
+
+    def getUser_def9(self):
+        return self.p_user_def9
+
+    def getUser_def10(self):
+        return self.p_user_def10
 
 class Customer():
     p_customer_id,p_group_id,p_name=None,None,None
