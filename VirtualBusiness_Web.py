@@ -14,6 +14,7 @@ import datetime
 from time import mktime
 import logging
 import time
+from xml.dom import minidom
 
 # settings.configure()
 urls = ("/upload/(.*)", "Uploaddata", \
@@ -24,10 +25,42 @@ urls = ("/upload/(.*)", "Uploaddata", \
         "/groupbuy/(.*)", "GroupBuy",\
         "/import/(.*)", "Import", \
         "/sfexpress/(.*)", "SFExpress", \
-        "/sfexpressapi/(.*)", "SendSFExpress")
+        "/sfexpressapi/(.*)", "SendSFExpress", \
+        "/PurchaseOrderInboundPush/(.*)", "SFInboundDetail", \
+        "/SaleOrderOutboundDetailPush/(.*)", "SFOutboundDetail", \
+        "/SaleOrderStatusPush/(.*)", "SFStatus", \
+        "/InventoryChange/(.*)", "SFChange", \
+        "/InventoryBalance/(.*)", "SFBalance")
 
 app = web.application(urls, globals())
-logger = logging.getLogger(__name__)
+
+logger = logging.getLogger('vb')
+
+def vb_logger(name):
+    logger = logging.getLogger(name)
+    logger.setLevel(logging.DEBUG)
+
+    # create file handler
+    fh = logging.FileHandler('/data/VirtualBusiness_Data/sf_warehouse.log')
+    fh.setLevel(logging.DEBUG)
+
+    # create console handler
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG)
+
+    # create formatter and add it to the handlers
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(name)s/%(funcName)s/%(lineno)d - %(message)s')
+
+    # formatter.datefmt = '%Y/%m/%d %I:%M:%S %p'
+    fh.setFormatter(formatter)
+    ch.setFormatter(formatter)
+
+    # add the handlers to the logger
+    if not logger.handlers:
+        logger.addHandler(fh)
+        logger.addHandler(ch)
+
+    return logger
 
 class Uploaddata():
     def GET(self, name):
@@ -194,5 +227,125 @@ class SendSFExpress():
         return SF.sendToSFexpress(data[0])
         # http: // localhost:8080 / sfexpressapi / data = PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI / Pg0KPFJlcXVlc3Qgc2VydmljZT0iSVRFTV9RVUVSWV9TRVJWSUNFIiBsYW5nPSJ6aC1UVyI + DQogICAgPEhlYWQ + DQogICAgICAgIDxBY2Nlc3NDb2RlPklUQ05DMWh0WFY5eHVPS3JodTI0b3c9PTwvQWNjZXNzQ29kZT4NCiAgICAgICAgPENoZWNrd29yZD5BTlUyVkh2VjVlcXNyMlBKSHUyem5XbVd0ejJDZEl2ajwvQ2hlY2t3b3JkPg0KICAgIDwvSGVhZD4NCiAgICA8Qm9keT4NCiAgICAgICAgPEl0ZW1RdWVyeVJlcXVlc3Q + DQogICAgICAgICAgICA8Q29tcGFueUNvZGU + V1lER0o8L0NvbXBhbnlDb2RlPg0KICAgICAgICAgICAgPFNrdU5vTGlzdD4NCiAgICAgICAgICAgICAgICA8U2t1Tm8 + UFkzMDAxQVNGPC9Ta3VObz4NCiAgICAgICAgICAgIDwvU2t1Tm9MaXN0Pg0KICAgICAgICA8L0l0ZW1RdWVyeVJlcXVlc3Q + DQogICAgPC9Cb2R5Pg0KPC9SZXF1ZXN0Pg ==
 
+
+class SFInboundDetail():
+    def __init__(self):
+        logger = vb_logger("vb")
+
+    def POST(self,data):
+
+        # dict_items
+        input_data = web.input()
+
+        logger = logging.getLogger("vb.SFInboundDetail")
+
+        # 取出 dict
+        for temp_param in input_data.items():
+            print temp_param
+
+            if temp_param[0] == "logistics_interface":
+
+                logger.debug(temp_param[0])
+                logger.debug(temp_param[1])
+                key = temp_param[0]
+                value = temp_param[1]
+                print key
+                print value
+            elif temp_param[0] == "data_digest":
+
+                logger.debug(temp_param[0])
+                logger.debug(temp_param[1])
+
+                key = temp_param[0]
+                value = temp_param[1]
+
+                print key
+                print value
+
+class SFOutboundDetail():
+    def __init__(self):
+        logger = vb_logger("vb")
+
+    def POST(self,data):
+        # dict_items
+        input_data = web.input()
+        logger = logging.getLogger("vb.SFOutboundDetail")
+
+        for key, value in input_data.items():
+            if key == 'logistics_interface':
+                logger.debug(key)
+                logger.debug(value)
+                print key
+                print value
+            elif key == 'data_digest':
+                logger.debug(key)
+                logger.debug(value)
+                print key
+                print
+
+class SFStatus():
+    def __init__(self):
+        logger = vb_logger("vb")
+
+    def POST(self,data):
+        # dict_items
+        input_data = web.input()
+        logger = logging.getLogger("vb.SFStatus")
+
+        for key, value in input_data.items():
+            if key == 'logistics_interface':
+                logger.debug(key)
+                logger.debug(value)
+                print key
+                print value
+            elif key == 'data_digest':
+                logger.debug(key)
+                logger.debug(value)
+                print key
+                print value
+
+class SFChange():
+    def __init__(self):
+        logger = vb_logger("vb")
+
+    def POST(self,data):
+        # dict_items
+        input_data = web.input()
+        logger = logging.getLogger("vb.SFChange")
+
+        # dict
+        for key, value in input_data.items():
+            if key == 'logistics_interface':
+                logger.debug(key)
+                logger.debug(value)
+                print key
+                print value
+            elif key == 'data_digest':
+                logger.debug(key)
+                logger.debug(value)
+                print key
+                print value
+
+class SFBalance():
+    def __init__(self):
+        logger = vb_logger("vb")
+
+    def POST(self,data):
+        # dict_items
+        input_data = web.input()
+        logger = logging.getLogger("vb.SFBalance")
+
+        for key, value in input_data.items():
+            if key == 'logistics_interface':
+                logger.debug(key)
+                logger.debug(value)
+                print key
+                print value
+            elif key == 'data_digest':
+                logger.debug(key)
+                logger.debug(value)
+                print key
+                print value
+                
 if __name__ == "__main__":
     app.run()
