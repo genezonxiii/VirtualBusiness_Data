@@ -228,6 +228,7 @@ class SendSFExpress():
         # http: // localhost:8080 / sfexpressapi / data = PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiIHN0YW5kYWxvbmU9InllcyI / Pg0KPFJlcXVlc3Qgc2VydmljZT0iSVRFTV9RVUVSWV9TRVJWSUNFIiBsYW5nPSJ6aC1UVyI + DQogICAgPEhlYWQ + DQogICAgICAgIDxBY2Nlc3NDb2RlPklUQ05DMWh0WFY5eHVPS3JodTI0b3c9PTwvQWNjZXNzQ29kZT4NCiAgICAgICAgPENoZWNrd29yZD5BTlUyVkh2VjVlcXNyMlBKSHUyem5XbVd0ejJDZEl2ajwvQ2hlY2t3b3JkPg0KICAgIDwvSGVhZD4NCiAgICA8Qm9keT4NCiAgICAgICAgPEl0ZW1RdWVyeVJlcXVlc3Q + DQogICAgICAgICAgICA8Q29tcGFueUNvZGU + V1lER0o8L0NvbXBhbnlDb2RlPg0KICAgICAgICAgICAgPFNrdU5vTGlzdD4NCiAgICAgICAgICAgICAgICA8U2t1Tm8 + UFkzMDAxQVNGPC9Ta3VObz4NCiAgICAgICAgICAgIDwvU2t1Tm9MaXN0Pg0KICAgICAgICA8L0l0ZW1RdWVyeVJlcXVlc3Q + DQogICAgPC9Cb2R5Pg0KPC9SZXF1ZXN0Pg ==
 
 
+# 入庫單明細推送接口
 class SFInboundDetail():
     def __init__(self):
         logger = vb_logger("vb")
@@ -261,7 +262,9 @@ class SFInboundDetail():
 
                 print key
                 print value
+        return '<Response service="PURCHASE_ORDER_INBOUND_SERVICE" lang="zh-CN"><Head>OK</Head><Body><PurchaseOrderInboundResponse><Result>Success</Result><Note></Note></PurchaseOrderInboundResponse></Body></Response>'
 
+# 出庫單明細推送接口
 class SFOutboundDetail():
     def __init__(self):
         logger = vb_logger("vb")
@@ -282,7 +285,9 @@ class SFOutboundDetail():
                 logger.debug(value)
                 print key
                 print
+        return '<Response service="SALE_ORDER_OUTBOUND_DETAIL_SERVICE" lang="zh-CN"><Head>OK</Head><Body><SaleOrderOutboundDetailResponse><Result>Success</Result><Note></Note></SaleOrderOutboundDetailResponse></Body></Response>'
 
+# 出庫單狀態推送入口
 class SFStatus():
     def __init__(self):
         logger = vb_logger("vb")
@@ -303,7 +308,9 @@ class SFStatus():
                 logger.debug(value)
                 print key
                 print value
+        return '<Response service="SALE_ORDER_STATUS_PUSH_SERVICE" lang="zh-CN"><Head>OK</Head><Body><SaleOrderStatusResponse><Result>Success</Result><Note></Note></SaleOrderStatusResponse></Body></Response>'
 
+# 庫存變化推送接口
 class SFChange():
     def __init__(self):
         logger = vb_logger("vb")
@@ -325,7 +332,9 @@ class SFChange():
                 logger.debug(value)
                 print key
                 print value
+        return '<Response service="INVENTORY_CHANGE_SERVICE" lang="zh-CN"><Head>OK</Head><Body><InventoryChangeResponse><Result>Success</Result><Note></Note></InventoryChangeResponse></Body></Response>'
 
+# 庫存對帳推送接口
 class SFBalance():
     def __init__(self):
         logger = vb_logger("vb")
@@ -346,6 +355,7 @@ class SFBalance():
                 logger.debug(value)
                 print key
                 print value
+        return '<Response service="INVENTORY_BALANCE_SERVICE" lang="zh-CN"><Head>OK</Head><Body><InventoryBalanceResponse><Result>Success</Result><Note></Note></InventoryBalanceResponse></Body></Response>'
                 
 if __name__ == "__main__":
     app.run()
