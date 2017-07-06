@@ -334,13 +334,13 @@ class VirtualBusiness():
             logger.debug('蝦皮')
             if supplierType == 'general':
                 FinalData = Shopee_Data()
-                return FinalData.Shopee_26_Data('Shopee', Firm, os.path.join(DataPath), userID)
+                return FinalData.Shopee_26_Data('shopee', Firm, os.path.join(DataPath), userID)
 
-        elif Supplier == 'CTI':
+        elif Supplier == 'yohopower':
             logger.debug('CTI')
             if supplierType == 'general':
                 FinalData = CTI_Data()
-                return FinalData.CTI_yoho_Data('CTI', Firm, os.path.join(DataPath), userID)
+                return FinalData.CTI_yoho_Data('yohopower', Firm, os.path.join(DataPath), userID)
 
 
 if __name__ == '__main__':
