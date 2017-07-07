@@ -126,8 +126,8 @@ class CTI_Data(Momo25_Data):
                        self.sale.getUser_def3(), self.sale.getUser_def4(), self.sale.getUser_def5(), self.sale.getUser_def6(), \
                        self.sale.getUser_def7(), self.sale.getUser_def8(), self.sale.getUser_def9(), self.sale.getUser_def10(), "")
             result = self.mysqlconnect.cursor.callproc('p_tb_sale_upower_cti', SaleSQL)
-            if result[36] != None:
-                self.dup_order_no.append(result[36])
+            if result[37] != None:
+                self.dup_order_no.append(result[37])
 
             return
         except Exception as e :
@@ -139,4 +139,4 @@ if __name__ == '__main__':
     friday = CTI_Data()
     # groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
-    print friday.Friday_16_Data('friday',groupid,u'C:\\Users\\10509002\\Desktop\\CTI檔案.xlsx','test')
+    print friday.CTI_yoho_Data('yohopower',groupid,u'C:\\Users\\10509002\\Desktop\\CTI檔案.xlsx','test')

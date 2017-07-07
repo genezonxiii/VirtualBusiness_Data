@@ -159,4 +159,4 @@ if __name__ == '__main__':
     udn = Shopee_Data()
     # groupid = ""
     groupid='cbcc3138-5603-11e6-a532-000d3a800878'
-    print udn.Shopee_26_Data('udn',groupid,u'C:/Users/10509002/Desktop/yohopower.shopee-order.20170601-20170620.xls','system')
+    print udn.Shopee_26_Data('shopee',groupid,u'C:/Users/10509002/Desktop/yohopower.shopee-order.20170601-20170620.xls','system')
